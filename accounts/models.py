@@ -26,7 +26,7 @@ class AccountManager(models.Model):
     )
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
-    role = models.CharField(max_length=2, CHOICES=ROLES, verbose_name=_("role"))
+    role = models.CharField(max_length=2, choices=ROLES, verbose_name=_("role"))
 
 
 class Client(models.Model):
@@ -38,7 +38,7 @@ class Client(models.Model):
     )
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
-    # phone
+    phone = models.CharField(max_length=17, verbose_name=_("phone number"))
     created_on = models.DateTimeField(auto_now_add=True, verbose_name=_("created on"))
     last_update = models.DateTimeField(auto_now=True, verbose_name=_("last updated on"))
     company_name = models.CharField(max_length=200, verbose_name=_("company name"))
