@@ -17,14 +17,10 @@ class Event(models.Model):
         related_name="event_account_managers",
         verbose_name=_("account manager for event"),
     )
-    event_date = models.DateTimeField(
-        default=timezone.now(), verbose_name=_("date of event")
-    )
-    event_name = models.CharField(max_length=100, verbose_name=_("name of event"))
-    event_location = models.CharField(
-        max_length=200, verbose_name=_("address of event")
-    )
-    max_number_guests = models.PositiveIntegerField(
+    date = models.DateTimeField(default=timezone.now, verbose_name=_("date of event"))
+    name = models.CharField(max_length=100, verbose_name=_("name of event"))
+    location = models.CharField(max_length=200, verbose_name=_("address of event"))
+    max_guests = models.PositiveIntegerField(
         default=1,
         validators=[
             MinValueValidator(
@@ -36,4 +32,4 @@ class Event(models.Model):
         ],
         verbose_name=_("number of guests"),
     )
-    event_notes = models.TextField(verbose_name=_("notes for the event"))
+    notes = models.TextField(verbose_name=_("notes for the event"))
