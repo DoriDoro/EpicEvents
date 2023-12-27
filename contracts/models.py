@@ -6,7 +6,7 @@ class Contract(models.Model):
     SIGNED = "S"
     DRAFT = "D"
 
-    STATE = [(SIGNED, _("Signed")), (DRAFT, _("Draft"))]
+    STATES = [(SIGNED, _("Signed")), (DRAFT, _("Draft"))]
 
     client = models.ForeignKey(
         "accounts.Client",
@@ -27,5 +27,5 @@ class Contract(models.Model):
         auto_now_add=True, verbose_name=_("contract created on")
     )
     state = models.CharField(
-        max_length=1, CHIOCES=STATE, default=DRAFT, verbose_name=_("state")
+        max_length=1, choices=STATES, default=DRAFT, verbose_name=_("state")
     )
