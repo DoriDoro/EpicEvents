@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+
 from accounts.models import AccountManager
 
 
@@ -25,4 +26,5 @@ class Command(BaseCommand):
             role=options["role"],
         )
         account_manager.save()
-        self.stdout.write("New account manager was created.")
+
+        print("New account manager was created.")

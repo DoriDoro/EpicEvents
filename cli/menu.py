@@ -13,23 +13,16 @@ def get_start_menu(title):
     return choice
 
 
-def get_app_menu(title, app):
-    print(f"** {title} **", end="\n\n")
+def get_app_menu(app):
+    print(f"** Menu of the {app}s **", end="\n\n")
 
-    print(f" *** Menu of the {app} *** ")
-    if app == "Main":
-        print("  [1] Manage the account managers")
-        print("  [2] Manage the contracts")
-        print("  [3] Manage the events")
-        print("  [4] Quit program", end="\n\n")
-        choice = int(input("Please enter your choice: "))
-        print()
-    if app != "Main":
-        print(f"  [1] Create an {app}")
-        print(f"  [2] Update an {app}")
-        print(f"  [3] Delete an {app}")
-        print(f"  [4] go back to Main Menu", end="\n\n")
-        choice = int(input("Please enter your choice: "))
-        print()
+    app_capitalized = app.title()
+    print(f" *** {app_capitalized} Menu *** ")
+    print(f"  [1] Create an {app}")
+    print(f"  [2] Update an {app}")
+    print(f"  [3] Delete an {app}")
+    print(f"  [4] go back to Main Menu", end="\n\n")
+    choice = int(input("Please enter your choice: "))
+    print()
 
     return choice
