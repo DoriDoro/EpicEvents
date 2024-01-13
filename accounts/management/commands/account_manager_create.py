@@ -1,6 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from accounts.models import AccountManager
+
+UserModel = get_user_model()
 
 
 class Command(BaseCommand):
@@ -19,12 +22,14 @@ class Command(BaseCommand):
         - last_name
         - role
         """
+        user_id = options["user"]
+        user = UserModel.objects.get(pk=user_id)
         account_manager = AccountManager(
-            user=options["user"],
+            user=user,
             first_name=options["first_name"],
             last_name=options["last_name"],
             role=options["role"],
         )
         account_manager.save()
 
-        print("New account manager was created.")
+        self.stdout.write("New account manager was created.")

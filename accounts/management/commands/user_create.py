@@ -21,4 +21,4 @@ class Command(BaseCommand):
             email=options["email"], password=options["password"]
         )
 
-        print("New user was created.")
+        self.stdout.write("New user was created.")
