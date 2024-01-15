@@ -6,9 +6,15 @@ def get_start_menu(title):
     print("  [2] Manage the contracts")
     print("  [3] Manage the events")
     print("  [4] Quit program", end="\n\n")
-    choice = int(input("Please enter your choice: "))
-    print(choice)
-    print()
+
+    while True:
+        try:
+            choice = int(input(" Please enter your choice: "))
+            print(choice)
+            print()
+            break
+        except ValueError:
+            print("   Invalid input. Please enter a number.", end="\n\n")
 
     return choice
 
@@ -22,7 +28,14 @@ def get_app_menu(app):
     print(f"  [2] Update an {app}")
     print(f"  [3] Delete an {app}")
     print(f"  [4] go back to Main Menu", end="\n\n")
-    choice = int(input("Please enter your choice: "))
-    print()
+
+    while True:
+        try:
+            choice = int(input(" Please enter your choice: "))
+            print(choice)
+            print()
+            break
+        except ValueError:
+            print("   Invalid input. Please enter a number.", end="\n\n")
 
     return choice
