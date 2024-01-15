@@ -10,7 +10,6 @@ def get_start_menu(title):
     while True:
         try:
             choice = int(input(" Please enter your choice: "))
-            print(choice)
             print()
             break
         except ValueError:
@@ -32,7 +31,6 @@ def get_app_menu(app):
     while True:
         try:
             choice = int(input(" Please enter your choice: "))
-            print(choice)
             print()
             break
         except ValueError:

@@ -17,3 +17,5 @@ class Command(BaseCommand):
             call_command("start")
         if choice == 1:
             call_command("employee_create")
+        if choice == 2:
+            call_command("employee_update")
