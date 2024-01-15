@@ -11,11 +11,11 @@ class Event(models.Model):
         related_name="event_contracts",
         verbose_name=_("contract for event"),
     )
-    account_manager = models.ForeignKey(
-        "accounts.AccountManager",
+    employee = models.ForeignKey(
+        "accounts.Employee",
         on_delete=models.CASCADE,
-        related_name="event_account_managers",
-        verbose_name=_("account manager for event"),
+        related_name="event_employees",
+        verbose_name=_("employee for event"),
     )
     date = models.DateTimeField(default=timezone.now, verbose_name=_("date of event"))
     name = models.CharField(max_length=100, verbose_name=_("name of event"))

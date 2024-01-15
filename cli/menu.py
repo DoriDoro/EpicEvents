@@ -2,7 +2,7 @@ def get_start_menu(title):
     print(f"** {title} **", end="\n\n")
 
     print(" *** Main Menu *** ")
-    print("  [1] Manage the account managers")
+    print("  [1] Manage the employees")
     print("  [2] Manage the contracts")
     print("  [3] Manage the events")
     print("  [4] Quit program", end="\n\n")

@@ -7,18 +7,15 @@ UserModel = get_user_model()
 class Command(BaseCommand):
     help = "Creates a new user."
 
-    def add_arguments(self, parser):
-        parser.add_argument("email", type=str, help="Enter the email address.")
-        parser.add_argument("password", type=str, help="Enter the password.")
-
     def handle(self, *args, **options):
-        """necessary data to create a user:
-        - email
-        - password
-        """
+        while True:
+            email = str(input(" Please enter the email address: "))
+            user = UserModel.objects.filter(email=email).first()
+            if user is not None:
+                print("  Sorry, this user exists already!", end="\n\n")
+            else:
+                password = str(input(" Please enter the password: "))
+                UserModel.objects.create_user(email=email, password=password)
 
-        UserModel.objects.create_user(
-            email=options["email"], password=options["password"]
-        )
-
-        self.stdout.write("New user was created.")
+                self.stdout.write("   A new user was created.")
+                break

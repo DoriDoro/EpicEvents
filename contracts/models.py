@@ -14,11 +14,11 @@ class Contract(models.Model):
         related_name="contract_clients",
         verbose_name=_("client of contract"),
     )
-    account_manager = models.ForeignKey(
-        "accounts.AccountManager",
+    employee = models.ForeignKey(
+        "accounts.Employee",
         on_delete=models.CASCADE,
-        related_name="contract_account_managers",
-        verbose_name=_("account manager of contract"),
+        related_name="contract_employees",
+        verbose_name=_("Employee of contract"),
     )
     total_costs = models.DecimalField(
         max_digits=9, decimal_places=2, verbose_name=_("total costs of contract")

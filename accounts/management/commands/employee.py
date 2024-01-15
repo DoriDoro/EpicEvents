@@ -11,9 +11,9 @@ class Command(BaseCommand):
     help = "Menu for all operations around the account managers."
 
     def handle(self, *args, **options):
-        choice = get_app_menu("account manager")
+        choice = get_app_menu("employee")
 
         if choice == 4:
             call_command("start")
         if choice == 1:
-            call_command("account_manager_create")
+            call_command("employee_create")

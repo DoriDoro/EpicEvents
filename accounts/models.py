@@ -50,7 +50,7 @@ class User(AbstractUser):
         return self.email
 
 
-class AccountManager(models.Model):
+class Employee(models.Model):
     SALES = "SA"
     SUPPORT = "SU"
     MANAGEMENT = "MA"
@@ -64,8 +64,8 @@ class AccountManager(models.Model):
     user = models.ForeignKey(
         "accounts.User",
         on_delete=models.CASCADE,
-        related_name="account_manager_users",
-        verbose_name=_("account manager"),
+        related_name="employee_users",
+        verbose_name=_("employee"),
     )
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
