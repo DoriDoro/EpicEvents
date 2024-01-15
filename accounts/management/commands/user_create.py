@@ -12,10 +12,11 @@ class Command(BaseCommand):
             email = str(input(" Please enter the email address: "))
             user = UserModel.objects.filter(email=email).first()
             if user is not None:
-                print("  Sorry, this user exists already!", end="\n\n")
+                self.stdout.write("  Sorry, this user exists already! \n\n")
+                self.stdout.flush()
             else:
                 password = str(input(" Please enter the password: "))
                 UserModel.objects.create_user(email=email, password=password)
-
-                self.stdout.write("   A new user was created.")
+                self.stdout.write()
+                self.stdout.write("   A new user was created. \n\n")
                 break
