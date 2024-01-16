@@ -5,7 +5,7 @@ UserModel = get_user_model()
 
 
 class Command(BaseCommand):
-    help = "Update a new employee."
+    help = "Update a user."
 
     def handle(self, *args, **options):
         while True:
@@ -21,8 +21,8 @@ class Command(BaseCommand):
                 self.stdout.write(f"    Password: {'*' * 10} \n\n")
 
                 updates = {}
-                update_email = input(
-                    " Do you want to update the email address? (yes/no): "
+                update_email = str(
+                    input(" Do you want to update the email address? (yes/no): ")
                 )
                 if update_email.lower() == "yes" or update_email.lower() == "y":
                     new_email = str(input("  Please enter the new email address: "))
