@@ -7,7 +7,7 @@ UserModel = get_user_model()
 
 
 class Command(BaseCommand):
-    help = "Prompts for details to create a new client"
+    help = "Prompts for details to create a new client."
 
     def handle(self, *args, **options):
         while True:
@@ -18,6 +18,7 @@ class Command(BaseCommand):
                     "   This email address is not known. Please enter a valid email address. \n\n"
                 )
             else:
+                # get all attributes of the model Client
                 fields = [f.name for f in Client._meta.fields]
                 updates = {}
                 for field in fields:
