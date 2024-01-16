@@ -5,7 +5,8 @@ def get_start_menu(title):
     print("  [1] Manage the employees")
     print("  [2] Manage the contracts")
     print("  [3] Manage the events")
-    print("  [4] Quit program", end="\n\n")
+    print("  [4] Manage the users")
+    print("  [5] Quit program", end="\n\n")
 
     while True:
         try:
