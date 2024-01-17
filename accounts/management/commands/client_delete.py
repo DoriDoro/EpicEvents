@@ -9,12 +9,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         while True:
-            email = input(" Please enter the email address to delete the client: ")
+            email = input(" Enter the email address: ")
             client = Client.objects.filter(user__email=email).first()
             if client is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
+                self.stdout.write("   This email address is unknown. \n\n")
             else:
                 delete_client = input(
                     f"  Do you want to delete this client {email}? (yes/no): "
@@ -32,3 +30,5 @@ class Command(BaseCommand):
                     if possible_exit == "*":
                         call_command("start")
                         break
+                else:
+                    self.stdout.write("   Invalid input.")
