@@ -23,6 +23,7 @@ class Contract(models.Model):
     total_costs = models.DecimalField(
         max_digits=9, decimal_places=2, verbose_name=_("total costs of contract")
     )
+    # TODO: add amount_paid as attribute and amount_remaining as property
     create_date = models.DateTimeField(
         auto_now_add=True, verbose_name=_("contract created on")
     )

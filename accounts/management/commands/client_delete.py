@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         while True:
             email = input(" Enter the email address: ")
-            client = Client.objects.filter(user__email=email).first()
+            client = Client.objects.filter(email=email).first()
             if client is None:
                 self.stdout.write("   This email address is unknown. \n\n")
             else:
@@ -25,10 +25,10 @@ class Command(BaseCommand):
                 if delete_client in ["no", "n"]:
                     possible_exit = input(
                         "   Do you want to delete an other employee (yes) "
-                        "or do you want to go back to the main menu? (*): "
+                        "or do you want to go back to the Client Menu? (*): "
                     )
                     if possible_exit == "*":
-                        call_command("start")
+                        call_command("client")
                         break
                 else:
                     self.stdout.write("   Invalid input.")

@@ -82,12 +82,7 @@ class Employee(models.Model):
 
 
 class Client(models.Model):
-    user = models.ForeignKey(
-        "accounts.User",
-        on_delete=models.CASCADE,
-        related_name="client_users",
-        verbose_name=_("client"),
-    )
+    email = models.EmailField(max_length=254, verbose_name=_("email address"))
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
     phone = models.CharField(max_length=17, verbose_name=_("phone number"))

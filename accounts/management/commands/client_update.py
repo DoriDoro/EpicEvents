@@ -11,18 +11,20 @@ class Command(BaseCommand):
         updates_of_client = {}
 
         client_fields = {
-            1: "first_name",
-            2: "last_name",
-            3: "phone",
-            4: "company_name",
-            5: "quit",
+            1: "email",
+            2: "first_name",
+            3: "last_name",
+            4: "phone",
+            5: "company_name",
+            6: "quit",
         }
 
         update_client_list = []
 
         while True:
             email = input(" Enter the email address: ")
-            client = Client.objects.filter(user__email=email).first()
+            client = Client.objects.filter(email=email).first()
+
             if client is None:
                 self.stdout.write("   This email address is unknown. \n\n")
             else:
@@ -36,11 +38,12 @@ class Command(BaseCommand):
 
                 # TODO: use a table to display this info
                 self.stdout.write("   Which details you want to update?")
-                self.stdout.write("    [1] first name")
-                self.stdout.write("    [2] last name")
-                self.stdout.write("    [3] phone number")
-                self.stdout.write("    [4] company name")
-                self.stdout.write("    [5] go back to Main Menu \n\n")
+                self.stdout.write("    [1] email")
+                self.stdout.write("    [2] first name")
+                self.stdout.write("    [3] last name")
+                self.stdout.write("    [4] phone number")
+                self.stdout.write("    [5] company name")
+                self.stdout.write("    [6] go back to Client Menu \n\n")
 
                 update_str = input(
                     " Which details you want to update? (several numbers possible): "
@@ -54,7 +57,7 @@ class Command(BaseCommand):
 
                 for field in update_client_list:
                     if field == "quit":
-                        call_command("start")
+                        call_command("client")
                         break
                     if field == "phone":
                         while True:
@@ -71,9 +74,11 @@ class Command(BaseCommand):
                         )
 
                 if updates_of_client:
-                    Client.objects.filter(user__email=email).update(**updates_of_client)
+                    Client.objects.filter(email=email).update(**updates_of_client)
                     self.stdout.write("   The client was updated. \n\n")
+                    call_command("client")
                     break
                 else:
                     self.stdout.write("  No changes made. \n\n")
+                    call_command("client")
                     break
