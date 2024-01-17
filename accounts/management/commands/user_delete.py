@@ -16,7 +16,7 @@ class Command(BaseCommand):
                 self.stdout.write("   This email address is unknown. \n\n")
             else:
                 delete_user = input(
-                    f"  Do you want to delete this user {user.email}? (yes/no): "
+                    f"  Do you want to delete this user {email}? (yes/no): "
                 ).lower()
 
                 if delete_user not in ["yes", "y", "no", "n"]:
@@ -32,5 +32,5 @@ class Command(BaseCommand):
                         "or do you want to go back to the main menu? (*): "
                     )
                     if possible_exit == "*":
-                        call_command("start")
+                        call_command("user")
                         break

@@ -16,7 +16,7 @@ class Command(BaseCommand):
             call_command("client")
         if choice == 3:
             call_command("contract")
-        if choice == 3:
-            call_command("event")
         if choice == 4:
+            call_command("event")
+        if choice == 5:
             call_command("user")
