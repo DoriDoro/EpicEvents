@@ -37,17 +37,21 @@ def _style_text_display(
 
 def _display_headline(text):
     _style_text_display(
-        f"  ** {text} ** ", color=MAGENTA, bold=True, underline=True, end="\n\n"
+        f"{'':^2}** {text} **{'':^2}",
+        color=MAGENTA,
+        bold=True,
+        underline=True,
+        end="\n\n",
     )
 
 
 def _display_title(text):
-    _style_text_display(f"   *** {text} ***   ", color=CYAN, bold=True)
+    _style_text_display(f"{'':^3}*** {text} ***{'':^3}", color=CYAN, bold=True)
 
 
 def _display_choices(option, text, color=BLUE):
     """choice is [1] Manage the ..."""
-    _style_text_display(f"    [{option}] ", color=color, bold=True, end="")
+    _style_text_display(f"{'':^4}[{option}] ", color=color, bold=True, end="")
     _style_text_display(f"{text}", bold=True)
 
 
@@ -65,9 +69,12 @@ def get_start_menu(title):
         6: "quit",
     }
 
-    _display_headline("Welcome to Epic Events")
+    title_headline = f"Welcome to {title}"
+    text_title = f"{title} Menu"
 
-    _display_title(title)
+    _display_headline(title_headline)
+
+    _display_title(text_title)
 
     for key, choice in possible_choices.items():
         if choice == "quit":

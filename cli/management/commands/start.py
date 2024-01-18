@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = "Start of the program."
 
     def handle(self, *args, **options):
-        choice = get_start_menu("Welcome to Epic Events")
+        choice = get_start_menu("Epic Events")
 
         if choice == 1:
             call_command("employee")
