@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 update_str = input(
                     " Which details you want to update? (several numbers possible): "
                 )
-                # TODO: control missing to check if user enters a number
+                # TODO: control missing to check if user enters min one number
                 update_list = [int(num) for num in update_str.split()]
 
                 for key, field in user_fields.items():
