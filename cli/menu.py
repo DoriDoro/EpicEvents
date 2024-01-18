@@ -1,13 +1,80 @@
-def get_start_menu(title):
-    print(f"** {title} **", end="\n\n")
+BLACK = "\033[30m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
 
-    print(" *** Main Menu *** ")
-    print("  [1] Manage the employees")
-    print("  [2] Manage the clients")
-    print("  [3] Manage the contracts")
-    print("  [4] Manage the events")
-    print("  [5] Manage the users")
-    print("  [6] Quit program", end="\n\n")
+BG_BLACK = "\033[40m"
+BG_RED = "\033[41m"
+BG_GREEN = "\033[42m"
+BG_YELLOW = "\033[43m"
+BG_BLUE = "\033[44m"
+BG_MAGENTA = "\033[45m"
+BG_CYAN = "\033[46m"
+BG_WHITE = "\033[47m"
+
+BOLD = "\033[1m"
+UNDERLINE = "\033[4m"
+
+ENDC = "\033[0m"
+
+
+def _style_text_display(
+    text, color=ENDC, background=None, bold=False, underline=False, end="\n"
+):
+    style = f"{color}"
+    if bold:
+        style += f"{BOLD}"
+    if underline:
+        style += f"{UNDERLINE}"
+    if background:
+        style += f"{background}"
+    print(f"{style}{text}{ENDC}", end=end)  # {ENDC} resets the color
+
+
+def _display_headline(text):
+    _style_text_display(
+        f"  ** {text} ** ", color=MAGENTA, bold=True, underline=True, end="\n\n"
+    )
+
+
+def _display_title(text):
+    _style_text_display(f"   *** {text} ***   ", color=CYAN, bold=True)
+
+
+def _display_choices(option, text, color=BLUE):
+    """choice is [1] Manage the ..."""
+    _style_text_display(f"    [{option}] ", color=color, bold=True, end="")
+    _style_text_display(f"{text}", bold=True)
+
+
+def _display_new_line():
+    print()
+
+
+def get_start_menu(title):
+    possible_choices = {
+        1: "employees",
+        2: "clients",
+        3: "contracts",
+        4: "events",
+        5: "users",
+        6: "quit",
+    }
+
+    _display_headline("Welcome to Epic Events")
+
+    _display_title(title)
+
+    for key, choice in possible_choices.items():
+        if choice == "quit":
+            _display_choices(key, "Quit program", color=RED)
+            _display_new_line()
+        else:
+            _display_choices(key, f"Manage the {choice}")
 
     while True:
         try:
@@ -21,14 +88,24 @@ def get_start_menu(title):
 
 
 def get_app_menu(app):
-    print(f"** Menu of the {app}s **", end="\n\n")
-
+    possible_choices = {
+        1: "Create",
+        2: "Update",
+        3: "Delete",
+        4: "quit",
+    }
     app_capitalized = app.title()
-    print(f" *** {app_capitalized} Menu *** ")
-    print(f"  [1] Create an {app}")
-    print(f"  [2] Update an {app}")
-    print(f"  [3] Delete an {app}")
-    print(f"  [4] go back to Main Menu", end="\n\n")
+
+    _display_headline(f"Menu of the {app_capitalized}s")
+
+    _display_title(f"{app_capitalized} Menu")
+
+    for key, choice in possible_choices.items():
+        if choice == "quit":
+            _display_choices(key, "Go back to Main Menu", color=RED)
+            _display_new_line()
+        else:
+            _display_choices(key, f"{choice} an {app}")
 
     while True:
         try:
