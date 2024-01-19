@@ -11,9 +11,9 @@ class Command(BaseCommand):
         choice = get_app_menu("user")
 
         if choice == 1:
-            call_command("user_create")
+            call_command("user_input_create")
         if choice == 2:
-            call_command("user_update")
+            call_command("user_input_update")
         if choice == 3:
             call_command("user_delete")
         if choice == 4:
