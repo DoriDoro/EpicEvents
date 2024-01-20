@@ -1,8 +1,18 @@
 def customer_input(field_name):
     field_name = field_name.title()
-    return input(f"  Enter the {field_name}: ")
+    try:
+        input_customer = input(f"  Enter the {field_name}: ")
+        return input_customer
+
+    except ValueError:
+        print("   Invalid input. Please enter a number. \n")
 
 
 def customer_int_input(field_name):
     field_name = field_name.title()
-    return int(input(f"  Enter the {field_name}: "))
+    try:
+        input_customer = int(input(f"  Enter the {field_name}: "))
+        return input_customer
+
+    except ValueError:
+        print("   Invalid input. Please enter a number. \n")

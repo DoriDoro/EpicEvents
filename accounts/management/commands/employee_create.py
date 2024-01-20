@@ -7,66 +7,35 @@ UserModel = get_user_model()
 
 
 class Command(BaseCommand):
-    help = "Creates a new employee."
+    help = "Command to update a new employee."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--update_data",
+            metavar="KEY=VALUE",
+            nargs="+",
+            type=str,
+            help="Either an email address or a password or both.",
+        )
 
     def handle(self, *args, **options):
-        while True:
-            email = str(
-                input(" Please enter the email address of the future employee: ")
-            )
-            user = UserModel.objects.filter(email=email).first()
-            if user is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
-                self.stdout.flush()
-            else:
-                f_name = str(input(" Please enter the first name: "))
-                l_name = str(input(" Please enter the last name: "))
+        dict_arg = options["update_data"]
 
-                self.stdout.write(" Choose the role of your employee:")
-                self.stdout.write(f"  [1] Sales")
-                self.stdout.write(f"  [2] Support")
-                self.stdout.write(f"  [3] Management")
-                self.stdout.flush()
+        # get the string from the list
+        dict_str = dict_arg[0]
 
-                while True:
-                    get_role = {1: "Sales", 2: "Support", 3: "Management"}
-                    try:
-                        role_number = int(
-                            input("  Please enter your choice for the role: ")
-                        )
-                        if role_number in get_role:
-                            role = get_role[role_number]
-                            break
-                        else:
-                            self.stdout.write(
-                                "Invalid role number. Please enter a number between 1 and 3. \n\n"
-                            )
-                            self.stdout.flush()
-                    except ValueError:
-                        self.stdout.write(
-                            "   Invalid input. Please enter a number. \n\n"
-                        )
-                        self.stdout.flush()
+        # Split the string into separate key-value pairs
+        dict_pairs = dict_str.split(", ")
 
-                employee_exists = Employee.objects.filter(user=user).first()
+        # create a new dictionary with key:value pairs
+        dict_obj = {pair.split("=")[0]: pair.split("=")[1] for pair in dict_pairs}
 
-                if employee_exists:
-                    self.stdout.write(
-                        f"   This employee: {user.email} with role: "
-                        f"{employee_exists.role} exists already! "
-                        f"Please choose an other email address to create an employee. \n\n"
-                    )
-                    self.stdout.flush()
-                else:
-                    employee = Employee(
-                        user=user,
-                        first_name=f_name,
-                        last_name=l_name,
-                        role=role,
-                    )
-                    employee.save()
-                    self.stdout.write()
-                    self.stdout.write("   A new employee was created. \n\n")
-                    break
+        user = UserModel.objects.get(email=dict_obj["user"])
+
+        employee = Employee(
+            user=user,
+            first_name=dict_obj["first_name"],
+            last_name=dict_obj["last_name"],
+            role=dict_obj["role"],
+        )
+        employee.save()

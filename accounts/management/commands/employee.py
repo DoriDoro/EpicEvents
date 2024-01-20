@@ -11,7 +11,7 @@ class Command(BaseCommand):
         choice = get_app_menu("employee")
 
         if choice == 1:
-            call_command("employee_create")
+            call_command("employee_input_create")
         if choice == 2:
             call_command("employee_update")
         if choice == 3:
