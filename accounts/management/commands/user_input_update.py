@@ -69,8 +69,6 @@ class Command(BaseCommand):
                     else:
                         update_user[field] = customer_input(field)
 
-                # TODO: control missing if update_user is an empty dictionary
-                #     probably not necessary because if ENTER ask again for email address
                 # in update_user (dictionary) can be an email or a password or both
                 if update_user:
                     # when user updates email AND password

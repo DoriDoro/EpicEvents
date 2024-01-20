@@ -3,6 +3,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 from accounts.models import Client
+from cli.table_utils import create_pretty_table
 
 UserModel = get_user_model()
 
@@ -36,14 +37,16 @@ class Command(BaseCommand):
             else:
                 Client.objects.create(**create_client)
 
-                # TODO: display this info as table
-                self.stdout.write("\n   A new client was created. \n\n")
-                self.stdout.write(f"  Email: {client_email}")
-                self.stdout.write(f"  First name: {create_client['first_name']}")
-                self.stdout.write(f"  Last name: {create_client['last_name']}")
-                self.stdout.write(f"  Phone: {create_client['phone']}")
-                self.stdout.write(
-                    f"  Company name: {create_client['company_name']} \n\n"
-                )
+                client_table = [
+                    ["Email: ", client_email],
+                    ["First name: ", create_client["first_name"]],
+                    ["Last name: ", create_client["last_name"]],
+                    ["Phone: ", create_client["phone"]],
+                    ["Company name: ", create_client["company_name"]],
+                ]
+
+                create_pretty_table("New Client: ", client_table)
+
+                self.stdout.write("   A new client was created. \n\n")
                 call_command("client")
                 break

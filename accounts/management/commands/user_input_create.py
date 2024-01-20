@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 from tabulate import tabulate
 
 from cli.input_utils import customer_input
+from cli.table_utils import create_pretty_table
 
 UserModel = get_user_model()
 
@@ -24,11 +25,14 @@ class Command(BaseCommand):
                 self.stdout.write()
                 self.stdout.write("   A new user was created. \n")
 
+                self.stdout.write()
                 display_password = "*" * 10
-                table = [["Email:", email], ["Password:", display_password]]
-                table = tabulate(table, tablefmt="pretty")
-                indented_table = "\n".join("  " + line for line in table.split("\n"))
-                self.stdout.write(indented_table)
+
+                table = [
+                    ["Email:", email],
+                    ["Password:", display_password],
+                ]
+                create_pretty_table("Updated data of the user:", table)
 
                 call_command("user")
                 break
