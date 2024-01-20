@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from tabulate import tabulate
 
 from cli.input_utils import customer_input
+from cli.menu_utils import create_menu
+from cli.table_utils import create_pretty_table
 
 UserModel = get_user_model()
 
@@ -31,10 +32,7 @@ class Command(BaseCommand):
             email_all_users.append(all_users_table)
 
         # display all users
-        all_users_table = tabulate(email_all_users, tablefmt="pretty")
-        indented_table = "\n".join("   " + line for line in all_users_table.split("\n"))
-        self.stdout.write(indented_table)
-        self.stdout.write()
+        create_pretty_table("All users: ", email_all_users)
 
         while True:
             email = customer_input("email address")
@@ -45,15 +43,13 @@ class Command(BaseCommand):
                 self.stdout.write("   This email address is unknown. \n\n")
 
             else:
-                # TODO: use menu to get the choice
-                self.stdout.write("   Which details you want to update?")
-                self.stdout.write("    [1] Email")
-                self.stdout.write("    [2] Password")
-                self.stdout.write("    [3] go back to User Menu \n\n")
+                menu_choices = {1: "Email", 2: "Password", 3: "go back to User Menu"}
+                create_menu("Which details you want to update?", menu_choices)
 
                 update_str = input(
                     " Which details you want to update? (several numbers possible): "
                 )
+                self.stdout.write()
                 # TODO: control missing to check if user enters min one number
                 # update_list is a list with one or more numbers from input of customer
                 update_list = [int(num) for num in update_str.split()]
@@ -103,6 +99,15 @@ class Command(BaseCommand):
                                 update_data,
                             )
 
+                        self.stdout.write()
+                        display_password = "*" * 10
+
+                        table = [
+                            ["Email:", update_user["email"]],
+                            ["Password:", display_password],
+                        ]
+                        create_pretty_table("Updated data of the user:", table)
+
                     # when user update just the email OR the password
                     if len(update_user) == 1:
                         for key, field in update_user.items():
@@ -114,6 +119,16 @@ class Command(BaseCommand):
                                     "--update_data",
                                     update_data_email,
                                 )
+
+                                self.stdout.write()
+                                display_password = "*" * 10
+
+                                table = [
+                                    ["Email:", update_user["email"]],
+                                    ["Password:", display_password],
+                                ]
+                                create_pretty_table("Updated data of the user:", table)
+
                             if key == "password":
                                 update_data_password = f"password={field}"
                                 call_command(
@@ -123,19 +138,15 @@ class Command(BaseCommand):
                                     update_data_password,
                                 )
 
-                    self.stdout.write("\n  The user was updated. \n\n")
-                    self.stdout.write("  Updated data of the user:")
+                                self.stdout.write()
+                                display_password = "*" * 10
 
-                    display_password = "*" * 10
-                    table = [
-                        ["Email:", update_user["email"]],
-                        ["Password:", display_password],
-                    ]
-                    table = tabulate(table, tablefmt="pretty")
-                    indented_table = "\n".join(
-                        "   " + line for line in table.split("\n")
-                    )
-                    self.stdout.write(indented_table)
+                                table = [
+                                    ["Email:", email],
+                                    ["Password:", display_password],
+                                ]
+                                create_pretty_table("Updated data of the user:", table)
 
+                    self.stdout.write("  The user was updated. \n\n")
                     call_command("user")
                     break

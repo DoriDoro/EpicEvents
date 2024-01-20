@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 
 from accounts.models import Employee
 from cli.input_utils import customer_input, customer_int_input
+from cli.menu_utils import create_menu
 
 UserModel = get_user_model()
 
@@ -34,13 +35,9 @@ class Command(BaseCommand):
                     if value == "last_name":
                         update_employee["l_name"] = customer_input("last name")
 
-                # TODO: use menu to get the choice
-                #   or add this to employee_fields?
                 self.stdout.write()
-                self.stdout.write(" Choose the role of your employee:")
-                self.stdout.write(f"  [1] Sales")
-                self.stdout.write(f"  [2] Support")
-                self.stdout.write(f"  [3] Management")
+                menu_choices = {1: "Sales", 2: "Support", 3: "Management"}
+                create_menu("Choose the role of your employee: ", menu_choices)
 
                 while True:
                     get_role = {1: "Sales", 2: "Support", 3: "Management"}

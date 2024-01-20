@@ -22,7 +22,7 @@ UNDERLINE = "\033[4m"
 ENDC = "\033[0m"
 
 
-def _style_text_display(
+def style_text_display(
     text, color=ENDC, background=None, bold=False, underline=False, end="\n"
 ):
     style = f"{color}"
@@ -35,8 +35,8 @@ def _style_text_display(
     print(f"{style}{text}{ENDC}", end=end)  # {ENDC} resets the color
 
 
-def _display_headline(text):
-    _style_text_display(
+def display_headline(text):
+    style_text_display(
         f"{'':^2}** {text} **{'':^2}",
         color=MAGENTA,
         bold=True,
@@ -45,17 +45,17 @@ def _display_headline(text):
     )
 
 
-def _display_title(text):
-    _style_text_display(f"{'':^3}*** {text} ***{'':^3}", color=CYAN, bold=True)
+def display_title(text):
+    style_text_display(f"{'':^3}*** {text} ***{'':^3}", color=CYAN, bold=True)
 
 
-def _display_choices(option, text, color=BLUE):
+def display_choices(option, text, color=BLUE):
     """choice is [1] Manage the ..."""
-    _style_text_display(f"{'':^4}[{option}] ", color=color, bold=True, end="")
-    _style_text_display(f"{text}", bold=True)
+    style_text_display(f"{'':^4}[{option}] ", color=color, bold=True, end="")
+    style_text_display(f"{text}", bold=True)
 
 
-def _display_new_line():
+def display_new_line():
     print()
 
 
@@ -72,16 +72,16 @@ def get_start_menu(title):
     title_headline = f"Welcome to {title}"
     text_title = f"{title} Menu"
 
-    _display_headline(title_headline)
+    display_headline(title_headline)
 
-    _display_title(text_title)
+    display_title(text_title)
 
     for key, choice in possible_choices.items():
         if choice == "quit":
-            _display_choices(key, "Quit program", color=RED)
-            _display_new_line()
+            display_choices(key, "Quit program", color=RED)
+            display_new_line()
         else:
-            _display_choices(key, f"Manage the {choice}")
+            display_choices(key, f"Manage the {choice}")
 
     while True:
         try:
@@ -103,16 +103,16 @@ def get_app_menu(app):
     }
     app_capitalized = app.title()
 
-    _display_headline(f"Menu of the {app_capitalized}s")
+    display_headline(f"Menu of the {app_capitalized}s")
 
-    _display_title(f"{app_capitalized} Menu")
+    display_title(f"{app_capitalized} Menu")
 
     for key, choice in possible_choices.items():
         if choice == "quit":
-            _display_choices(key, "Go back to Main Menu", color=RED)
-            _display_new_line()
+            display_choices(key, "Go back to Main Menu", color=RED)
+            display_new_line()
         else:
-            _display_choices(key, f"{choice} an {app}")
+            display_choices(key, f"{choice} an {app}")
 
     while True:
         try:

@@ -13,7 +13,7 @@ class Command(BaseCommand):
         if choice == 1:
             call_command("employee_input_create")
         if choice == 2:
-            call_command("employee_update")
+            call_command("employee_input_update")
         if choice == 3:
             call_command("employee_delete")
         if choice == 4:
