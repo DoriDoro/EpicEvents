@@ -24,52 +24,27 @@ class Command(BaseCommand):
 
         email_all_users = []
 
+        all_users = UserModel.objects.all()
+
+        for user in all_users:
+            all_users_table = ["Email: ", user.email]
+            email_all_users.append(all_users_table)
+
+        # display all users
+        all_users_table = tabulate(email_all_users, tablefmt="pretty")
+        indented_table = "\n".join("   " + line for line in all_users_table.split("\n"))
+        self.stdout.write(indented_table)
+        self.stdout.write()
+
         while True:
-            all_users = UserModel.objects.all()
-
-            for user in all_users:
-                user_table = ["Email: ", user.email]
-                email_all_users.append(user_table)
-
-            user_table = tabulate(email_all_users, tablefmt="pretty")
-            indented_table = "\n".join("   " + line for line in user_table.split("\n"))
-            self.stdout.write(indented_table)
-            self.stdout.write()
-
             email = customer_input("email address")
+            self.stdout.write()
             user = UserModel.objects.filter(email=email).first()
 
             if user is None:
                 self.stdout.write("   This email address is unknown. \n\n")
 
-                """
-                  Enter Email Address: kjo#mail.com
-                   This email address is unknown. 
-                
-                   +--------+----------------+
-                   | Email: |   m@mail.com   |
-                   | Email: | test@mail.com  |
-                   | Email: | supp@mail.com  |
-                   | Email: | sales@mail.com |
-                   | Email: |  man@mail.com  |
-                   | Email: |  Kjo#mail.com  |
-                   | Email: |   m@mail.com   |
-                   | Email: | test@mail.com  |
-                   | Email: | supp@mail.com  |
-                   | Email: | sales@mail.com |
-                   | Email: |  man@mail.com  |
-                   | Email: |  Kjo#mail.com  |
-                   +--------+----------------+
-
-                """
             else:
-                self.stdout.write("   All information about this user:")
-                display_password = "*" * 10
-                table = [["Email:", email], ["Password:", display_password]]
-                table = tabulate(table, tablefmt="pretty")
-                indented_table = "\n".join("   " + line for line in table.split("\n"))
-                self.stdout.write(indented_table)
-
                 # TODO: use menu to get the choice
                 self.stdout.write("   Which details you want to update?")
                 self.stdout.write("    [1] Email")
@@ -98,28 +73,64 @@ class Command(BaseCommand):
                     else:
                         update_user[field] = customer_input(field)
 
-                print(update_user)
-
                 # TODO: control missing if update_user is an empty dictionary
                 #     probably not necessary because if ENTER ask again for email address
                 # in update_user (dictionary) can be an email or a password or both
                 if update_user:
-                    call_command("user_update", email, update_user)
-                    # this command is not working with one values
-                    """
-                    File "/home/doro/Desktop/DR_P12/P12/EpicEvents/accounts/management/
-                    commands/user_update.py", line 26, in handle
-                    for key, value in options["update_data"]:
-                    ^^^^^^^^^^
-                    ValueError: not enough values to unpack (expected 2, got 1)
+                    # when user updates email AND password
+                    if len(update_user) == 2:
+                        update_user_email = None
+                        update_user_password = None
 
-                    """
+                        for key, field in update_user.items():
+                            if key == "email":
+                                update_user_email = field
+                            elif key == "password":
+                                update_user_password = field
+
+                        if (
+                            update_user_email is not None
+                            and update_user_password is not None
+                        ):
+                            # user_update expects a KEY=VALUE pair, create a variable and
+                            # assign the key=value
+                            update_data = f"email={update_user_email},password={update_user_password}"
+
+                            call_command(
+                                "user_update",
+                                email,
+                                "--update_data",
+                                update_data,
+                            )
+
+                    # when user update just the email OR the password
+                    if len(update_user) == 1:
+                        for key, field in update_user.items():
+                            if key == "email":
+                                update_data_email = f"email={field}"
+                                call_command(
+                                    "user_update",
+                                    email,
+                                    "--update_data",
+                                    update_data_email,
+                                )
+                            if key == "password":
+                                update_data_password = f"password={field}"
+                                call_command(
+                                    "user_update",
+                                    email,
+                                    "--update_data",
+                                    update_data_password,
+                                )
 
                     self.stdout.write("\n  The user was updated. \n\n")
                     self.stdout.write("  Updated data of the user:")
-                    # TODO: table
+
                     display_password = "*" * 10
-                    table = [["Email:", email], ["Password:", display_password]]
+                    table = [
+                        ["Email:", update_user["email"]],
+                        ["Password:", display_password],
+                    ]
                     table = tabulate(table, tablefmt="pretty")
                     indented_table = "\n".join(
                         "   " + line for line in table.split("\n")

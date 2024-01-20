@@ -16,22 +16,24 @@ class Command(BaseCommand):
             help="Email of user.",
         )
         parser.add_argument(
-            "update_data",
-            type=json.loads,
+            "--update_data",
+            metavar="KEY=VALUE",
+            nargs="+",
+            type=str,
             help="Either an email address or a password or both.",
         )
 
     def handle(self, *args, **options):
-        update_data_str = options["update_data"]
-        try:
-            update_data = json.loads(update_data_str)
-        except json.JSONDecodeError:
-            raise CommandError(f"Invalid JSON: {update_data_str}")
+        dict_arg = options["update_data"]
+
+        # converting the dict_arg/options["update_data"]
+        # in a new dictionary dict_obj
+        dict_obj = {item.split("=")[0]: item.split("=")[1] for item in dict_arg}
 
         user = UserModel.objects.get(email=options["email"])
 
         # check if email or password or both:
-        for key, value in options["update_data"]:
+        for key, value in dict_obj.items():
             if key == "email":
                 user.email = value
             if key == "password":
