@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from tabulate import tabulate
 
@@ -110,7 +111,7 @@ class Command(BaseCommand):
                                 )
 
             if updates:
-                # Employee.objects.filter(user=employee.user).update(**updates)
+                Employee.objects.filter(user=employee.user).update(**updates)
                 self.stdout.write()
                 updated_employee_table = []
 
@@ -128,7 +129,9 @@ class Command(BaseCommand):
                 )
 
                 self.stdout.write("  The employee was updated. \n\n")
+                call_command("employee")
                 break
             else:
                 self.stdout.write("  No changes made. \n\n")
+                call_command("employee")
                 break

@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 from accounts.models import Employee
 from cli.input_utils import customer_input, customer_int_input
 from cli.menu_utils import create_menu
+from cli.table_utils import create_pretty_table
 
 UserModel = get_user_model()
 
@@ -20,6 +21,26 @@ class Command(BaseCommand):
         }
 
         update_employee = {}
+
+        all_users_list = []
+        all_employees_list = []
+
+        all_users = UserModel.objects.all()
+        all_employees = Employee.objects.all()
+
+        for user in all_users:
+            all_users_table = ["Email: ", user.email]
+            all_users_list.append(all_users_table)
+
+        # display all users
+        create_pretty_table("All users: ", all_users_list)
+
+        for employee in all_employees:
+            all_employees_table = ["Email: ", employee.user.email]
+            all_employees_list.append(all_employees_table)
+
+        # display all users
+        create_pretty_table("All employees: ", all_employees_list)
 
         while True:
             email = customer_input("email address")
@@ -49,7 +70,7 @@ class Command(BaseCommand):
                         break
                     else:
                         self.stdout.write(
-                            "Invalid role number. Please enter a number between 1 and 3. \n\n"
+                            "    Invalid role number. Please enter a number between 1 and 3. \n\n"
                         )
 
             employee_exists = Employee.objects.filter(user=user).first()
