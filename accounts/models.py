@@ -61,7 +61,7 @@ class Employee(models.Model):
         (MANAGEMENT, _("Management")),
     ]
 
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         "accounts.User",
         on_delete=models.CASCADE,
         related_name="employee_users",
