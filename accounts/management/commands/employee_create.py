@@ -1,72 +1,47 @@
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management import call_command
+from django.db import IntegrityError
 
 from accounts.models import Employee
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_error_message, create_success_message
+from cli.utils_tables import create_model_table, create_result_table
 
 UserModel = get_user_model()
 
 
-class Command(BaseCommand):
-    help = "Creates a new employee."
+class Command(EpicEventsCommand):
+    help = "Prompts to create a new employee."
+    action = "CREATE"
 
-    def handle(self, *args, **options):
-        while True:
-            email = str(
-                input(" Please enter the email address of the future employee: ")
+    def get_create_model_table(self):
+        create_model_table(Employee, "user.email", "Email")
+
+    def get_data(self):
+        return {
+            "email": self.email_input("Email address"),
+            "password": self.password_input("Password"),
+            "first_name": self.text_input("First name"),
+            "last_name": self.text_input("Last name"),
+            "role": self.choice_str_input(("SA", "SU", "MA"), "Role [SA, SU, MA]"),
+            "new_line": self.display_new_line(),
+        }
+
+    def make_changes(self, data):
+        data.pop("new_line", None)
+        try:
+            user = UserModel.objects.create_user(
+                data.pop("email", None), data.pop("password", None)
             )
-            user = UserModel.objects.filter(email=email).first()
-            if user is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
-                self.stdout.flush()
-            else:
-                f_name = str(input(" Please enter the first name: "))
-                l_name = str(input(" Please enter the last name: "))
+            employee = Employee.objects.create(**data, user=user)
+            return employee
+        except IntegrityError:
+            create_error_message("Email")
+            call_command("employee_create")
 
-                self.stdout.write(" Choose the role of your employee:")
-                self.stdout.write(f"  [1] Sales")
-                self.stdout.write(f"  [2] Support")
-                self.stdout.write(f"  [3] Management")
-                self.stdout.flush()
+    def display_changes(self, instance):
+        create_success_message("Employee", "created")
+        create_result_table(instance, "New employee:")
 
-                while True:
-                    get_role = {1: "Sales", 2: "Support", 3: "Management"}
-                    try:
-                        role_number = int(
-                            input("  Please enter your choice for the role: ")
-                        )
-                        if role_number in get_role:
-                            role = get_role[role_number]
-                            break
-                        else:
-                            self.stdout.write(
-                                "Invalid role number. Please enter a number between 1 and 3. \n\n"
-                            )
-                            self.stdout.flush()
-                    except ValueError:
-                        self.stdout.write(
-                            "   Invalid input. Please enter a number. \n\n"
-                        )
-                        self.stdout.flush()
-
-                employee_exists = Employee.objects.filter(user=user).first()
-
-                if employee_exists:
-                    self.stdout.write(
-                        f"   This employee: {user.email} with role: "
-                        f"{employee_exists.role} exists already! "
-                        f"Please choose an other email address to create an employee. \n\n"
-                    )
-                    self.stdout.flush()
-                else:
-                    employee = Employee(
-                        user=user,
-                        first_name=f_name,
-                        last_name=l_name,
-                        role=role,
-                    )
-                    employee.save()
-                    self.stdout.write()
-                    self.stdout.write("   A new employee was created. \n\n")
-                    break
+    def go_back(self):
+        call_command("employee")
