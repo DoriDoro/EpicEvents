@@ -7,8 +7,11 @@ def display_table_title(text):
     style_text_display(f"{'':^3}{text} {'':^3}", color=CYAN, bold=True)
 
 
-def create_pretty_table(title, table_list):
-    display_table_title(title)
+def create_pretty_table(table_list, title=None):
+    """creates a table with library tabulate in style='pretty'"""
+
+    if title:
+        display_table_title(title)
 
     table = tabulate(table_list, tablefmt="pretty")
     indented_table = "\n".join("   " + line for line in table.split("\n"))
@@ -22,6 +25,8 @@ def contains_period(input_string):
 
 
 def create_model_table(model, column_label, title):
+    """creates the data for the create_pretty_table"""
+
     # for parameter like: user.email
     check_period = contains_period(column_label)
 
@@ -45,13 +50,4 @@ def create_model_table(model, column_label, title):
                 ]
                 all_items_list.append(all_items_period_table)
 
-        create_pretty_table(f"All {title}: ", all_items_list)
-
-
-def create_result_table(model, title):
-    new_employee = [
-        ["First name:", model.first_name],
-        ["Last name:", model.last_name],
-        ["Role: ", model.role],
-    ]
-    create_pretty_table(title, new_employee)
+        create_pretty_table(all_items_list, f"All {title}: ")

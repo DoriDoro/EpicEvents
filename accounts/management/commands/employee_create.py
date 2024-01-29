@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_error_message, create_success_message
-from cli.utils_tables import create_model_table, create_result_table
+from cli.utils_tables import create_model_table
 
 UserModel = get_user_model()
 
@@ -40,8 +40,9 @@ class Command(EpicEventsCommand):
             call_command("employee_create")
 
     def display_changes(self, instance):
+        self.update_fields = ["first_name", "last_name", "role"]
         create_success_message("Employee", "created")
-        create_result_table(instance, "New employee:")
+        super().display_changes(instance)
 
     def go_back(self):
         call_command("employee")

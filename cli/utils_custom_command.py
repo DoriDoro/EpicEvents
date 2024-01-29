@@ -4,11 +4,13 @@ from django.core.management import BaseCommand
 from django.core.validators import validate_email
 
 from cli.menu import BOLD, ENDC
+from cli.utils_tables import create_pretty_table
 
 
 class EpicEventsCommand(BaseCommand):
     help = "Custom BaseCommand"
     action = None
+    update_fields = None
 
     @classmethod
     def text_input(cls, label, required=True):
@@ -100,7 +102,14 @@ class EpicEventsCommand(BaseCommand):
         return None
 
     def display_changes(self, instance):
-        pass
+        update_table = []
+        for field in self.update_fields:
+            if hasattr(instance, field):
+                field_item = getattr(instance, field)
+                field = field.replace("_", " ")
+                update_table.append([f"{field.capitalize()}: ", field_item])
+
+        create_pretty_table(update_table)
 
     def go_back(self):
         pass
@@ -120,11 +129,3 @@ class EpicEventsCommand(BaseCommand):
         #     self.update()
         # elif self.action == "DELETE":
         #     self.delete()
-
-    # def create_pretty_table(self, title, table_list):
-    #     style_text_display(f"{'':^3}{title} {'':^3}", color=CYAN, bold=True)
-    #
-    #     table = tabulate(table_list, tablefmt="pretty")
-    #     indented_table = "\n".join("   " + line for line in table.split("\n"))
-    #     print(indented_table)
-    #     print()
