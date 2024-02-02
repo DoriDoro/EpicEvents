@@ -1,37 +1,45 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
 
 from accounts.models import Employee
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_success_message
+from cli.utils_tables import create_model_table, create_pretty_table
 
 
-class Command(BaseCommand):
+class Command(EpicEventsCommand):
     help = "Delete an employee."
+    action = "DELETE"
 
-    def handle(self, *args, **options):
-        while True:
-            email = input(" Please enter the email address to delete the employee: ")
-            employee = Employee.objects.filter(user__email=email).first()
-            if employee is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
-            else:
-                try:
-                    delete_employee = input(
-                        f"  Do you want to delete this employee {employee.user.email}? (yes/no): "
-                    ).lower()
+    def get_create_model_table(self):
+        create_model_table(Employee, "user.email", "Employees")
 
-                    if delete_employee in ["yes", "y"]:
-                        employee.delete()
-                        self.stdout.write(f" The employee {email} was deleted!")
-                        break
-                    if delete_employee in ["no", "n"]:
-                        possible_exit = input(
-                            "   Do you want to delete an other employee (yes) "
-                            "or do you want to go back to the main menu? (*): "
-                        )
-                        if possible_exit == "*":
-                            call_command("start")
-                            break
-                except ValueError:
-                    self.stdout.write("Invalid input.")
+    def get_requested_model(self):
+        email = self.email_input("Email address")
+        self.stdout.write()
+        self.object = Employee.objects.filter(user__email=email).first()
+
+        employee_table = [
+            ["Email: ", self.object.user.email],
+            ["First name: ", self.object.first_name],
+            ["Last name: ", self.object.last_name],
+            ["Role: ", self.object.role],
+        ]
+        create_pretty_table(employee_table, "Details of the Employee: ")
+
+    def get_data(self):
+        return {
+            "delete": self.choice_str_input(("Y", "N"), "Role [Y]es or [N]o"),
+        }
+
+    def make_changes(self, data):
+        if data["delete"] == "Y":
+            self.object.delete()
+        if data["delete"] == "N":
+            self.stdout.write()
+            call_command("employee")
+
+    def display_changes(self):
+        create_success_message("Employee", "deleted")
+
+    def go_back(self):
+        call_command("employee")

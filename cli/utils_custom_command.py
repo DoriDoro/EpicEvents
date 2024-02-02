@@ -162,6 +162,10 @@ class EpicEventsCommand(BaseCommand):
     def delete(self):
         self.get_create_model_table()
         self.get_requested_model()
+        validated_data = self.get_data()
+        self.make_changes(validated_data)
+        self.display_changes()
+        self.go_back()
 
     def handle(self, *args, **options):
         if self.action == "CREATE":
