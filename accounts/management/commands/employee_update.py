@@ -1,86 +1,94 @@
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management import call_command
+from django.db import IntegrityError
 
 from accounts.models import Employee
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_error_message, create_success_message
+from cli.utils_tables import (
+    create_model_table,
+    create_pretty_table,
+)
 
 UserModel = get_user_model()
 
 
-class Command(BaseCommand):
-    help = "Update a new employee."
+class Command(EpicEventsCommand):
+    help = "Prompts to update an employee."
+    action = "UPDATE"
 
-    def handle(self, *args, **options):
-        while True:
-            email = str(
-                input(" Please enter the email address to update the employee: ")
-            )
-            employee = Employee.objects.filter(user__email=email).first()
-            if employee is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
-            else:
-                self.stdout.write("   Here are all information about this employee:")
-                self.stdout.write(f"    Email: {employee.user.email}")
-                self.stdout.write(f"    First name: {employee.first_name}")
-                self.stdout.write(f"    Last name: {employee.last_name}")
-                self.stdout.write(f"    Role: {employee.role} \n\n")
+    def get_available_fields(self):
+        self.available_fields = {
+            "E": {
+                "method": self.email_input,
+                "params": {"label": "Email"},
+                "label": "user__email",
+            },
+            "F": {
+                "method": self.text_input,
+                "params": {"label": "First name"},
+                "label": "first_name",
+            },
+            "L": {
+                "method": self.text_input,
+                "params": {"label": "Last name"},
+                "label": "last_name",
+            },
+            "R": {
+                "method": self.choice_str_input,
+                "params": {"options": ("SA", "SU", "MA"), "label": "Role [SA, SU, MA]"},
+                "label": "role",
+            },
+        }
+        return self.available_fields
 
-                updates = {}
-                update_first_name = input(
-                    " Do you want to update the first name? (yes/no): "
-                )
-                if (
-                    update_first_name.lower() == "yes"
-                    or update_first_name.lower() == "y"
-                ):
-                    f_name = str(input("  Please enter the new first name: "))
-                    updates["first_name"] = f_name
+    def get_create_model_table(self):
+        create_model_table(Employee, "user.email", "Employees")
 
-                update_last_name = input(
-                    " Do you want to update the last name? (yes/no): "
-                )
-                if update_last_name.lower() == "yes" or update_last_name.lower() == "y":
-                    l_name = str(input("  Please enter the new last name: "))
-                    updates["last_name"] = l_name
+    def get_requested_model(self):
+        email = self.email_input("Email address")
+        self.stdout.write()
+        self.object = Employee.objects.filter(user__email=email).first()
 
-                update_role = input(" Do you want to update the role? (yes/no): ")
-                if update_role.lower() == "yes" or update_role.lower() == "y":
-                    self.stdout.write("  Choose the role of your employee:")
-                    self.stdout.write(f"   [1] Sales")
-                    self.stdout.write(f"   [2] Support")
-                    self.stdout.write(f"   [3] Management")
+        employee_table = [
+            ["[E]mail: ", self.object.user.email],
+            ["[F]irst name: ", self.object.first_name],
+            ["[L]ast name: ", self.object.last_name],
+            ["[R]ole: ", self.object.role],
+        ]
+        create_pretty_table(employee_table, "Details of the Employee: ")
 
-                    while True:
-                        get_role = {1: "Sales", 2: "Support", 3: "Management"}
-                        try:
-                            role_number = int(
-                                input("  Please enter your choice for the role: ")
-                            )
-                            if role_number in get_role:
-                                updates["role"] = get_role[role_number]
-                                break
-                            else:
-                                self.stdout.write(
-                                    "Invalid role number. "
-                                    "Please enter a number between 1 and 3. \n\n"
-                                )
-                        except ValueError:
-                            self.stdout.write(
-                                "  Invalid input. Please enter a number. \n\n"
-                            )
+    def get_fields_to_update(self):
+        self.fields_to_update = self.multiple_choice_str_input(
+            ("E", "F", "L", "R"), " Your choice? [E, F, L, R]"
+        )
 
-                if updates:
-                    Employee.objects.filter(user=employee.user).update(**updates)
-                    self.stdout.write()
-                    self.stdout.write("  Here are all information about this employee:")
-                    self.stdout.write(f"   Email: {employee.user.email}")
-                    self.stdout.write(f"   First name: {employee.first_name}")
-                    self.stdout.write(f"   Last name: {employee.last_name}")
-                    self.stdout.write(f"   Role: {employee.role} \n\n")
+    def get_data(self):
+        self.update_fields = list()
+        data = dict()
+        # TODO: if no letter go back to Menu
+        for letter in self.fields_to_update:
+            if self.available_fields[letter]:
+                field_data = self.available_fields.get(letter)
+                method = field_data["method"]
+                params = field_data["params"]
+                label = field_data["label"]
 
-                    self.stdout.write("  The employee was updated. \n\n")
-                    break
-                else:
-                    self.stdout.write("  No changes made. \n\n")
-                    break
+                data[label] = method(**params)
+                self.update_fields.append(label)
+
+        return data
+
+        # method, params, label = self.available_fields.get(letter)
+        # data[label] = method(**params)
+        # update_fields.append(label)
+        # return data
+
+    def make_changes(self, data):
+        email = data.pop("user__email", None)
+        if email:
+            user = self.object.user
+            user.email = email
+            user.save()
+
+        Employee.objects.filter(user=self.object.user).update(**data)
