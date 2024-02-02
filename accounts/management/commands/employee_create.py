@@ -33,16 +33,16 @@ class Command(EpicEventsCommand):
             user = UserModel.objects.create_user(
                 data.pop("email", None), data.pop("password", None)
             )
-            employee = Employee.objects.create(**data, user=user)
-            return employee
+            self.object = Employee.objects.create(**data, user=user)
+            return self.object
         except IntegrityError:
             create_error_message("Email")
             call_command("employee_create")
 
-    def display_changes(self, instance):
-        self.update_fields = ["first_name", "last_name", "role"]
+    def display_changes(self):
+        self.update_fields = ["email", "first_name", "last_name", "role"]
         create_success_message("Employee", "created")
-        super().display_changes(instance)
+        super().display_changes()
 
     def go_back(self):
         call_command("employee")
