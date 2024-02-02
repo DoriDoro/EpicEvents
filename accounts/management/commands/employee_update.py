@@ -16,6 +16,28 @@ class Command(EpicEventsCommand):
     help = "Prompts to update an employee."
     action = "UPDATE"
 
+    def get_create_model_table(self):
+        create_model_table(Employee, "user.email", "Employees")
+
+    def get_requested_model(self):
+        # TODO: verify if email exists
+        email = self.email_input("Email address")
+        self.stdout.write()
+        self.object = Employee.objects.filter(user__email=email).first()
+
+        employee_table = [
+            ["[E]mail: ", self.object.user.email],
+            ["[F]irst name: ", self.object.first_name],
+            ["[L]ast name: ", self.object.last_name],
+            ["[R]ole: ", self.object.role],
+        ]
+        create_pretty_table(employee_table, "Details of the Employee: ")
+
+    def get_fields_to_update(self):
+        self.fields_to_update = self.multiple_choice_str_input(
+            ("E", "F", "L", "R"), "Your choice? [E, F, L, R]"
+        )
+
     def get_available_fields(self):
         self.available_fields = {
             "E": {
@@ -40,28 +62,6 @@ class Command(EpicEventsCommand):
             },
         }
         return self.available_fields
-
-    def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employees")
-
-    def get_requested_model(self):
-        # TODO: verify if email exists
-        email = self.email_input("Email address")
-        self.stdout.write()
-        self.object = Employee.objects.filter(user__email=email).first()
-
-        employee_table = [
-            ["[E]mail: ", self.object.user.email],
-            ["[F]irst name: ", self.object.first_name],
-            ["[L]ast name: ", self.object.last_name],
-            ["[R]ole: ", self.object.role],
-        ]
-        create_pretty_table(employee_table, "Details of the Employee: ")
-
-    def get_fields_to_update(self):
-        self.fields_to_update = self.multiple_choice_str_input(
-            ("E", "F", "L", "R"), "Your choice? [E, F, L, R]"
-        )
 
     def get_data(self):
         self.update_fields = list()
