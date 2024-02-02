@@ -125,11 +125,15 @@ class EpicEventsCommand(BaseCommand):
     def make_changes(self, data):
         return None
 
-    def display_changes(self, instance):
+    def display_changes(self):
         update_table = []
         for field in self.update_fields:
-            if hasattr(instance, field):
-                field_item = getattr(instance, field)
+            if hasattr(self.object, field):
+                field_item = getattr(self.object, field)
+                field = field.replace("_", " ")
+                update_table.append([f"{field.capitalize()}: ", field_item])
+            if hasattr(self.object.user, field):
+                field_item = getattr(self.object.user, field)
                 field = field.replace("_", " ")
                 update_table.append([f"{field.capitalize()}: ", field_item])
 
@@ -141,8 +145,8 @@ class EpicEventsCommand(BaseCommand):
     def create(self):
         self.get_create_model_table()
         validated_data = self.get_data()
-        instance = self.make_changes(validated_data)
-        self.display_changes(instance)
+        self.make_changes(validated_data)
+        self.display_changes()
         self.go_back()
 
     def update(self):
@@ -151,16 +155,18 @@ class EpicEventsCommand(BaseCommand):
         self.get_fields_to_update()
         self.get_available_fields()
         validated_data = self.get_data()
+        self.make_changes(validated_data)
+        self.display_changes()
+        self.go_back()
 
-        instance = self.make_changes(validated_data)
-        # self.display_changes(instance)
-        # self.go_back()
+    def delete(self):
+        self.get_create_model_table()
+        self.get_requested_model()
 
     def handle(self, *args, **options):
         if self.action == "CREATE":
             self.create()
         elif self.action == "UPDATE":
             self.update()
-
-        # elif self.action == "DELETE":
-        #     self.delete()
+        elif self.action == "DELETE":
+            self.delete()

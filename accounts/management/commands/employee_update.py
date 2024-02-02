@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import IntegrityError
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
-from cli.utils_messages import create_error_message, create_success_message
+from cli.utils_messages import create_success_message
 from cli.utils_tables import (
     create_model_table,
     create_pretty_table,
@@ -22,7 +21,7 @@ class Command(EpicEventsCommand):
             "E": {
                 "method": self.email_input,
                 "params": {"label": "Email"},
-                "label": "user__email",
+                "label": "email",
             },
             "F": {
                 "method": self.text_input,
@@ -46,6 +45,7 @@ class Command(EpicEventsCommand):
         create_model_table(Employee, "user.email", "Employees")
 
     def get_requested_model(self):
+        # TODO: verify if email exists
         email = self.email_input("Email address")
         self.stdout.write()
         self.object = Employee.objects.filter(user__email=email).first()
@@ -60,7 +60,7 @@ class Command(EpicEventsCommand):
 
     def get_fields_to_update(self):
         self.fields_to_update = self.multiple_choice_str_input(
-            ("E", "F", "L", "R"), " Your choice? [E, F, L, R]"
+            ("E", "F", "L", "R"), "Your choice? [E, F, L, R]"
         )
 
     def get_data(self):
@@ -79,16 +79,24 @@ class Command(EpicEventsCommand):
 
         return data
 
-        # method, params, label = self.available_fields.get(letter)
-        # data[label] = method(**params)
-        # update_fields.append(label)
-        # return data
-
     def make_changes(self, data):
-        email = data.pop("user__email", None)
+        email = data.pop("email", None)
         if email:
             user = self.object.user
             user.email = email
             user.save()
 
         Employee.objects.filter(user=self.object.user).update(**data)
+
+        # Refresh the object from the database
+        self.object.refresh_from_db()
+
+        return self.object
+
+    def display_changes(self):
+        # TODO: display the hole Employee not just the updated part
+        create_success_message("Employee", "updated")
+        super().display_changes()
+
+    def go_back(self):
+        call_command("employee")
