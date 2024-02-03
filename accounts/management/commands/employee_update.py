@@ -3,7 +3,7 @@ from django.core.management import call_command
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
-from cli.utils_messages import create_success_message
+from cli.utils_messages import create_success_message, create_invalid_error_message
 from cli.utils_tables import (
     create_model_table,
     create_pretty_table,
@@ -20,11 +20,16 @@ class Command(EpicEventsCommand):
         create_model_table(Employee, "user.email", "Employees")
 
     def get_requested_model(self):
-        # TODO: verify if email exists
-        email = self.email_input("Email address")
-        self.stdout.write()
-        self.object = Employee.objects.filter(user__email=email).first()
+        while True:
+            email = self.email_input("Email address")
+            self.object = Employee.objects.filter(user__email=email).first()
 
+            if self.object:
+                break
+            else:
+                create_invalid_error_message("email")
+
+        self.stdout.write()
         employee_table = [
             ["[E]mail: ", self.object.user.email],
             ["[F]irst name: ", self.object.first_name],
@@ -66,7 +71,6 @@ class Command(EpicEventsCommand):
     def get_data(self):
         self.update_fields = list()
         data = dict()
-        # TODO: if no letter go back to Menu
         for letter in self.fields_to_update:
             if self.available_fields[letter]:
                 field_data = self.available_fields.get(letter)
@@ -94,7 +98,8 @@ class Command(EpicEventsCommand):
         return self.object
 
     def display_changes(self):
-        # TODO: display the hole Employee not just the updated part
+        # overwrite self.update_fields to display all fields
+        self.update_fields = ["email", "first_name", "last_name", "role"]
         create_success_message("Employee", "updated")
         super().display_changes()
 

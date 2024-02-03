@@ -11,3 +11,9 @@ def create_error_message(text):
     print()
     style_text_display(f"{'':^2}{text} exists already !", color=RED, bold=True)
     print()
+
+
+def create_invalid_error_message(text):
+    print()
+    style_text_display(f"{'':^2} Invalid {text} !", color=RED, bold=True)
+    print()

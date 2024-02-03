@@ -1,9 +1,10 @@
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, call_command
 from django.core.validators import validate_email
 
 from cli.menu import BOLD, ENDC
+from cli.utils_messages import create_invalid_error_message
 from cli.utils_tables import create_pretty_table
 
 
@@ -25,8 +26,11 @@ class EpicEventsCommand(BaseCommand):
 
         value = input(label)
         if required:
+            if value in ["", " "]:
+                call_command("start")
+                print()
             while not value:
-                print("Invalid input!")
+                create_invalid_error_message("input")
                 value = input(label)
 
         return value
