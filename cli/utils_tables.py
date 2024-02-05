@@ -1,6 +1,7 @@
 from tabulate import tabulate
 
 from cli.menu import display_new_line, style_text_display, CYAN
+from cli.utils_messages import create_info_message
 
 
 def display_table_title(text):
@@ -51,3 +52,6 @@ def create_model_table(model, column_label, title):
                 all_items_list.append(all_items_period_table)
 
         create_pretty_table(all_items_list, f"All {title}: ")
+
+    else:
+        create_info_message("Nothing there!")
