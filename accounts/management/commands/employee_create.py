@@ -15,7 +15,7 @@ class Command(EpicEventsCommand):
     action = "CREATE"
 
     def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employee Email")
+        create_model_table(Employee, "user.email", "Employee Emails")
 
     def get_data(self):
         return {

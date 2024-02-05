@@ -11,7 +11,7 @@ class Command(EpicEventsCommand):
     action = "DELETE"
 
     def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employees")
+        create_model_table(Employee, "user.email", "Employee Emails")
 
     def get_requested_model(self):
         email = self.email_input("Email address")
@@ -28,7 +28,9 @@ class Command(EpicEventsCommand):
 
     def get_data(self):
         return {
-            "delete": self.choice_str_input(("Y", "N"), "Role [Y]es or [N]o"),
+            "delete": self.choice_str_input(
+                ("Y", "N"), "Choice to delete [Y]es or [N]o"
+            ),
         }
 
     def make_changes(self, data):
