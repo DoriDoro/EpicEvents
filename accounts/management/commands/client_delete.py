@@ -1,34 +1,49 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
 
 from accounts.models import Client
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_success_message
+from cli.utils_tables import create_model_table, create_pretty_table
 
 
-class Command(BaseCommand):
+class Command(EpicEventsCommand):
     help = "Prompts for details to delete a client."
+    action = "DELETE"
 
-    def handle(self, *args, **options):
-        while True:
-            email = input(" Enter the email address: ")
-            client = Client.objects.filter(email=email).first()
-            if client is None:
-                self.stdout.write("   This email address is unknown. \n\n")
-            else:
-                delete_client = input(
-                    f"  Do you want to delete this client {email}? (yes/no): "
-                ).lower()
+    def get_create_model_table(self):
+        create_model_table(Client, "email", "Client Emails")
 
-                if delete_client in ["yes", "y"]:
-                    client.delete()
-                    self.stdout.write(f"\n  The client {email} was deleted! \n\n")
-                    break
-                if delete_client in ["no", "n"]:
-                    possible_exit = input(
-                        "   Do you want to delete an other employee (yes) "
-                        "or do you want to go back to the Client Menu? (*): "
-                    )
-                    if possible_exit == "*":
-                        call_command("client")
-                        break
-                else:
-                    self.stdout.write("   Invalid input.")
+    def get_requested_model(self):
+        email = self.email_input("Email address")
+        self.stdout.write()
+        self.object = Client.objects.filter(email=email).first()
+
+        client_table = [
+            ["Email: ", self.object.email],
+            ["First name: ", self.object.first_name],
+            ["Last name: ", self.object.last_name],
+            ["Phone: ", self.object.phone],
+            ["Company name: ", self.object.company_name],
+        ]
+
+        create_pretty_table(client_table, "Details of the Client: ")
+
+    def get_data(self):
+        return {
+            "delete": self.choice_str_input(
+                ("Y", "N"), "Choice to delete [Y]es or [N]o?"
+            )
+        }
+
+    def make_changes(self, data):
+        if data["delete"] == "Y":
+            self.object.delete()
+        if data["delete"] == "N":
+            self.stdout.write()
+            call_command("client")
+
+    def display_changes(self):
+        create_success_message("Client", "deleted")
+
+    def go_back(self):
+        call_command("client")

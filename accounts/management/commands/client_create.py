@@ -1,49 +1,48 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 
 from accounts.models import Client
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_error_message, create_success_message
+from cli.utils_tables import create_model_table
 
 UserModel = get_user_model()
 
 
-class Command(BaseCommand):
+class Command(EpicEventsCommand):
     help = "Prompts for details to create a new client."
+    action = "CREATE"
 
-    def handle(self, *args, **options):
-        while True:
-            create_client = {}
-            for field in ["email", "first_name", "last_name", "phone", "company_name"]:
-                if field == "phone":
-                    while True:
-                        try:
-                            create_client[field] = int(
-                                input(f"  Please enter the {field}: ")
-                            )
-                            break
-                        except ValueError:
-                            self.stdout.write("    Invalid input. \n\n")
-                else:
-                    create_client[field] = input(f"  Please enter the {field}: ")
+    def get_create_model_table(self):
+        create_model_table(Client, "email", "Client Emails")
 
-            client_email = create_client["email"]
-            client_exists = Client.objects.filter(email=client_email).first()
+    def get_data(self):
+        return {
+            "email": self.email_input("Email address"),
+            "first_name": self.text_input("First name"),
+            "last_name": self.text_input("Last name"),
+            "phone": self.int_input("Phone number"),
+            "company_name": self.text_input("Company name"),
+        }
 
-            if client_exists:
-                self.stdout.write(
-                    f"   This client: {client_email} exists already! \n\n"
-                )
-            else:
-                Client.objects.create(**create_client)
+    def make_changes(self, data):
+        try:
+            self.object = Client.objects.create(**data)
+        except IntegrityError:
+            create_error_message("Email")
+            call_command("client_create")
 
-                # TODO: display this info as table
-                self.stdout.write("\n   A new client was created. \n\n")
-                self.stdout.write(f"  Email: {client_email}")
-                self.stdout.write(f"  First name: {create_client['first_name']}")
-                self.stdout.write(f"  Last name: {create_client['last_name']}")
-                self.stdout.write(f"  Phone: {create_client['phone']}")
-                self.stdout.write(
-                    f"  Company name: {create_client['company_name']} \n\n"
-                )
-                call_command("client")
-                break
+    def display_changes(self):
+        self.update_fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "phone",
+            "company_name",
+        ]
+        create_success_message("Client", "created")
+        super().display_changes()
+
+    def go_back(self):
+        call_command("client")

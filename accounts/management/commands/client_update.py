@@ -1,84 +1,112 @@
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
 
 from accounts.models import Client
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_success_message, create_invalid_error_message
+from cli.utils_tables import (
+    create_model_table,
+    create_pretty_table,
+)
+
+UserModel = get_user_model()
 
 
-class Command(BaseCommand):
-    help = "Prompts for details to update a client."
+class Command(EpicEventsCommand):
+    help = "Prompts for details to to update a client."
+    action = "UPDATE"
 
-    def handle(self, *args, **options):
-        updates_of_client = {}
+    def get_create_model_table(self):
+        create_model_table(Client, "email", "Client Emails")
 
-        client_fields = {
-            1: "email",
-            2: "first_name",
-            3: "last_name",
-            4: "phone",
-            5: "company_name",
-            6: "quit",
-        }
-
-        update_client_list = []
-
+    def get_requested_model(self):
         while True:
-            email = input(" Enter the email address: ")
-            client = Client.objects.filter(email=email).first()
+            email = self.email_input("Email address")
+            self.object = Client.objects.filter(email=email).first()
 
-            if client is None:
-                self.stdout.write("   This email address is unknown. \n\n")
+            if self.object:
+                break
             else:
-                # TODO: use a table to display this info
-                self.stdout.write("\n   Details about this client:")
-                self.stdout.write(f"    Email: {email}")
-                self.stdout.write(f"    First name: {client.first_name}")
-                self.stdout.write(f"    Last name: {client.last_name}")
-                self.stdout.write(f"    Phone: {client.phone}")
-                self.stdout.write(f"    Company name: {client.company_name} \n\n")
+                create_invalid_error_message("email")
 
-                # TODO: use a table to display this info
-                self.stdout.write("   Which details you want to update?")
-                self.stdout.write("    [1] email")
-                self.stdout.write("    [2] first name")
-                self.stdout.write("    [3] last name")
-                self.stdout.write("    [4] phone number")
-                self.stdout.write("    [5] company name")
-                self.stdout.write("    [6] go back to Client Menu \n\n")
+        self.stdout.write()
+        client_table = [
+            ["[E]mail: ", self.object.email],
+            ["[F]irst name: ", self.object.first_name],
+            ["[L]ast name: ", self.object.last_name],
+            ["[P]hone: ", self.object.phone],
+            ["[C]ompany name: ", self.object.company_name],
+        ]
+        create_pretty_table(client_table, "Details of the Client: ")
 
-                update_str = input(
-                    " Which details you want to update? (several numbers possible): "
-                )
-                update_list = [int(num) for num in update_str.split()]
+    def get_fields_to_update(self):
+        self.fields_to_update = self.multiple_choice_str_input(
+            ("E", "F", "L", "P", "C"), "Your choice? [E, F, L, P, C]"
+        )
 
-                for key, field in client_fields.items():
-                    for number in update_list:
-                        if key == number:
-                            update_client_list.append(field)
+    def get_available_fields(self):
+        self.available_fields = {
+            "E": {
+                "method": self.email_input,
+                "params": {"label": "Email"},
+                "label": "email",
+            },
+            "F": {
+                "method": self.text_input,
+                "params": {"label": "First name"},
+                "label": "first_name",
+            },
+            "L": {
+                "method": self.text_input,
+                "params": {"label": "Last name"},
+                "label": "last_name",
+            },
+            "P": {
+                "method": self.int_input,
+                "params": {"label": "Phone"},
+                "label": "phone",
+            },
+            "C": {
+                "method": self.text_input,
+                "params": {"label": "Company name"},
+                "label": "company_name",
+            },
+        }
+        return self.available_fields
 
-                for field in update_client_list:
-                    if field == "quit":
-                        call_command("client")
-                        break
-                    if field == "phone":
-                        while True:
-                            try:
-                                updates_of_client[field] = int(
-                                    input(f"\n  Please enter the new {field}: ")
-                                )
-                                break
-                            except ValueError:
-                                self.stdout.write("    Invalid input. \n\n")
-                    else:
-                        updates_of_client[field] = input(
-                            f"  Please enter the new {field}: "
-                        )
+    def get_data(self):
+        self.update_fields = list()
+        data = dict()
+        for letter in self.fields_to_update:
+            if self.available_fields[letter]:
+                field_data = self.available_fields.get(letter)
+                method = field_data["method"]
+                params = field_data["params"]
+                label = field_data["label"]
 
-                if updates_of_client:
-                    Client.objects.filter(email=email).update(**updates_of_client)
-                    self.stdout.write("   The client was updated. \n\n")
-                    call_command("client")
-                    break
-                else:
-                    self.stdout.write("  No changes made. \n\n")
-                    call_command("client")
-                    break
+                data[label] = method(**params)
+                self.update_fields.append(label)
+
+        return data
+
+    def make_changes(self, data):
+        Client.objects.filter(email=self.object.email).update(**data)
+
+        self.object.refresh_from_db()
+
+        return self.object
+
+    def display_changes(self):
+        # overwrite self.update_fields to display all fields
+        self.update_fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "phone",
+            "company_name",
+        ]
+        create_success_message("Client", "updated")
+        super().display_changes()
+
+    def go_back(self):
+        call_command("client")

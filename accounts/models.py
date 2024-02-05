@@ -82,7 +82,9 @@ class Employee(models.Model):
 
 
 class Client(models.Model):
-    email = models.EmailField(max_length=254, verbose_name=_("email address"))
+    email = models.EmailField(
+        max_length=254, unique=True, verbose_name=_("email address")
+    )
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
     phone = models.CharField(max_length=17, verbose_name=_("phone number"))
