@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.db import transaction
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
@@ -83,6 +84,10 @@ class Command(EpicEventsCommand):
 
         return data
 
+    @transaction.atomic
+    # if the user.email is saved and the Employee update is not working,
+    # the user.email will stay saved but the Employee update will fail
+    # with transaction.atomic both will be canceled
     def make_changes(self, data):
         email = data.pop("email", None)
         if email:
@@ -102,6 +107,7 @@ class Command(EpicEventsCommand):
         self.update_fields = ["email", "first_name", "last_name", "role"]
         create_success_message("Employee", "updated")
         super().display_changes()
+        self.update_table.append([f"Email: ", self.object.user.email])
 
     def go_back(self):
         call_command("employee")

@@ -15,7 +15,7 @@ class Command(EpicEventsCommand):
     action = "CREATE"
 
     def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Email")
+        create_model_table(Employee, "user.email", "Employee Email")
 
     def get_data(self):
         return {
@@ -24,17 +24,16 @@ class Command(EpicEventsCommand):
             "first_name": self.text_input("First name"),
             "last_name": self.text_input("Last name"),
             "role": self.choice_str_input(("SA", "SU", "MA"), "Role [SA, SU, MA]"),
-            "new_line": self.display_new_line(),
         }
 
     def make_changes(self, data):
-        data.pop("new_line", None)
         try:
             user = UserModel.objects.create_user(
                 data.pop("email", None), data.pop("password", None)
             )
             self.object = Employee.objects.create(**data, user=user)
             return self.object
+
         except IntegrityError:
             create_error_message("Email")
             call_command("employee_create")
@@ -43,6 +42,7 @@ class Command(EpicEventsCommand):
         self.update_fields = ["email", "first_name", "last_name", "role"]
         create_success_message("Employee", "created")
         super().display_changes()
+        self.update_table.append([f"Email: ", self.object.user.email])
 
     def go_back(self):
         call_command("employee")

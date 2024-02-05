@@ -33,7 +33,7 @@ class Command(EpicEventsCommand):
 
     def make_changes(self, data):
         if data["delete"] == "Y":
-            self.object.delete()
+            self.object.user.delete()
         if data["delete"] == "N":
             self.stdout.write()
             call_command("employee")

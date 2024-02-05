@@ -16,6 +16,7 @@ class EpicEventsCommand(BaseCommand):
     update_fields = None
     fields_to_update = None
     available_fields = None
+    update_table = None
 
     @classmethod
     def text_input(cls, label, required=True):
@@ -36,7 +37,7 @@ class EpicEventsCommand(BaseCommand):
         return value
 
     @classmethod
-    def number_input(cls, label, required=True):
+    def int_input(cls, label, required=True):
         """handles number/int input"""
         if required:
             label = f"{label}*"
@@ -63,7 +64,7 @@ class EpicEventsCommand(BaseCommand):
     @classmethod
     def choice_int_input(cls, options, label, required=True):
         """handles one choice as int input"""
-        value = cls.number_input(label, required)
+        value = cls.int_input(label, required)
 
         if value not in options:
             value = cls.choice_int_input(options, label, required)
@@ -130,18 +131,15 @@ class EpicEventsCommand(BaseCommand):
         return None
 
     def display_changes(self):
-        update_table = []
+        self.update_table = []
         for field in self.update_fields:
             if hasattr(self.object, field):
                 field_item = getattr(self.object, field)
                 field = field.replace("_", " ")
-                update_table.append([f"{field.capitalize()}: ", field_item])
-            if hasattr(self.object.user, field):
-                field_item = getattr(self.object.user, field)
-                field = field.replace("_", " ")
-                update_table.append([f"{field.capitalize()}: ", field_item])
+                self.update_table.append([f"{field.capitalize()}: ", field_item])
 
-        create_pretty_table(update_table)
+    def create_table(self):
+        create_pretty_table(self.update_table)
 
     def go_back(self):
         pass
@@ -151,6 +149,7 @@ class EpicEventsCommand(BaseCommand):
         validated_data = self.get_data()
         self.make_changes(validated_data)
         self.display_changes()
+        self.create_table()
         self.go_back()
 
     def update(self):
@@ -161,6 +160,7 @@ class EpicEventsCommand(BaseCommand):
         validated_data = self.get_data()
         self.make_changes(validated_data)
         self.display_changes()
+        self.create_table()
         self.go_back()
 
     def delete(self):
