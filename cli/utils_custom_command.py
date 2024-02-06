@@ -134,6 +134,18 @@ class EpicEventsCommand(BaseCommand):
         for field in self.update_fields:
             if hasattr(self.object, field):
                 field_item = getattr(self.object, field)
+                if field_item in ["SA", "SU", "MA"]:
+                    if field_item == "SA":
+                        field_item = "Sales"
+                    if field_item == "SU":
+                        field_item = "Support"
+                    if field_item == "MA":
+                        field_item = "Management"
+                if field_item in ["S", "D"]:
+                    if field_item == "S":
+                        field_item = "Signed"
+                    if field_item == "D":
+                        field_item = "Draft"
                 field = field.replace("_", " ")
                 self.update_table.append([f"{field.capitalize()}: ", field_item])
 

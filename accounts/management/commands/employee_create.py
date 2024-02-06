@@ -23,7 +23,9 @@ class Command(EpicEventsCommand):
             "password": self.password_input("Password"),
             "first_name": self.text_input("First name"),
             "last_name": self.text_input("Last name"),
-            "role": self.choice_str_input(("SA", "SU", "MA"), "Role [SA, SU, MA]"),
+            "role": self.choice_str_input(
+                ("SA", "SU", "MA"), "Role [SA]les, [SU]pport, [MA]nagement"
+            ),
         }
 
     def make_changes(self, data):
