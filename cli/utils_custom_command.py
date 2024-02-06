@@ -16,7 +16,7 @@ class EpicEventsCommand(BaseCommand):
     update_fields = None
     fields_to_update = None
     available_fields = None
-    update_table = None
+    update_table = list()
 
     @classmethod
     def text_input(cls, label, required=True):
@@ -131,7 +131,6 @@ class EpicEventsCommand(BaseCommand):
         return None
 
     def display_changes(self):
-        self.update_table = []
         for field in self.update_fields:
             if hasattr(self.object, field):
                 field_item = getattr(self.object, field)
