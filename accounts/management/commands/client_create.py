@@ -41,6 +41,7 @@ class Command(EpicEventsCommand):
             "phone",
             "company_name",
         ]
+        self.update_table = []
         create_success_message("Client", "created")
         super().display_changes()
 

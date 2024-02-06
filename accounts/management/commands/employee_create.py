@@ -40,6 +40,7 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = ["email", "first_name", "last_name", "role"]
+        self.update_table = []
         create_success_message("Employee", "created")
         self.update_table.append([f"Email: ", self.object.user.email])
         super().display_changes()

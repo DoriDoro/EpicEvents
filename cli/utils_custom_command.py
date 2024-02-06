@@ -16,7 +16,7 @@ class EpicEventsCommand(BaseCommand):
     update_fields = None
     fields_to_update = None
     available_fields = None
-    update_table = list()
+    update_table = None
 
     @classmethod
     def text_input(cls, label, required=True):

@@ -105,6 +105,7 @@ class Command(EpicEventsCommand):
     def display_changes(self):
         # overwrite self.update_fields to display all fields
         self.update_fields = ["email", "first_name", "last_name", "role"]
+        self.update_table = []
         create_success_message("Employee", "updated")
         super().display_changes()
         self.update_table.append([f"Email: ", self.object.user.email])

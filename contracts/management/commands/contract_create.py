@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.management import call_command
-from django.db import IntegrityError
 
 from accounts.models import Client, Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import (
     create_error_message,
     create_does_not_exists_message,
-    create_info_message,
     create_success_message,
 )
 from cli.utils_tables import create_model_table
@@ -79,7 +76,9 @@ class Command(EpicEventsCommand):
             "amount_paid",
             "state",
         ]
-        create_success_message("Employee", "created")
+        self.update_table = []
+
+        create_success_message("Contract", "created")
         self.update_table.append([f"Client: ", self.object.client.email])
         self.update_table.append([f"Employee: ", self.object.employee.user.email])
         super().display_changes()
