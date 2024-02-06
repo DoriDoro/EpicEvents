@@ -8,7 +8,7 @@ from cli.utils_messages import (
     create_does_not_exists_message,
     create_success_message,
 )
-from cli.utils_tables import create_model_table
+from cli.utils_tables import create_model_table, create_queryset_table
 from contracts.models import Contract
 
 UserModel = get_user_model()
@@ -19,9 +19,16 @@ class Command(EpicEventsCommand):
     action = "CREATE"
 
     def get_create_model_table(self):
-        # model = Contract.objects.select_related("client", "employee").all()
-        # create_model_table(Contract, "total_costs", "Contracts")
-        print("table contracts")
+        table_data = dict()
+        create_model_table(Client, "email", "Client Emails")
+        create_model_table(Employee, "user.email", "Employee Emails")
+
+        queryset = Contract.objects.select_related("client").all()
+
+        for contract in queryset:
+            table_data[contract.client.id] = contract.client.email
+
+        create_queryset_table(table_data, "Email", "Client Emails from contracts")
 
     def get_data(self):
         return {

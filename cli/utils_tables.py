@@ -55,3 +55,13 @@ def create_model_table(model, column_label, title):
 
     else:
         create_info_message("Nothing there!")
+
+
+def create_queryset_table(queryset, label, title):
+    all_items_list = list()
+
+    for item in queryset.values():
+        item_table = [label + ": ", item]
+        all_items_list.append(item_table)
+
+    create_pretty_table(all_items_list, f"All {title}: ")
