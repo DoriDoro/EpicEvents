@@ -1,72 +1,88 @@
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.exceptions import ValidationError
+from django.core.management import call_command
+from django.db import IntegrityError
 
-from accounts.models import Employee
+from accounts.models import Client, Employee
+from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import (
+    create_error_message,
+    create_does_not_exists_message,
+    create_info_message,
+    create_success_message,
+)
+from cli.utils_tables import create_model_table
+from contracts.models import Contract
 
 UserModel = get_user_model()
 
 
-class Command(BaseCommand):
-    help = "Creates a new contract."
+class Command(EpicEventsCommand):
+    help = "Prompts for details to create a new contract."
+    action = "CREATE"
 
-    def handle(self, *args, **options):
-        while True:
-            email = str(
-                input(" Please enter the email address of the future employee: ")
-            )
-            user = UserModel.objects.filter(email=email).first()
-            if user is None:
-                self.stdout.write(
-                    "   This email address is not known. Please enter a valid email address. \n\n"
-                )
-                self.stdout.flush()
-            else:
-                f_name = str(input(" Please enter the first name: "))
-                l_name = str(input(" Please enter the last name: "))
+    def get_create_model_table(self):
+        # model = Contract.objects.select_related("client", "employee").all()
+        # create_model_table(Contract, "total_costs", "Contracts")
+        print("table contracts")
 
-                self.stdout.write(" Choose the role of your employee:")
-                self.stdout.write(f"  [1] Sales")
-                self.stdout.write(f"  [2] Support")
-                self.stdout.write(f"  [3] Management")
-                self.stdout.flush()
+    def get_data(self):
+        return {
+            "client": self.email_input("Client email"),
+            "employee": self.email_input("Employee email"),
+            "total_costs": self.int_input("Amount of contract"),
+            "amount_paid": self.int_input("Paid amount"),
+            "state": self.choice_str_input(("S", "D"), "State [S]igned or [D]raft"),
+        }
 
-                while True:
-                    get_role = {1: "Sales", 2: "Support", 3: "Management"}
-                    try:
-                        role_number = int(
-                            input("  Please enter your choice for the role: ")
-                        )
-                        if role_number in get_role:
-                            role = get_role[role_number]
-                            break
-                        else:
-                            self.stdout.write(
-                                "Invalid role number. Please enter a number between 1 and 3. \n\n"
-                            )
-                            self.stdout.flush()
-                    except ValueError:
-                        self.stdout.write(
-                            "   Invalid input. Please enter a number. \n\n"
-                        )
-                        self.stdout.flush()
+    def make_changes(self, data):
+        validated_data = dict()
+        # verify if the contract already exists, client + contract
+        # OneToOne instead of ForeignKey? client
 
-                employee_exists = Employee.objects.filter(user=user).first()
+        client = Client.objects.filter(email=data["client"]).first()
+        if not client:
+            create_does_not_exists_message("Client")
+            call_command("contract_create")
 
-                if employee_exists:
-                    self.stdout.write(
-                        f"   This employee: {user.email} with role: "
-                        f"{employee_exists.role} exists already! "
-                        f"Please choose an other email address to create an employee. \n\n"
-                    )
-                    self.stdout.flush()
-                else:
-                    employee = Employee(
-                        user=user,
-                        first_name=f_name,
-                        last_name=l_name,
-                        role=role,
-                    )
-                    employee.save()
-                    self.stdout.write()
-                    self.stdout.write("   A new employee was created. \n\n")
-                    break
+        validated_data["client"] = client
+
+        employee = Employee.objects.filter(user__email=data["employee"]).first()
+        if not employee:
+            create_does_not_exists_message("Employee")
+            call_command("contract_create")
+
+        validated_data["employee"] = employee
+
+        # remove client and employee for data:
+        data.pop("client", None)
+        data.pop("employee", None)
+
+        # verify if the contract already exists:
+        contract_exists = Contract.objects.filter(
+            client=validated_data["client"]
+        ).first()
+        if contract_exists:
+            create_error_message("Contract")
+            call_command("contract_create")
+
+        # create the contract:
+        self.object = Contract.objects.create(
+            client=validated_data["client"],
+            employee=validated_data["employee"],
+            **data,
+        )
+
+    def display_changes(self):
+        self.update_fields = [
+            "total_costs",
+            "amount_paid",
+            "state",
+        ]
+        create_success_message("Employee", "created")
+        self.update_table.append([f"Client: ", self.object.client.email])
+        self.update_table.append([f"Employee: ", self.object.employee.user.email])
+        super().display_changes()
+
+    def go_back(self):
+        call_command("contract")
