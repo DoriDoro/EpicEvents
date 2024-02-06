@@ -63,7 +63,10 @@ class Command(EpicEventsCommand):
             },
             "R": {
                 "method": self.choice_str_input,
-                "params": {"options": ("SA", "SU", "MA"), "label": "Role [SA, SU, MA]"},
+                "params": {
+                    "options": ("SA", "SU", "MA"),
+                    "label": "Role: [SA]les, [SU]pport or [MA]nagement",
+                },
                 "label": "role",
             },
         }

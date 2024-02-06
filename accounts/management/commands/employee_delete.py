@@ -2,7 +2,7 @@ from django.core.management import call_command
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
-from cli.utils_messages import create_success_message
+from cli.utils_messages import create_success_message, create_invalid_error_message
 from cli.utils_tables import create_model_table, create_pretty_table
 
 
@@ -14,10 +14,16 @@ class Command(EpicEventsCommand):
         create_model_table(Employee, "user.email", "Employee Emails")
 
     def get_requested_model(self):
-        email = self.email_input("Email address")
-        self.stdout.write()
-        self.object = Employee.objects.filter(user__email=email).first()
+        while True:
+            email = self.email_input("Email address")
+            self.object = Employee.objects.filter(user__email=email).first()
 
+            if self.object:
+                break
+            else:
+                create_invalid_error_message("email")
+
+        self.stdout.write()
         employee_table = [
             ["Email: ", self.object.user.email],
             ["First name: ", self.object.first_name],
