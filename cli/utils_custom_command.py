@@ -6,7 +6,7 @@ from django.core.management import BaseCommand, call_command
 from django.core.validators import validate_email
 from django.utils.timezone import make_aware
 
-from cli.menu import BOLD, ENDC
+from cli.utils_menu import BOLD, ENDC
 from cli.utils_messages import create_invalid_error_message
 from cli.utils_tables import create_pretty_table
 

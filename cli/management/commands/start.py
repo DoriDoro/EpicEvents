@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
-from cli.menu import get_start_menu
+from cli.utils_menu import get_start_menu
 
 
 class Command(BaseCommand):

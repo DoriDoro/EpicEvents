@@ -1,4 +1,4 @@
-from cli.menu import style_text_display, YELLOW, RED, GREEN
+from cli.utils_menu import style_text_display, YELLOW, RED, GREEN
 
 
 def create_success_message(text, action):

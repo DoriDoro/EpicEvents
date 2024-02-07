@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-from cli.menu import display_new_line, style_text_display, CYAN
+from cli.utils_menu import display_new_line, style_text_display, CYAN
 from cli.utils_messages import create_info_message
 
 
