@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.management import BaseCommand, call_command
 from django.core.validators import validate_email
+from django.utils.timezone import make_aware
 
 from cli.menu import BOLD, ENDC
 from cli.utils_messages import create_invalid_error_message
@@ -72,14 +75,26 @@ class EpicEventsCommand(BaseCommand):
         return value
 
     @classmethod
+    def date_input(cls, label, required=True):
+        """excepts a date with format: DD/MM/YYYY as valid"""
+        value = cls.text_input(label, required)  # DD/MM/YYYY
+
+        try:
+            # save the given date in format: 2025-12-15 00:00:00
+            value = datetime.strptime(value, "%d/%m/%Y")
+            # Make the datetime object timezone-aware
+            value = make_aware(value)
+        except ValueError:
+            value = cls.date_input(label, required)
+
+        return value
+
+    @classmethod
     def multiple_choice_str_input(cls, options, label, required=True):
         """handles one to many choices as string/text input"""
         values = cls.text_input(label, required)
 
         return [w for w in values if w in options]
-        # for value in values:
-        #     if value in options:
-        #         check_options.append(value)
 
     @classmethod
     def email_input(cls, label, required=True):
@@ -110,6 +125,15 @@ class EpicEventsCommand(BaseCommand):
     def display_new_line(cls):
         print()
 
+    def check_state_value(self):
+        if self.object.state == "S":
+            state_value = "Signed"
+        if self.object.state == "D":
+            state_value = "Draft"
+
+        return state_value
+
+    # METHODS for ACTION:
     def get_create_model_table(self):
         pass
 
