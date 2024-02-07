@@ -14,7 +14,6 @@ from cli.utils_tables import (
 from contracts.models import Contract
 
 
-
 class Command(EpicEventsCommand):
     help = "Prompts for details to update a contract."
     action = "UPDATE"
