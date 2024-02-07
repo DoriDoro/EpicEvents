@@ -1,10 +1,8 @@
 from django.core.management import call_command
 
-from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_success_message, create_invalid_error_message
 from cli.utils_tables import (
-    create_model_table,
     create_pretty_table,
     create_queryset_table,
 )

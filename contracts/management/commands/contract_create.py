@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 
 from accounts.models import Client, Employee
@@ -10,8 +9,6 @@ from cli.utils_messages import (
 )
 from cli.utils_tables import create_model_table, create_queryset_table
 from contracts.models import Contract
-
-UserModel = get_user_model()
 
 
 class Command(EpicEventsCommand):
