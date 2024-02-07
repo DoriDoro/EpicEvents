@@ -6,7 +6,7 @@ class Contract(models.Model):
     SIGNED = "S"
     DRAFT = "D"
 
-    STATES = [(SIGNED, _("Signed")), (DRAFT, _("Draft"))]
+    STATE_CHOICES = {SIGNED: _("Signed"), DRAFT: _("Draft")}
 
     client = models.ForeignKey(
         "accounts.Client",
@@ -30,7 +30,7 @@ class Contract(models.Model):
         auto_now_add=True, verbose_name=_("contract created on")
     )
     state = models.CharField(
-        max_length=1, choices=STATES, default=DRAFT, verbose_name=_("state")
+        max_length=1, choices=STATE_CHOICES, default=DRAFT, verbose_name=_("state")
     )
 
     # TODO: add amount_paid as attribute and amount_remaining as property

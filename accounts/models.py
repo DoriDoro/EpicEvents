@@ -55,11 +55,11 @@ class Employee(models.Model):
     SUPPORT = "SU"
     MANAGEMENT = "MA"
 
-    ROLES = [
-        (SALES, _("Sales")),
-        (SUPPORT, _("Support")),
-        (MANAGEMENT, _("Management")),
-    ]
+    ROLE_CHOICES = {
+        SALES: _("Sales"),
+        SUPPORT: _("Support"),
+        MANAGEMENT: _("Management"),
+    }
 
     user = models.OneToOneField(
         "accounts.User",
@@ -69,7 +69,7 @@ class Employee(models.Model):
     )
     first_name = models.CharField(max_length=100, verbose_name=_("first name"))
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
-    role = models.CharField(max_length=2, choices=ROLES, verbose_name=_("role"))
+    role = models.CharField(max_length=2, choices=ROLE_CHOICES, verbose_name=_("role"))
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
