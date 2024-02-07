@@ -10,7 +10,7 @@ from contracts.models import Contract
 
 
 class Command(EpicEventsCommand):
-    help = "Prompts for details to a contract."
+    help = "Prompts for details to delete a contract."
     action = "DELETE"
 
     def get_create_model_table(self):
