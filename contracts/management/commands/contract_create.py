@@ -65,7 +65,7 @@ class Command(EpicEventsCommand):
         # verify if the contract already exists:
         contract_exists = Contract.objects.filter(
             client=validated_data["client"]
-        ).first()
+        ).exists()
         if contract_exists:
             create_error_message("Contract")
             call_command("contract_create")
