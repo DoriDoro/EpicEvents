@@ -24,11 +24,14 @@ class Command(EpicEventsCommand):
                 create_invalid_error_message("email")
 
         self.stdout.write()
+
+        role_value = self.check_role_value()
+
         employee_table = [
             ["Email: ", self.object.user.email],
             ["First name: ", self.object.first_name],
             ["Last name: ", self.object.last_name],
-            ["Role: ", self.object.role],
+            ["Role: ", role_value],
         ]
         create_pretty_table(employee_table, "Details of the Employee: ")
 

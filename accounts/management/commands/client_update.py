@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 
 from accounts.models import Client
@@ -9,12 +8,13 @@ from cli.utils_tables import (
     create_pretty_table,
 )
 
-UserModel = get_user_model()
-
 
 class Command(EpicEventsCommand):
     help = "Prompts for details to to update a client."
     action = "UPDATE"
+
+    update_fields = list()
+    update_table = list()
 
     def get_create_model_table(self):
         create_model_table(Client, "email", "Client Emails")
@@ -75,7 +75,6 @@ class Command(EpicEventsCommand):
         return self.available_fields
 
     def get_data(self):
-        self.update_fields = list()
         data = dict()
         for letter in self.fields_to_update:
             if self.available_fields[letter]:
@@ -105,7 +104,6 @@ class Command(EpicEventsCommand):
             "phone",
             "company_name",
         ]
-        self.update_table = []
 
         create_success_message("Client", "updated")
         super().display_changes()

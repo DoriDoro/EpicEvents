@@ -18,6 +18,9 @@ class Command(EpicEventsCommand):
     help = "Prompts for details to update a contract."
     action = "UPDATE"
 
+    update_fields = list()
+    update_table = list()
+
     def get_create_model_table(self):
         table_data = dict()
 
@@ -82,7 +85,6 @@ class Command(EpicEventsCommand):
         return self.available_fields
 
     def get_data(self):
-        self.update_fields = list()
         data = dict()
         for letter in self.fields_to_update:
             if self.available_fields[letter]:
@@ -119,7 +121,6 @@ class Command(EpicEventsCommand):
             "amount_paid",
             "state",
         ]
-        self.update_table = []
 
         create_success_message("Contract", "updated")
         self.update_table.append([f"Client: ", self.object.client.email])

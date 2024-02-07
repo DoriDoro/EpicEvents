@@ -15,6 +15,8 @@ class Command(EpicEventsCommand):
     help = "Prompts for details to create a new contract."
     action = "CREATE"
 
+    update_table = list()
+
     def get_create_model_table(self):
         table_data = dict()
         create_model_table(Client, "email", "Client Emails")
@@ -80,7 +82,6 @@ class Command(EpicEventsCommand):
             "amount_paid",
             "state",
         ]
-        self.update_table = []
 
         create_success_message("Contract", "created")
         self.update_table.append([f"Client: ", self.object.client.email])

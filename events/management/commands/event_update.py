@@ -1,26 +1,25 @@
 from django.core.management import call_command
 from django.db import transaction
 
-from accounts.models import Client, Employee
+from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import (
-    create_does_not_exists_message,
-    create_error_message,
     create_success_message,
     create_invalid_error_message,
 )
 from cli.utils_tables import (
     create_queryset_table,
-    create_model_table,
     create_pretty_table,
 )
-from contracts.models import Contract
 from events.models import Event
 
 
 class Command(EpicEventsCommand):
     help = "Prompts for details to update an event"
     action = "UPDATE"
+
+    update_fields = list()
+    update_table = list()
 
     def get_create_model_table(self):
         table_data = dict()
@@ -94,7 +93,6 @@ class Command(EpicEventsCommand):
         return self.available_fields
 
     def get_data(self):
-        self.update_fields = list()
         data = dict()
         for letter in self.fields_to_update:
             if self.available_fields[letter]:
@@ -129,7 +127,6 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = ["name", "location", "max_guests", "notes"]
-        self.update_table = []
 
         create_success_message("Event", "created")
 

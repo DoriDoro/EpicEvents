@@ -16,6 +16,8 @@ class Command(EpicEventsCommand):
     help = "Prompts for details to create a new event"
     action = "CREATE"
 
+    update_table = list()
+
     def get_create_model_table(self):
         table_data = dict()
 
@@ -74,7 +76,6 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = ["name", "location", "max_guests", "notes"]
-        self.update_table = []
 
         create_success_message("Event", "created")
 

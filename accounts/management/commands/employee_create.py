@@ -14,6 +14,8 @@ class Command(EpicEventsCommand):
     help = "Prompts to create a new employee."
     action = "CREATE"
 
+    update_table = list()
+
     def get_create_model_table(self):
         create_model_table(Employee, "user.email", "Employee Emails")
 
@@ -42,7 +44,7 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = ["email", "first_name", "last_name", "role"]
-        self.update_table = []
+
         create_success_message("Employee", "created")
         self.update_table.append([f"Email: ", self.object.user.email])
         super().display_changes()

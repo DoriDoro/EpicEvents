@@ -14,6 +14,9 @@ class Command(EpicEventsCommand):
     help = "Prompts to update an employee."
     action = "UPDATE"
 
+    update_fields = list()
+    update_table = list()
+
     def get_create_model_table(self):
         create_model_table(Employee, "user.email", "Employee Emails")
 
@@ -28,11 +31,14 @@ class Command(EpicEventsCommand):
                 create_invalid_error_message("email")
 
         self.stdout.write()
+
+        role_value = self.check_role_value()
+
         employee_table = [
             ["[E]mail: ", self.object.user.email],
             ["[F]irst name: ", self.object.first_name],
             ["[L]ast name: ", self.object.last_name],
-            ["[R]ole: ", self.object.role],
+            ["[R]ole: ", role_value],
         ]
         create_pretty_table(employee_table, "Details of the Employee: ")
 
@@ -70,7 +76,6 @@ class Command(EpicEventsCommand):
         return self.available_fields
 
     def get_data(self):
-        self.update_fields = list()
         data = dict()
         for letter in self.fields_to_update:
             if self.available_fields[letter]:
@@ -105,7 +110,6 @@ class Command(EpicEventsCommand):
     def display_changes(self):
         # overwrite self.update_fields to display all fields
         self.update_fields = ["email", "first_name", "last_name", "role"]
-        self.update_table = []
 
         create_success_message("Employee", "updated")
 

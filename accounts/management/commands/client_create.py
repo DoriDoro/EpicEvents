@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import IntegrityError
 
@@ -7,12 +6,12 @@ from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_error_message, create_success_message
 from cli.utils_tables import create_model_table
 
-UserModel = get_user_model()
-
 
 class Command(EpicEventsCommand):
     help = "Prompts for details to create a new client."
     action = "CREATE"
+
+    update_table = list()
 
     def get_create_model_table(self):
         create_model_table(Client, "email", "Client Emails")
@@ -41,7 +40,7 @@ class Command(EpicEventsCommand):
             "phone",
             "company_name",
         ]
-        self.update_table = []
+
         create_success_message("Client", "created")
         super().display_changes()
 

@@ -127,11 +127,17 @@ class EpicEventsCommand(BaseCommand):
 
     def check_state_value(self):
         if self.object.state == "S":
-            state_value = "Signed"
+            return "Signed"
         if self.object.state == "D":
-            state_value = "Draft"
+            return "Draft"
 
-        return state_value
+    def check_role_value(self):
+        if self.object.role == "SA":
+            return "Sales"
+        if self.object.state == "SU":
+            return "Support"
+        if self.object.state == "MA":
+            return "Management"
 
     # METHODS for ACTION:
     def get_create_model_table(self):
