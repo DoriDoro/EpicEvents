@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import transaction
 
@@ -9,8 +8,6 @@ from cli.utils_tables import (
     create_model_table,
     create_pretty_table,
 )
-
-UserModel = get_user_model()
 
 
 class Command(EpicEventsCommand):
@@ -109,9 +106,11 @@ class Command(EpicEventsCommand):
         # overwrite self.update_fields to display all fields
         self.update_fields = ["email", "first_name", "last_name", "role"]
         self.update_table = []
+
         create_success_message("Employee", "updated")
-        super().display_changes()
+
         self.update_table.append([f"Email: ", self.object.user.email])
+        super().display_changes()
 
     def go_back(self):
         call_command("employee")
