@@ -30,6 +30,8 @@ class Command(EpicEventsCommand):
         create_queryset_table(table_data, "Email", "Events")
 
     def get_data(self):
+        self.display_input_title("Enter the details to create a new event:")
+
         return {
             "client": self.email_input("Client email"),
             "date": self.date_input("Date of the event [DD/MM/YYYY]"),

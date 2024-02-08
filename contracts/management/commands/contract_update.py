@@ -33,6 +33,8 @@ class Command(EpicEventsCommand):
 
     def get_requested_model(self):
         while True:
+            self.display_input_title("Enter details:")
+
             email = self.email_input("Email address")
             self.object = Contract.objects.filter(client__email=email).first()
 
@@ -55,6 +57,8 @@ class Command(EpicEventsCommand):
         create_pretty_table(contract_table, "Details of the Contract: ")
 
     def get_fields_to_update(self):
+        self.display_input_title("Enter choice:")
+
         self.fields_to_update = self.multiple_choice_str_input(
             ("E", "T", "A", "S"), "Your choice? [E, T, A, S]"
         )

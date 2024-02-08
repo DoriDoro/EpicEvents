@@ -24,6 +24,8 @@ class Command(EpicEventsCommand):
 
     def get_requested_model(self):
         while True:
+            self.display_input_title("Enter details:")
+
             email = self.email_input("Email address of client")
             self.object = Event.objects.filter(contract__client__email=email).first()
 
@@ -45,6 +47,8 @@ class Command(EpicEventsCommand):
         create_pretty_table(event_table, "Details of the Event: ")
 
     def get_data(self):
+        self.display_input_title("Enter choice:")
+
         return {
             "delete": self.choice_str_input(
                 ("Y", "N"), "Choice to delete [Y]es or [N]o"

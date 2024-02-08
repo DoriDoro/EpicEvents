@@ -30,6 +30,8 @@ class Command(EpicEventsCommand):
         create_queryset_table(table_data, "Email", "Client Emails from contracts")
 
     def get_data(self):
+        self.display_input_title("Enter details to create a new contract:")
+
         return {
             "client": self.email_input("Client email"),
             "employee": self.email_input("Employee email"),
