@@ -1,13 +1,15 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
 
+from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_menu import get_app_menu
 
 
-class Command(BaseCommand):
+class Command(EpicEventsCommand):
     help = "Menu for all operations around the events."
 
     def handle(self, *args, **options):
+        super().handle(*args, **options)
+
         choice = get_app_menu("event")
 
         if choice == 1:

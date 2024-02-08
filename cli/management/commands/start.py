@@ -1,13 +1,15 @@
-from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
+from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_menu import get_start_menu
 
 
-class Command(BaseCommand):
+class Command(EpicEventsCommand):
     help = "Start of the program."
 
     def handle(self, *args, **options):
+        super().handle(*args, **options)
+
         choice = get_start_menu("Epic Events")
 
         if choice == 1:
