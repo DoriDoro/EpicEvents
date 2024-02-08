@@ -21,6 +21,8 @@ class Command(EpicEventsCommand):
 
     def get_requested_model(self):
         while True:
+            self.display_input_title("Enter details:")
+
             email = self.email_input("Email address")
             self.object = Client.objects.filter(email=email).first()
 
@@ -40,6 +42,8 @@ class Command(EpicEventsCommand):
         create_pretty_table(client_table, "Details of the Client: ")
 
     def get_fields_to_update(self):
+        self.display_input_title("Enter choice:")
+
         self.fields_to_update = self.multiple_choice_str_input(
             ("E", "F", "L", "P", "C"), "Your choice? [E, F, L, P, C]"
         )

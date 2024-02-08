@@ -20,6 +20,8 @@ class Command(EpicEventsCommand):
         create_model_table(Employee, "user.email", "Employee Emails")
 
     def get_data(self):
+        self.display_input_title("Enter details to create an employee:")
+
         return {
             "email": self.email_input("Email address"),
             "password": self.password_input("Password"),

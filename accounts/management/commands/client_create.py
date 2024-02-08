@@ -17,6 +17,8 @@ class Command(EpicEventsCommand):
         create_model_table(Client, "email", "Client Emails")
 
     def get_data(self):
+        self.display_input_title("Enter details to create a client:")
+
         return {
             "email": self.email_input("Email address"),
             "first_name": self.text_input("First name"),
