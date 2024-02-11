@@ -66,6 +66,7 @@ def get_start_menu(title):
         3: "contracts",
         4: "events",
         5: "quit",
+        6: "logout",
     }
 
     title_headline = f"Welcome to {title}"
@@ -78,8 +79,10 @@ def get_start_menu(title):
     for key, choice in possible_choices.items():
         if choice == "quit":
             display_choices(key, "Quit program", color=RED)
+        if choice == "logout":
+            display_choices(key, "Logout", color=RED)
             display_new_line()
-        else:
+        if choice in ["employees", "clients", "contracts", "events"]:
             display_choices(key, f"Manage the {choice}")
 
     while True:

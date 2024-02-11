@@ -20,3 +20,6 @@ class Command(EpicEventsCommand):
             call_command("contract")
         if choice == 4:
             call_command("event")
+        if choice == 6:
+            self.logout()
+            return
