@@ -6,16 +6,17 @@ from django.core.management import BaseCommand, call_command
 from django.core.validators import validate_email
 from django.utils.timezone import make_aware
 
-from cli.utils_menu import BOLD, ENDC
+from cli.utils_menu import BOLD, ENDC, style_text_display, BLUE
 from cli.utils_messages import create_invalid_error_message
 from cli.utils_tables import create_pretty_table
+from cli.utils_token_mixin import JWTTokenMixin
 
 
-class EpicEventsCommand(BaseCommand):
+class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     help = "Custom BaseCommand"
     action = None
-    object = None
 
+    object = None
     update_fields = None
     fields_to_update = None
     available_fields = None
@@ -26,7 +27,7 @@ class EpicEventsCommand(BaseCommand):
         """handles text/string input"""
         if required:
             label = f"{label}*"
-        label = f"   {BOLD}{label}{ENDC}: "
+        label = f"{'':^5}{BOLD}{label}{ENDC}: "
 
         value = input(label)
         if required:
@@ -44,7 +45,7 @@ class EpicEventsCommand(BaseCommand):
         """handles number/int input"""
         if required:
             label = f"{label}*"
-        label = f"   {BOLD}{label}{ENDC}: "
+        label = f"{'':^5}{BOLD}{label}{ENDC}: "
 
         value = int(input(label))
         if required:
@@ -122,6 +123,10 @@ class EpicEventsCommand(BaseCommand):
         return value
 
     @classmethod
+    def display_input_title(cls, text):
+        style_text_display(f"{'':^3}{text} {'':^3}", color=BLUE, bold=True)
+
+    @classmethod
     def display_new_line(cls):
         print()
 
@@ -134,9 +139,9 @@ class EpicEventsCommand(BaseCommand):
     def check_role_value(self):
         if self.object.role == "SA":
             return "Sales"
-        if self.object.state == "SU":
+        if self.object.role == "SU":
             return "Support"
-        if self.object.state == "MA":
+        if self.object.role == "MA":
             return "Management"
 
     # METHODS for ACTION:
@@ -185,6 +190,7 @@ class EpicEventsCommand(BaseCommand):
     def go_back(self):
         pass
 
+    # METHODS FOR HANDLE:
     def create(self):
         self.get_create_model_table()
         validated_data = self.get_data()
@@ -213,6 +219,7 @@ class EpicEventsCommand(BaseCommand):
         self.go_back()
 
     def handle(self, *args, **options):
+        super().handle(*args, **options)
         if self.action == "CREATE":
             self.create()
         elif self.action == "UPDATE":
