@@ -2,6 +2,7 @@ from django.core.management import call_command
 
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_menu import get_start_menu
+from cli.utils_messages import create_info_message
 
 
 class Command(EpicEventsCommand):
@@ -22,5 +23,5 @@ class Command(EpicEventsCommand):
             call_command("event")
         if choice == 6:
             self.logout()
-            self.stdout.write(" Logging out...")
+            create_info_message("Logging out...")
             return
