@@ -22,4 +22,5 @@ class Command(EpicEventsCommand):
             call_command("event")
         if choice == 6:
             self.logout()
+            self.stdout.write(" Logging out...")
             return

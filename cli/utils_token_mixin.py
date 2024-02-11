@@ -1,9 +1,10 @@
+import os
+
 import jwt
 import datetime
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
-from django.core.management import call_command
 
 from cli.utils_messages import (
     create_invalid_error_message,
@@ -89,7 +90,12 @@ class JWTTokenMixin:
             self.login()
 
     def handle(self, *args, **options):
-        # self.logout()
-        with open(settings.JWT_PATH, "r") as file:
+        file_path = settings.JWT_PATH  # 'cli/token.txt'
+
+        if not os.path.isfile(file_path):
+            with open(file_path, "x") as file:
+                pass
+
+        with open(file_path, "r") as file:
             self.token = file.read()
             self.get_user()
