@@ -36,15 +36,12 @@ class Command(EpicEventsCommand):
                 create_invalid_error_message("email")
 
         self.stdout.write()
-
-        state_value = self.check_state_value()
-
         contract_table = [
             ["Client: ", self.object.client.email],
             ["Employee: ", self.object.employee.user.email],
             ["Total costs: ", self.object.total_costs],
             ["Amount paid: ", self.object.amount_paid],
-            ["State: ", state_value],
+            ["State: ", self.object.get_state_display()],
         ]
         create_pretty_table(contract_table, "Details of the Contract: ")
 
