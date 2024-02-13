@@ -82,6 +82,12 @@ class Employee(models.Model):
 
 
 class Client(models.Model):
+    employee = models.ForeignKey(
+        "accounts.Employee",
+        on_delete=models.CASCADE,
+        related_name="client_employee",
+        verbose_name=_("employee"),
+    )
     email = models.EmailField(
         max_length=254, unique=True, verbose_name=_("email address")
     )
