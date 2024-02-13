@@ -39,8 +39,9 @@ class Command(EpicEventsCommand):
         contract_table = [
             ["Client: ", self.object.client.email],
             ["Employee: ", self.object.employee.user.email],
-            ["Total costs: ", self.object.total_costs],
-            ["Amount paid: ", self.object.amount_paid],
+            ["Total costs: ", self.object.total],
+            ["Amount paid: ", self.object.paid_amount],
+            ["Rest amount: ", self.object.rest_amount],
             ["State: ", self.object.get_state_display()],
         ]
         create_pretty_table(contract_table, "Details of the Contract: ")

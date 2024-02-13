@@ -47,8 +47,9 @@ class Command(EpicEventsCommand):
         contract_table = [
             ["Client: ", self.object.client.email],
             ["[E]mployee: ", self.object.employee.user.email],
-            ["[T]otal costs in €: ", self.object.total_costs],
-            ["[A]mount paid in €: ", self.object.amount_paid],
+            ["[T]otal costs: ", self.object.total],
+            ["[A]mount paid: ", self.object.paid_amount],
+            ["Rest amount: ", self.object.rest_amount],
             ["[S]tate: ", self.object.get_state_display()],
         ]
         create_pretty_table(contract_table, "Details of the Contract: ")
@@ -68,12 +69,12 @@ class Command(EpicEventsCommand):
                 "label": "employee_email",
             },
             "T": {
-                "method": self.int_input,
+                "method": self.decimal_input,
                 "params": {"label": "Total amount"},
                 "label": "total_costs",
             },
             "A": {
-                "method": self.int_input,
+                "method": self.decimal_input,
                 "params": {"label": "Amount paid"},
                 "label": "amount_paid",
             },
@@ -118,8 +119,9 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = [
-            "total_costs",
-            "amount_paid",
+            "total",
+            "paid_amount",
+            "rest_amount",
             "state",
         ]
 
