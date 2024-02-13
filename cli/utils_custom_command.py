@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -7,7 +8,9 @@ from django.core.validators import validate_email
 from django.utils.timezone import make_aware
 
 from cli.utils_menu import BOLD, ENDC, style_text_display, BLUE
-from cli.utils_messages import create_invalid_error_message
+from cli.utils_messages import (
+    create_invalid_error_message,
+)
 from cli.utils_tables import create_pretty_table
 from cli.utils_token_mixin import JWTTokenMixin
 
@@ -52,6 +55,24 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             while not value:
                 print("Invalid input! Number input.")
                 value = int(input(label))
+
+        return value
+
+    @classmethod
+    def decimal_input(cls, label, required=True):
+        """handles number/int input"""
+        if required:
+            label = f"{label}*"
+        label = f"{'':^5}{BOLD}{label}{ENDC}: "
+
+        value = input(label)
+
+        if required:
+            try:
+                value = Decimal(value)
+            except InvalidOperation:
+                print("Invalid input! Decimal input.")
+                value = input(label)
 
         return value
 
@@ -126,25 +147,10 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     def display_input_title(cls, text):
         style_text_display(f"{'':^3}{text} {'':^3}", color=BLUE, bold=True)
 
-    @classmethod
-    def display_new_line(cls):
+    def display_new_line(self):
         print()
 
-    def check_state_value(self):
-        if self.object.state == "S":
-            return "Signed"
-        if self.object.state == "D":
-            return "Draft"
-
-    def check_role_value(self):
-        if self.object.role == "SA":
-            return "Sales"
-        if self.object.role == "SU":
-            return "Support"
-        if self.object.role == "MA":
-            return "Management"
-
-    # METHODS for ACTION:
+    # METHODS FOR ACTION:
     def get_create_model_table(self):
         pass
 
@@ -169,18 +175,11 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         for field in self.update_fields:
             if hasattr(self.object, field):
                 field_item = getattr(self.object, field)
-                if field_item in ["SA", "SU", "MA"]:
-                    if field_item == "SA":
-                        field_item = "Sales"
-                    if field_item == "SU":
-                        field_item = "Support"
-                    if field_item == "MA":
-                        field_item = "Management"
-                if field_item in ["S", "D"]:
-                    if field_item == "S":
-                        field_item = "Signed"
-                    if field_item == "D":
-                        field_item = "Draft"
+
+                # Check if the field has choices and get the display value if available
+                if hasattr(self.object, f"get_{field}_display"):
+                    field_item = getattr(self.object, f"get_{field}_display")()
+
                 field = field.replace("_", " ")
                 self.update_table.append([f"{field.capitalize()}: ", field_item])
 
