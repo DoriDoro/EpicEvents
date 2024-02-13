@@ -1,18 +1,26 @@
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
-from cli.utils_messages import create_success_message, create_invalid_error_message
+from cli.utils_messages import (
+    create_success_message,
+    create_invalid_error_message,
+    create_error_message,
+)
 from cli.utils_tables import (
     create_model_table,
     create_pretty_table,
 )
 
+UserModel = get_user_model()
+
 
 class Command(EpicEventsCommand):
     help = "Prompts to update an employee."
     action = "UPDATE"
+    permissions = ["MA"]
 
     update_fields = list()
     update_table = list()
@@ -96,10 +104,15 @@ class Command(EpicEventsCommand):
     # with transaction.atomic both will be canceled
     def make_changes(self, data):
         email = data.pop("email", None)
+
         if email:
-            user = self.object.user
-            user.email = email
-            user.save()
+            if UserModel.objects.filter(email=email).exists():
+                create_error_message("This email")
+                call_command("employee_update")
+            else:
+                user = self.object.user
+                user.email = email
+                user.save()
 
         Employee.objects.filter(user=self.object.user).update(**data)
 
