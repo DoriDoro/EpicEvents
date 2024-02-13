@@ -10,6 +10,7 @@ from cli.utils_tables import create_model_table
 class Command(EpicEventsCommand):
     help = "Prompts for details to create a new client."
     action = "CREATE"
+    permissions = ["SA"]
 
     update_table = list()
 

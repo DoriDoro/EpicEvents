@@ -14,6 +14,7 @@ from contracts.models import Contract
 class Command(EpicEventsCommand):
     help = "Prompts for details to create a new contract."
     action = "CREATE"
+    permissions = ["MA"]
 
     update_table = list()
 

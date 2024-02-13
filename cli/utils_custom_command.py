@@ -19,6 +19,7 @@ from cli.utils_token_mixin import JWTTokenMixin
 class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     help = "Custom BaseCommand"
     action = None
+    permissions = None
 
     object = None
     update_fields = None
@@ -225,6 +226,10 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     def handle(self, *args, **options):
         super().handle(*args, **options)
+
+        if self.user.employee_users.role not in self.permissions:
+            create_permission_denied_message()
+            return
 
         if self.action == "LIST":
             self.list()

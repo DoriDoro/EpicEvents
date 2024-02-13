@@ -9,6 +9,7 @@ from cli.utils_tables import create_model_table, create_pretty_table
 class Command(EpicEventsCommand):
     help = "Delete an employee."
     action = "DELETE"
+    permissions = ["MA"]
 
     def get_create_model_table(self):
         create_model_table(Employee, "user.email", "Employee Emails")

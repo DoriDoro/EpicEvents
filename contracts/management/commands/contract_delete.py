@@ -12,6 +12,7 @@ from contracts.models import Contract
 class Command(EpicEventsCommand):
     help = "Prompts for details to delete a contract."
     action = "DELETE"
+    permissions = ["MA"]
 
     def get_create_model_table(self):
         table_data = dict()

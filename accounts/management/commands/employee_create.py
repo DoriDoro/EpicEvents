@@ -13,7 +13,9 @@ UserModel = get_user_model()
 class Command(EpicEventsCommand):
     help = "Prompts to create a new employee."
     action = "CREATE"
+    permissions = ["MA"]
 
+    update_fields = list()
     update_table = list()
 
     def get_create_model_table(self):
