@@ -29,7 +29,9 @@ class Command(EpicEventsCommand):
 
     def make_changes(self, data):
         try:
-            self.object = Client.objects.create(**data)
+            self.object = Client.objects.create(
+                employee=self.user.employee_users, **data
+            )
         except IntegrityError:
             create_error_message("Email")
             call_command("client_create")
