@@ -31,7 +31,7 @@ def create_does_not_exists_message(text):
     print()
 
 
-def create_permission_denied_message(text):
+def create_permission_denied_message():
     print()
     style_text_display(f"{'':^2} Permission denied !", color=RED, bold=True)
     print()

@@ -98,10 +98,11 @@ def get_start_menu(title):
 
 def get_app_menu(app):
     possible_choices = {
-        1: "Create",
-        2: "Update",
-        3: "Delete",
-        4: "quit",
+        1: "List",
+        2: "Create",
+        3: "Update",
+        4: "Delete",
+        5: "quit",
     }
     app_capitalized = app.title()
 
