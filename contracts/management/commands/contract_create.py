@@ -35,8 +35,8 @@ class Command(EpicEventsCommand):
         return {
             "client": self.email_input("Client email"),
             "employee": self.email_input("Employee email"),
-            "total_costs": self.int_input("Amount of contract"),
-            "amount_paid": self.int_input("Paid amount"),
+            "total_costs": self.decimal_input("Amount of contract"),
+            "amount_paid": self.decimal_input("Paid amount"),
             "state": self.choice_str_input(("S", "D"), "State [S]igned or [D]raft"),
         }
 
@@ -80,8 +80,9 @@ class Command(EpicEventsCommand):
 
     def display_changes(self):
         self.update_fields = [
-            "total_costs",
-            "amount_paid",
+            "total",
+            "paid_amount",
+            "rest_amount",
             "state",
         ]
 
