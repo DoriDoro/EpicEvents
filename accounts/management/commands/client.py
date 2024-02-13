@@ -6,6 +6,7 @@ from cli.utils_menu import get_app_menu
 
 class Command(EpicEventsCommand):
     help = "Menu for all operations around the clients."
+    permissions = ["SA", "SU", "MA"]
 
     def handle(self, *args, **options):
         super().handle(*args, **options)
@@ -13,10 +14,12 @@ class Command(EpicEventsCommand):
         choice = get_app_menu("client")
 
         if choice == 1:
-            call_command("client_create")
+            call_command("client_list")
         if choice == 2:
-            call_command("client_update")
+            call_command("client_create")
         if choice == 3:
-            call_command("client_delete")
+            call_command("client_update")
         if choice == 4:
+            call_command("client_delete")
+        if choice == 5:
             call_command("start")

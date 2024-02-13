@@ -7,6 +7,7 @@ from cli.utils_messages import create_info_message
 
 class Command(EpicEventsCommand):
     help = "Start of the program."
+    permissions = ["SA", "SU", "MA"]
 
     def handle(self, *args, **options):
         super().handle(*args, **options)

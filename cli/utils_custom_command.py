@@ -10,6 +10,7 @@ from django.utils.timezone import make_aware
 from cli.utils_menu import BOLD, ENDC, style_text_display, BLUE
 from cli.utils_messages import (
     create_invalid_error_message,
+    create_permission_denied_message,
 )
 from cli.utils_tables import create_pretty_table
 from cli.utils_token_mixin import JWTTokenMixin
@@ -190,6 +191,11 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         pass
 
     # METHODS FOR HANDLE:
+
+    def list(self):
+        self.get_create_model_table()
+        self.go_back()
+
     def create(self):
         self.get_create_model_table()
         validated_data = self.get_data()
@@ -219,7 +225,10 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     def handle(self, *args, **options):
         super().handle(*args, **options)
-        if self.action == "CREATE":
+
+        if self.action == "LIST":
+            self.list()
+        elif self.action == "CREATE":
             self.create()
         elif self.action == "UPDATE":
             self.update()
