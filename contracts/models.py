@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -33,4 +35,20 @@ class Contract(models.Model):
         max_length=1, choices=STATE_CHOICES, default=DRAFT, verbose_name=_("state")
     )
 
-    # TODO: add amount_paid as attribute and amount_remaining as property
+    @property
+    def total(self):
+        return f"{self.total_costs} €"
+
+    @property
+    def paid_amount(self):
+        return f"{self.amount_paid} €"
+
+    @property
+    def rest_amount(self):
+        # Convert the fields to Decimal before performing the calculation
+        total_costs_decimal = Decimal(str(self.total_costs))
+        amount_paid_decimal = Decimal(str(self.amount_paid))
+
+        rest_amount = total_costs_decimal - amount_paid_decimal
+
+        return f"{rest_amount} €"
