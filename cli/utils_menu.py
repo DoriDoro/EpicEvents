@@ -7,35 +7,39 @@ MAGENTA = "\033[35m"
 CYAN = "\033[36m"
 WHITE = "\033[37m"
 
-BG_BLACK = "\033[40m"
-BG_RED = "\033[41m"
-BG_GREEN = "\033[42m"
-BG_YELLOW = "\033[43m"
-BG_BLUE = "\033[44m"
-BG_MAGENTA = "\033[45m"
-BG_CYAN = "\033[46m"
-BG_WHITE = "\033[47m"
-
 BOLD = "\033[1m"
 UNDERLINE = "\033[4m"
 
-ENDC = "\033[0m"
+ENDC = "\033[0m"  # to reset the style coded before
 
 
-def style_text_display(
-    text, color=ENDC, background=None, bold=False, underline=False, end="\n"
-):
+def style_text_display(text, color=ENDC, bold=False, underline=False, end="\n"):
+    """
+    Styles the provided text with the specified color
+    and/or boldness and/or underlines and prints it.
+
+    Args:
+        text (str): The text to be styled and displayed.
+        color (str, optional): The color to apply to the text. Defaults to None.
+        bold (bool, optional): Whether to apply bold formatting to the text. Defaults to False.
+        underline (bool, optional): To underline the text. Defaults to False.
+        end (str): Defines the spaces or non-spaces for the print-statement. Default is linebreak.
+    """
     style = f"{color}"
     if bold:
         style += f"{BOLD}"
     if underline:
         style += f"{UNDERLINE}"
-    if background:
-        style += f"{background}"
     print(f"{style}{text}{ENDC}", end=end)  # {ENDC} resets the color
 
 
 def _display_menu_headline(text):
+    """
+    PRIVATE FUNCTION, which styles the headline of the main menu.
+
+    Args:
+        text (str): The text will be the headline of the main menu.
+    """
     style_text_display(
         f"{'':^2}** {text} **{'':^2}",
         color=MAGENTA,
@@ -46,44 +50,73 @@ def _display_menu_headline(text):
 
 
 def _display_menu_title(text):
+    """
+    PRIVATE FUNCTION, which styles the title of the menu.
+
+    Args:
+        text (str): The text will be the title of the menu.
+    """
     style_text_display(f"{'':^3}*** {text} ***{'':^3}", color=CYAN, bold=True)
 
 
 def display_choices(option, text, color=BLUE):
-    """choice is [1] Manage the ..."""
+    """display the possible choices with information to choose in menu.
+        exm: [1] Manage the employees ([option] text)
+    Args:
+        option (int): Int-value which is defined in the menu-function, beginning from 0. exp: [1].
+        text (str): After the option value, there is a text as information, to choose.
+        color (str, optional): The color of the option can be set. Default is Blue.
+    """
     style_text_display(f"{'':^4}[{option}] ", color=color, bold=True, end="")
     style_text_display(f"{text}", bold=True)
 
 
 def display_new_line():
+    """Displays a new line."""
     print()
 
 
+def _create_menu_choices(menu_choices):
+    """creates the menu choices.
+    Args:
+        menu_choices (dict): contains the choices the user has.
+    """
+    for key, choice_desc in menu_choices.items():
+        if isinstance(choice_desc, list) and len(choice_desc) == 2:
+            choice_key, choice_text = choice_desc
+            display_choices(key, choice_text, color=RED)
+        else:
+            display_choices(key, f"Manage the {choice_desc}")
+    display_new_line()
+
+
 def get_start_menu(title):
+    # TODO: menu for SA, SU and MA in addition for the permissions
+    """
+    Displays the start menu and prompts the user for input.
+
+    Args:
+        title (str): The title of the menu.
+
+    Returns:
+        int: The user's choice.
+
+    Raises:
+        ValueError: If the user enters a choice that is not an integer or not in the available choices.
+    """
     possible_choices = {
         1: "employees",
         2: "clients",
         3: "contracts",
         4: "events",
-        5: "quit",
-        6: "logout",
+        5: ["quit", "Quit program"],
+        6: ["logout", "Logout"],
     }
 
-    title_headline = f"Welcome to {title}"
-    text_title = f"{title} Menu"
+    _display_menu_headline(f"Welcome to {title}")
+    _display_menu_title(f"{title} Menu")
 
-    _display_menu_headline(title_headline)
-
-    _display_menu_title(text_title)
-
-    for key, choice in possible_choices.items():
-        if choice == "quit":
-            display_choices(key, "Quit program", color=RED)
-        if choice == "logout":
-            display_choices(key, "Logout", color=RED)
-            display_new_line()
-        if choice in ["employees", "clients", "contracts", "events"]:
-            display_choices(key, f"Manage the {choice}")
+    _create_menu_choices(possible_choices)
 
     while True:
         try:
@@ -97,12 +130,24 @@ def get_start_menu(title):
 
 
 def get_app_menu(app):
+    """
+    Displays the menu and prompts the user for input.
+
+    Args:
+        app (str): The title of the menu.
+
+    Returns:
+        int: The user's choice.
+
+    Raises:
+        ValueError: If the user enters a choice that is not an integer or not in the available choices.
+    """
     possible_choices = {
         1: "List",
         2: "Create",
         3: "Update",
         4: "Delete",
-        5: "quit",
+        5: ["quit", "Go back to Main Menu"],
     }
     app_capitalized = app.title()
 
@@ -110,12 +155,7 @@ def get_app_menu(app):
 
     _display_menu_title(f"{app_capitalized} Menu")
 
-    for key, choice in possible_choices.items():
-        if choice == "quit":
-            display_choices(key, "Go back to Main Menu", color=RED)
-            display_new_line()
-        else:
-            display_choices(key, f"{choice} an {app}")
+    _create_menu_choices(possible_choices)
 
     while True:
         try:
