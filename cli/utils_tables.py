@@ -8,11 +8,18 @@ def display_table_title(text):
     style_text_display(f"{'':^3}{text} {'':^3}", color=CYAN, bold=True)
 
 
-def create_pretty_table(table_list, title=None):
+def create_pretty_table(table_list, title=None, headers=None):
     """creates a table with library tabulate in style='pretty'"""
 
     if title:
         display_table_title(title)
+
+    if headers is not None:
+        table = tabulate(table_list, headers=headers, tablefmt="pretty")
+        indented_table = "\n".join("   " + line for line in table.split("\n"))
+        print(indented_table)
+        display_new_line()
+        return
 
     table = tabulate(table_list, tablefmt="pretty")
     indented_table = "\n".join("   " + line for line in table.split("\n"))
@@ -57,13 +64,23 @@ def create_model_table(model, column_label, title):
         create_info_message("Nothing there!")
 
 
-def create_queryset_table(queryset, label, title):
-    all_items_list = list()
-    if queryset:
-        for item in queryset.values():
-            item_table = [label + ": ", item]
-            all_items_list.append(item_table)
+def create_queryset_table(queryset, title, label=None, headers=None):
+    all_items_list = []
 
-        create_pretty_table(all_items_list, f"All {title}: ")
+    if queryset:
+        if label is not None:
+            for item in queryset.values():
+                item_table = [label + ": ", item]
+                all_items_list.append(item_table)
+            create_pretty_table(all_items_list, f"All {title}: ")
+
+        if headers is not None:
+            for key, values in queryset.items():
+                item_table = [f"{key}: "]
+                for value in values.values():
+                    item_table.append(value)
+                all_items_list.append(item_table)
+            create_pretty_table(all_items_list, headers=headers, title=f"All {title}: ")
+
     else:
         create_info_message("Nothing there!")
