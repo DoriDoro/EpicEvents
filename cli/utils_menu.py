@@ -59,8 +59,9 @@ def _display_menu_title(text):
     style_text_display(f"{'':^3}*** {text} ***{'':^3}", color=CYAN, bold=True)
 
 
-def display_choices(option, text, color=BLUE):
-    """display the possible choices with information to choose in menu.
+def _display_choices(option, text, color=BLUE):
+    """
+    PRIVATE FUNCTION, display the possible choices with information to choose in menu.
         exm: [1] Manage the employees ([option] text)
     Args:
         option (int): Int-value which is defined in the menu-function, beginning from 0. exp: [1].
@@ -76,22 +77,38 @@ def display_new_line():
     print()
 
 
-def _create_menu_choices(menu_choices):
-    """creates the menu choices.
+def _create_start_menu_choices(menu_choices):
+    """creates the menu choices for the start menu.
     Args:
         menu_choices (dict): contains the choices the user has.
     """
+
     for key, choice_desc in menu_choices.items():
         if isinstance(choice_desc, list) and len(choice_desc) == 2:
             choice_key, choice_text = choice_desc
-            display_choices(key, choice_text, color=RED)
+            _display_choices(key, choice_text, color=RED)
         else:
-            display_choices(key, f"Manage the {choice_desc}")
+            _display_choices(key, f"Manage the {choice_desc}")
+    display_new_line()
+
+
+def _create_menu_choices(menu_choices, app):
+    """creates the menu choices.
+    Args:
+        menu_choices (dict): contains the choices the user has.
+        app (str): to determine to display the choices in a different manner.
+    """
+
+    for key, choice_desc in menu_choices.items():
+        if isinstance(choice_desc, list) and len(choice_desc) == 2:
+            choice_key, choice_text = choice_desc
+            _display_choices(key, choice_text, color=RED)
+        else:
+            _display_choices(key, f"{choice_desc} {app}")
     display_new_line()
 
 
 def get_start_menu(title):
-    # TODO: menu for SA, SU and MA in addition for the permissions
     """
     Displays the start menu and prompts the user for input.
 
@@ -116,7 +133,7 @@ def get_start_menu(title):
     _display_menu_headline(f"Welcome to {title}")
     _display_menu_title(f"{title} Menu")
 
-    _create_menu_choices(possible_choices)
+    _create_start_menu_choices(possible_choices)
 
     while True:
         try:
@@ -130,6 +147,8 @@ def get_start_menu(title):
 
 
 def get_app_menu(app):
+    # TODO: menu for SA, SU and MA in addition for the permissions
+
     """
     Displays the menu and prompts the user for input.
 
@@ -155,7 +174,7 @@ def get_app_menu(app):
 
     _display_menu_title(f"{app_capitalized} Menu")
 
-    _create_menu_choices(possible_choices)
+    _create_menu_choices(possible_choices, app)
 
     while True:
         try:
