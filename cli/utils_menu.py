@@ -166,7 +166,8 @@ def get_app_menu(app):
         2: "Create",
         3: "Update",
         4: "Delete",
-        5: ["quit", "Go back to Main Menu"],
+        5: "Filter",
+        6: ["quit", "Go back to Main Menu"],
     }
     app_capitalized = app.title()
 

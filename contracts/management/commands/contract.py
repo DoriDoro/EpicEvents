@@ -22,4 +22,6 @@ class Command(EpicEventsCommand):
         if choice == 4:
             call_command("contract_delete")
         if choice == 5:
+            call_command("contract_filter")
+        if choice == 6:
             call_command("start")
