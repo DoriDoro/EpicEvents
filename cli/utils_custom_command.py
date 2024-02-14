@@ -21,11 +21,13 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     action = None
     permissions = None
 
-    object = None
-    update_fields = None
-    fields_to_update = None
-    available_fields = None
-    update_table = None
+    def __init__(self, *args, **options):
+        super().__init__(*args, **options)
+        self.object = None
+        self.update_fields = list()
+        self.fields_to_update = tuple()
+        self.available_fields = dict()
+        self.update_table = list()
 
     @classmethod
     def text_input(cls, label, required=True):
@@ -229,6 +231,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
         if self.user.employee_users.role not in self.permissions:
             create_permission_denied_message()
+            call_command("start")
             return
 
         if self.action == "LIST":
