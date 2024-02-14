@@ -5,26 +5,45 @@ from cli.utils_menu import get_start_menu
 from cli.utils_messages import create_info_message
 
 
-class Command(EpicEventsCommand):
-    help = "Start of the program."
+class StartProgramCommand(EpicEventsCommand):
+    """
+    Command to start the Epic Events program.
+
+    This command displays the start menu of the Epic Events program and allows users
+    with appropriate permissions to navigate to different sections of the program.
+
+    Permissions for Employees with role:
+        - SA: Sales
+        - SU: Support
+        - MA: Management
+    """
+
+    help = "Start the Epic Events program."
+
     permissions = ["SA", "SU", "MA"]
 
     def handle(self, *args, **options):
+        """
+        Handle the command execution.
+
+        Displays the start menu and handles user input to navigate to different sections
+        of the Epic Events program.
+        """
         super().handle(*args, **options)
 
         choice = get_start_menu("Epic Events")
 
         if choice == 1:
             call_command("employee")
-        if choice == 2:
+        elif choice == 2:
             call_command("client")
-        if choice == 3:
+        elif choice == 3:
             call_command("contract")
-        if choice == 4:
+        elif choice == 4:
             call_command("event")
-        if choice == 5:
+        elif choice == 5:
             return
-        if choice == 6:
+        elif choice == 6:
             self.logout()
             create_info_message("Logging out...")
             return
