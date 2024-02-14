@@ -32,13 +32,13 @@ def create_invalid_error_message(text):
     print()
 
 
-def create_expired_error_message(text):
-    """Displays an expired message.
+def create_token_error_message(text):
+    """Displays a message that there is a problem with the token.
     Args:
-        text (str): The text will specify what is expired.
+        text (str): The text is the message.
     """
     print()
-    style_text_display(f"{'':^2} {text} expired !", color=RED, bold=True)
+    style_text_display(f"{'':^2} {text}", color=RED, bold=True)
     print()
 
 
