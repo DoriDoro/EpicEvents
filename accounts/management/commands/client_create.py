@@ -12,8 +12,6 @@ class Command(EpicEventsCommand):
     action = "CREATE"
     permissions = ["SA"]
 
-    update_table = list()
-
     def get_create_model_table(self):
         create_model_table(Client, "email", "Client Emails")
 

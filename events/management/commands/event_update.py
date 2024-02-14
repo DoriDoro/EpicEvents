@@ -18,9 +18,6 @@ class Command(EpicEventsCommand):
     help = "Prompts for details to update an event"
     action = "UPDATE"
 
-    update_fields = list()
-    update_table = list()
-
     def get_create_model_table(self):
         table_data = dict()
 

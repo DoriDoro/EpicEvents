@@ -13,9 +13,6 @@ class Command(EpicEventsCommand):
     help = "Prompts for details to to update a client."
     action = "UPDATE"
 
-    update_fields = list()
-    update_table = list()
-
     def get_create_model_table(self):
         create_model_table(Client, "email", "Client Emails")
 
