@@ -49,9 +49,11 @@ class JWTTokenMixin:
             return True
         except jwt.ExpiredSignatureError:
             self.login()
+            self.get_user()
             return
         except jwt.InvalidTokenError:
             self.login()
+            self.get_user()
             return
 
     def get_user(self):
