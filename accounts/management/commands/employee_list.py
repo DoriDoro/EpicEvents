@@ -6,6 +6,18 @@ from cli.utils_tables import create_queryset_table
 
 
 class Command(EpicEventsCommand):
+    """
+    Command to list all Employees.
+
+    This command displays all Employees with get_create_model_table, finish the command and
+    goes back to the employee menu.
+
+    Permissions for Employees with role:
+        - SA: Sales
+        - SU: Support
+        - MA: Management
+    """
+
     help = "Lists all employees."
     action = "LIST"
     permissions = ["SA", "SU", "MA"]
@@ -14,18 +26,17 @@ class Command(EpicEventsCommand):
         table_data = dict()
 
         queryset = Employee.objects.select_related("user").all()
-        headers = ["", "email", "first name", "last name", "role"]
+        headers = ["", "email", "name", "role"]
 
         for employee in queryset:
             employee_data = {
                 "email": employee.user.email,
-                "first_name": employee.first_name,
-                "last_name": employee.last_name,
+                "name": employee.get_full_name,
                 "role": employee.role,
             }
             table_data[f"Employee {employee.id}"] = employee_data
 
-        create_queryset_table(table_data, "Test", headers=headers)
+        create_queryset_table(table_data, "Employees", headers=headers)
 
     def go_back(self):
         call_command("employee")

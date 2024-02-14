@@ -71,14 +71,16 @@ class Employee(models.Model):
     last_name = models.CharField(max_length=100, verbose_name=_("last name"))
     role = models.CharField(max_length=2, choices=ROLE_CHOICES, verbose_name=_("role"))
 
+    @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    # def get_email_address(self):
-    #     return self.user.email
+    @property
+    def get_email_address(self):
+        return self.user.email
 
     def __str__(self):
-        return self.get_full_name()
+        return self.get_full_name
 
 
 class Client(models.Model):
@@ -98,11 +100,13 @@ class Client(models.Model):
     last_update = models.DateTimeField(auto_now=True, verbose_name=_("last updated on"))
     company_name = models.CharField(max_length=200, verbose_name=_("company name"))
 
+    @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    # def get_email_address(self):
-    #     return self.user.email
+    @property
+    def get_email_address(self):
+        return self.employee.user.email
 
     def __str__(self):
-        return self.get_full_name()
+        return self.get_full_name

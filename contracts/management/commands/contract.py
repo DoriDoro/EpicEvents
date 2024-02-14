@@ -6,7 +6,7 @@ from cli.utils_menu import get_app_menu
 
 class Command(EpicEventsCommand):
     help = "Menu for all operations around the contracts."
-    permissions = ["MA"]
+    permissions = ["SA", "SU", "MA"]
 
     def handle(self, *args, **options):
         super().handle(*args, **options)

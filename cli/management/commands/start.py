@@ -5,7 +5,7 @@ from cli.utils_menu import get_start_menu
 from cli.utils_messages import create_info_message
 
 
-class StartProgramCommand(EpicEventsCommand):
+class Command(EpicEventsCommand):
     """
     Command to start the Epic Events program.
 
