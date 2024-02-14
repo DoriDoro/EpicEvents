@@ -27,7 +27,7 @@ class Command(EpicEventsCommand):
         for contract in queryset:
             table_data[contract.client.id] = contract.client.email
 
-        create_queryset_table(table_data, "Email", "Client Emails from contracts")
+        create_queryset_table(table_data, "Client Emails from contracts", "Email")
 
     def get_requested_model(self):
         while True:

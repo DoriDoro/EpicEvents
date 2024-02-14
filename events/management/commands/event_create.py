@@ -25,7 +25,7 @@ class Command(EpicEventsCommand):
         for event in queryset:
             table_data[event.contract.client.id] = event.contract.client.email
 
-        create_queryset_table(table_data, "Email", "Events")
+        create_queryset_table(table_data, "Events", "Email")
 
     def get_data(self):
         self.display_input_title("Enter the details to create a new event:")
