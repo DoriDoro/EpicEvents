@@ -54,9 +54,6 @@ def create_model_table(model, column_label, title):
         column_label (str): Label of the column to display.
         title (str): Title for the table.
     """
-    if not hasattr(model, column_label):
-        create_info_message(f"Invalid column label: {column_label}")
-        return
 
     all_items = model.objects.all()
     all_items_list = []
