@@ -62,7 +62,7 @@ class Command(EpicEventsCommand):
             self.stdout.write()
             call_command("event")
 
-    def display_changes(self):
+    def collect_changes(self):
         create_success_message("Event", "deleted")
 
     def go_back(self):

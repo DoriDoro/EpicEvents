@@ -15,6 +15,7 @@ from events.models import Event
 class Command(EpicEventsCommand):
     help = "Prompts for details to create a new event"
     action = "CREATE"
+    permissions = ["SA", "SU", "MA"]
 
     def get_create_model_table(self):
         table_data = dict()
@@ -74,7 +75,7 @@ class Command(EpicEventsCommand):
             **data,
         )
 
-    def display_changes(self):
+    def collect_changes(self):
         self.update_fields = ["name", "location", "max_guests", "notes"]
 
         create_success_message("Event", "created")
@@ -82,7 +83,7 @@ class Command(EpicEventsCommand):
         self.update_table.append([f"Client: ", self.object.contract.client.email])
         self.update_table.append([f"Employee: ", self.object.employee.user.email])
         self.update_table.append([f"Date: ", self.object.date.strftime("%d/%m/%Y")])
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("event")

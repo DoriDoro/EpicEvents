@@ -96,7 +96,7 @@ class Command(EpicEventsCommand):
 
         return self.object
 
-    def display_changes(self):
+    def collect_changes(self):
         # overwrite self.update_fields to display all fields
         self.update_fields = [
             "email",
@@ -107,7 +107,7 @@ class Command(EpicEventsCommand):
         ]
 
         create_success_message("Client", "updated")
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("client")

@@ -35,7 +35,7 @@ class Command(EpicEventsCommand):
             create_error_message("Email")
             call_command("client_create")
 
-    def display_changes(self):
+    def collect_changes(self):
         self.update_fields = [
             "email",
             "first_name",
@@ -45,7 +45,7 @@ class Command(EpicEventsCommand):
         ]
 
         create_success_message("Client", "created")
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("client")

@@ -77,7 +77,7 @@ class Command(EpicEventsCommand):
             **data,
         )
 
-    def display_changes(self):
+    def collect_changes(self):
         self.update_fields = [
             "total",
             "paid_amount",
@@ -88,7 +88,7 @@ class Command(EpicEventsCommand):
         create_success_message("Contract", "created")
         self.update_table.append([f"Client: ", self.object.client.email])
         self.update_table.append([f"Employee: ", self.object.employee.user.email])
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("contract")

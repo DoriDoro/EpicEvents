@@ -126,7 +126,7 @@ class Command(EpicEventsCommand):
 
         return self.object
 
-    def display_changes(self):
+    def collect_changes(self):
         self.update_fields = ["name", "location", "max_guests", "notes"]
 
         create_success_message("Event", "created")
@@ -134,7 +134,7 @@ class Command(EpicEventsCommand):
         self.update_table.append([f"Client: ", self.object.contract.client.email])
         self.update_table.append([f"Employee: ", self.object.employee.user.email])
         self.update_table.append([f"Date: ", self.object.date.strftime("%d/%m/%Y")])
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("event")

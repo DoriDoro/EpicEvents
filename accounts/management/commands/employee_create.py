@@ -43,12 +43,12 @@ class Command(EpicEventsCommand):
             create_error_message("Email")
             call_command("employee_create")
 
-    def display_changes(self):
+    def collect_changes(self):
         self.update_fields = ["email", "first_name", "last_name", "role"]
 
         create_success_message("Employee", "created")
         self.update_table.append([f"Email: ", self.object.user.email])
-        super().display_changes()
+        super().collect_changes()
 
     def go_back(self):
         call_command("employee")
