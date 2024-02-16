@@ -17,14 +17,43 @@ from cli.utils_token_mixin import JWTTokenMixin
 
 
 class EpicEventsCommand(JWTTokenMixin, BaseCommand):
-    help = "Custom BaseCommand"
+    """
+    Custom management command for handling epic events.
+
+    Class attributes:
+        action (str): The action to perform (LIST, CREATE, UPDATE, DELETE).
+        permissions (str): The role required to access the command.
+
+    Instance attributes:
+        object (Any): The object to be manipulated by the command.
+        queryset (Any): The queryset is used only in "action = 'LIST'" and requests the queryset of
+            a model.
+        fields (list): A list of fields to update.
+        fields_to_update (list): A list of fields that need to be updated.
+        available_fields (dict): A dictionary of available fields.
+        update_table (list): A list representing the update table.
+
+    Methods:
+        __init__(self, *args, **options): Initializes the command with options.
+        handle(self): The main method to execute the command's action.
+
+    Example usage:
+        python manage.py epic_events --action=LIST --permissions=employee
+
+    Note:
+        - Ensure the `action` attribute is set to one of 'LIST', 'CREATE', 'UPDATE', 'DELETE'.
+        - The `permissions` attribute should be set to the role required to execute the command.
+    """
+
+    help = "Custom BaseCommand for handling epic events"
     action = None
     permissions = None
 
     def __init__(self, *args, **options):
         super().__init__(*args, **options)
         self.object = None
-        self.update_fields = list()
+        self.queryset = None
+        self.fields = list()
         self.fields_to_update = list()
         self.available_fields = dict()
         self.update_table = list()
@@ -326,38 +355,11 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """Prints a new line"""
         print()
 
-    # METHODS FOR ACTION:
+    # METHODS FOR ALL ACTIONS:
+    # METHODS FOR ALL ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
     def get_create_model_table(self):
         """Within this method, create a table of the existing model instances."""
         pass
-
-    def get_requested_model(self):
-        """
-        Prompt the user for the email or other required details to find the corresponding model.
-        Displays a or several table(s) with help of 'cli/utils_table.py'.
-        """
-        pass
-
-    def get_available_fields(self):
-        """
-        Sets the instance attribute 'available_fields'.
-
-        Returns:
-            dict: Contains the 'method', 'params' and 'label' to display in 'get_data' the
-            necessary input-types.
-        """
-        pass
-
-    def get_fields_to_update(self):
-        """
-        Uses the 'multiple_choice_str_input' to retrieve the user's input. These choices will be
-        transmitted to the 'get_data' method to call the necessary inputs. And sets the instance
-        attribute 'field_to_update'.
-
-        Returns:
-            list: Contains a list of the option(s) which the user entered.
-        """
-        return self.fields_to_update
 
     def get_data(self):
         """
@@ -368,6 +370,11 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         return dict()
 
+    def go_back(self):
+        """Calls another Command."""
+        pass
+
+    # METHODS FOR ACTIONS: CREATE, UPDATE AND DELETE:
     def make_changes(self, data):
         """
         Verifies if the user's input from 'get_data' exists. Makes queries to verify the user's
@@ -383,10 +390,10 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     def collect_changes(self):
         """
-        Collects changes made to the object by iterating over instance attribute 'update_fields'.
+        Collects changes made to the object by iterating over instance attribute 'fields'.
 
         This method constructs the content of the table by iterating through each field
-        listed in the 'update_fields' attribute. For each field, it checks if the
+        listed in the 'fields' attribute. For each field, it checks if the
         field exists within the 'object' attribute. If the field has a corresponding
         display method (e.g., `get_field_display()`), it uses that method to retrieve
         the display value; otherwise, it retrieves the raw value of the field.
@@ -395,11 +402,11 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         'update_table' attribute.
 
         Notes:
-            This method assumes that the 'update_fields' attribute contains a list
+            This method assumes that the 'fields' attribute contains a list
             of strings representing the names of fields to be displayed, and that the
             'object' attribute contains an instance of a model with the corresponding fields.
         """
-        for field in self.update_fields:
+        for field in self.fields:
             if hasattr(self.object, field):
                 field_item = getattr(self.object, field)
 
@@ -410,6 +417,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
                 field = field.replace("_", " ")
                 self.update_table.append([f"{field.capitalize()}: ", field_item])
 
+    # METHODS FOR ACTIONS: CREATE AND UPDATE:
     def create_table(self):
         """
         Creates a table with help of library: 'tabulate'. It takes the instance attribute
@@ -417,15 +425,85 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         create_pretty_table(self.update_table)
 
-    def go_back(self):
-        """Calls another Command."""
+    # METHODS FOR ACTION: UPDATE AND DELETE:
+    def get_requested_model(self):
+        """
+        Prompt the user for the email or other required details to find the corresponding model.
+        Displays a or several table(s) with help of 'cli/utils_table.py'.
+        """
         pass
+
+    # METHODS FOR ACTION: UPDATE:
+    def get_fields_to_update(self):
+        """
+        Uses the 'multiple_choice_str_input' to retrieve the user's input. These choices will be
+        transmitted to the 'get_data' method to call the necessary inputs. And sets the instance
+        attribute 'field_to_update'.
+
+        Returns:
+            list: Contains a list of the option(s) which the user entered.
+        """
+        return self.fields_to_update
+
+    def get_available_fields(self):
+        """
+        Sets the instance attribute 'available_fields'.
+
+        Returns:
+            dict: Contains the 'method', 'params' and 'label' to display in 'get_data' the
+            necessary input-types.
+        """
+        pass
+
+    # METHODS FOR ACTION: LIST_FILTER:
+    def get_queryset(self):
+        """
+        Requests the queryset of a model.
+
+        Returns:
+            queryset: Returns the requested queryset.
+        """
+        return None
+
+    def get_user_queryset(self):
+        """
+        Requests the queryset of a model for a specific 'self.user'.
+
+        Returns:
+            queryset: Returns the requested queryset.
+        """
+        return None
+
+    def user_choice(self, choice):
+        """
+        Asks the user to make a choice.
+
+        Args:
+             choice (dict): Contains the user's input from 'get_data' function.
+        """
+        return None
+
+    def request_field_selection(self):
+        """
+        Prompts the user to choose the model attributes to make a filter.
+
+        Returns:
+            list: The list contains the choices of the user.
+        """
+        return None
 
     # METHODS FOR HANDLE:
 
-    def list(self):
-        """Methods when action='LIST' in the child Command."""
+    def list_filter(self):
+        """Methods when action='LIST_FILTER' in the child Command."""
+        self.get_queryset()
         self.get_create_model_table()
+        choice = self.get_data()
+        self.user_choice(choice)
+        if choice["filter"] == "Y":
+            self.request_field_selection()
+            user_queryset = self.get_user_queryset()
+
         self.go_back()
 
     def create(self):
@@ -477,8 +555,8 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             call_command("start")
             return
 
-        if self.action == "LIST":
-            self.list()
+        if self.action == "LIST_FILTER":
+            self.list_filter()
         elif self.action == "CREATE":
             self.create()
         elif self.action == "UPDATE":
