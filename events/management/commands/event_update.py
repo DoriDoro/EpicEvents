@@ -103,7 +103,7 @@ class Command(EpicEventsCommand):
                 label = field_data["label"]
 
                 data[label] = method(**params)
-                self.update_fields.append(label)
+                self.fields.append(label)
 
         return data
 
@@ -127,7 +127,7 @@ class Command(EpicEventsCommand):
         return self.object
 
     def collect_changes(self):
-        self.update_fields = ["name", "location", "max_guests", "notes"]
+        self.fields = ["name", "location", "max_guests", "notes"]
 
         create_success_message("Event", "created")
 

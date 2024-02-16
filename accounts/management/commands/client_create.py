@@ -36,7 +36,7 @@ class Command(EpicEventsCommand):
             call_command("client_create")
 
     def collect_changes(self):
-        self.update_fields = [
+        self.fields = [
             "email",
             "first_name",
             "last_name",

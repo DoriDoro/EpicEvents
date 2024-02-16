@@ -22,6 +22,8 @@ class Command(EpicEventsCommand):
     action = "LIST"
     permissions = ["SA", "SU", "MA"]
 
+    # TODO: get_queryset return queryset
+
     def get_create_model_table(self):
         table_data = dict()
 

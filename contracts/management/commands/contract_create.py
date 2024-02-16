@@ -78,7 +78,7 @@ class Command(EpicEventsCommand):
         )
 
     def collect_changes(self):
-        self.update_fields = [
+        self.fields = [
             "total",
             "paid_amount",
             "rest_amount",

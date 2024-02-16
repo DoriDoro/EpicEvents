@@ -44,7 +44,7 @@ class Command(EpicEventsCommand):
             call_command("employee_create")
 
     def collect_changes(self):
-        self.update_fields = ["email", "first_name", "last_name", "role"]
+        self.fields = ["email", "first_name", "last_name", "role"]
 
         create_success_message("Employee", "created")
         self.update_table.append([f"Email: ", self.object.user.email])

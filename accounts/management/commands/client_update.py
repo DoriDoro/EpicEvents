@@ -85,7 +85,7 @@ class Command(EpicEventsCommand):
                 label = field_data["label"]
 
                 data[label] = method(**params)
-                self.update_fields.append(label)
+                self.fields.append(label)
 
         return data
 
@@ -97,8 +97,7 @@ class Command(EpicEventsCommand):
         return self.object
 
     def collect_changes(self):
-        # overwrite self.update_fields to display all fields
-        self.update_fields = [
+        self.fields = [
             "email",
             "first_name",
             "last_name",

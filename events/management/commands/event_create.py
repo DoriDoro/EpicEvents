@@ -76,7 +76,7 @@ class Command(EpicEventsCommand):
         )
 
     def collect_changes(self):
-        self.update_fields = ["name", "location", "max_guests", "notes"]
+        self.fields = ["name", "location", "max_guests", "notes"]
 
         create_success_message("Event", "created")
 
