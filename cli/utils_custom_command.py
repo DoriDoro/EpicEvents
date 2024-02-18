@@ -492,6 +492,15 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         return None
 
+    def choose_attributes(self):
+        return None  # TODO: change the return type and add dogstring
+
+    def filter_selected_fields(self, selected_fields, order, user_queryset):
+        return None, list()  # TODO: change the pass if necessary and add dogstring
+
+    def display_result(self, filter_queryset, order_by_fields):
+        pass  # TODO: change the pass if necessary and add dogstring
+
     # METHODS FOR HANDLE:
 
     def list_filter(self):
@@ -501,8 +510,13 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         choice = self.get_data()
         self.user_choice(choice)
         if choice["filter"] == "Y":
-            self.request_field_selection()
+            self.choose_attributes()
+            selected_fields, order = self.request_field_selection()
             user_queryset = self.get_user_queryset()
+            filter_queryset, order_by_fields = self.filter_selected_fields(
+                selected_fields, order, user_queryset
+            )
+            self.display_result(filter_queryset, order_by_fields)
 
         self.go_back()
 
