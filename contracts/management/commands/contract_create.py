@@ -16,12 +16,22 @@ class Command(EpicEventsCommand):
     action = "CREATE"
     permissions = ["MA"]
 
+    def get_queryset(self):
+        """
+        Not using the EpicEventsCommand get_queryset method because only used for the creation
+        of a contract.
+
+        Returns:
+            A queryset of the Contract model, with all ForeignKey relations.
+        """
+        return Contract.objects.select_related("client").all()
+
     def get_create_model_table(self):
         table_data = dict()
         create_model_table(Client, "email", "Client Emails")
         create_model_table(Employee, "user.email", "Employee Emails")
 
-        queryset = Contract.objects.select_related("client").all()
+        queryset = self.get_queryset()  # call the internal get_queryset method
 
         for contract in queryset:
             table_data[contract.client.id] = contract.client.email
@@ -33,12 +43,10 @@ class Command(EpicEventsCommand):
 
         return {
             "client": self.email_input("Client email"),
-            "employee": self.email_input("Employee email"),
             "total_costs": self.decimal_input("Amount of contract"),
             "amount_paid": self.decimal_input("Paid amount"),
             "state": self.choice_str_input(("S", "D"), "State [S]igned or [D]raft"),
         }
-        # TODO: remove employee out of return
 
     def make_changes(self, data):
         validated_data = dict()
@@ -51,17 +59,10 @@ class Command(EpicEventsCommand):
             call_command("contract_create")
 
         validated_data["client"] = client
-
-        employee = Employee.objects.filter(user__email=data["employee"]).first()
-        if not employee:
-            create_does_not_exists_message("Employee")
-            call_command("contract_create")
-
-        validated_data["employee"] = employee
+        validated_data["employee"] = client.employee
 
         # remove client and employee for data:
         data.pop("client", None)
-        data.pop("employee", None)
 
         # verify if the contract already exists:
         contract_exists = Contract.objects.filter(
@@ -71,7 +72,6 @@ class Command(EpicEventsCommand):
             create_error_message("Contract")
             call_command("contract_create")
 
-        # TODO: use self.user as employee
         # create the contract:
         self.object = Contract.objects.create(
             client=validated_data["client"],
