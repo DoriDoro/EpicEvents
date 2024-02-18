@@ -14,7 +14,7 @@ class Command(EpicEventsCommand):
         choice = get_app_menu("employee")
 
         if choice == 1:
-            call_command("employee_list")
+            call_command("employee_list_filter")
         if choice == 2:
             call_command("employee_create")
         if choice == 3:
