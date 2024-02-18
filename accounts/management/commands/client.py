@@ -14,7 +14,7 @@ class Command(EpicEventsCommand):
         choice = get_app_menu("client")
 
         if choice == 1:
-            call_command("client_list")
+            call_command("client_list_filter")
         if choice == 2:
             call_command("client_create")
         if choice == 3:

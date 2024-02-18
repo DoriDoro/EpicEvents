@@ -14,7 +14,7 @@ class Command(EpicEventsCommand):
         choice = get_app_menu("contract")
 
         if choice == 1:
-            call_command("contract_list")
+            call_command("contract_list_filter")
         if choice == 2:
             call_command("contract_create")
         if choice == 3:
