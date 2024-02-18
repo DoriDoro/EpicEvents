@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-from cli.utils_menu import display_new_line, style_text_display, CYAN
+from cli.utils_menu import display_new_line, style_text_display, CYAN, WHITE
 from cli.utils_messages import create_info_message
 
 
@@ -18,7 +18,31 @@ def display_table_title(text):
     style_text_display(styled_text, color=CYAN, bold=True)
 
 
-def create_pretty_table(table_list, title=None, headers=None):
+def display_info(order_by_fields):
+    """
+    Prints information of the filtering of the 'user_queryset'.
+
+    Args:
+        order_by_fields (str): The 'order_by_fields' to be displayed.
+    """
+    if order_by_fields is None:
+        raise ValueError("Info cannot be None")
+
+    # ['email', 'first_name']
+    # ['-email', '-first_name']
+    ordering_info = []
+    for item in order_by_fields:
+        if item.startswith("-"):
+            field = item[1:]
+            ordering_info.append(f"descending {field}")
+        else:
+            ordering_info.append(f"ascending {item}")
+
+    styled_text = f"{'':^3}{ordering_info} {'':^3}"
+    style_text_display(styled_text, color=WHITE)
+
+
+def create_pretty_table(table_list, title=None, headers=None, order_by_fields=None):
     """
     Creates a formatted table using the tabulate library.
 
@@ -26,6 +50,7 @@ def create_pretty_table(table_list, title=None, headers=None):
         table_list (list): List of lists representing the rows of the table.
         title (str, optional): Title to display above the table. Defaults to None.
         headers (list, optional): List of strings representing column headers. Defaults to None.
+        order_by_fields (list, optional): Just for list_filter. To display info of the filter.
     """
     if not table_list:
         print("No data available to create table.")
@@ -33,6 +58,9 @@ def create_pretty_table(table_list, title=None, headers=None):
 
     if title:
         display_table_title(title)
+
+    if order_by_fields:
+        display_info(order_by_fields)
 
     table_format = "pretty"
     if headers is not None:
@@ -79,7 +107,9 @@ def create_model_table(model, column_label, title):
         create_info_message(f"No {model}-table available, until now!")
 
 
-def create_queryset_table(queryset, title, label=None, headers=None):
+def create_queryset_table(
+    queryset, title, label=None, headers=None, order_by_fields=None
+):
     """
     Creates a formatted table based on the provided queryset, title, label, and headers.
 
@@ -89,6 +119,7 @@ def create_queryset_table(queryset, title, label=None, headers=None):
         label (str, optional): A label to prepend to each row of the table. Defaults to None.
         headers (list, optional): A list of column headers for the table. If provided, each row
             in the table will be labeled with these headers. Defaults to None.
+        order_by_fields (list, optional): Just for list_filter. To display info of the filter.
 
     Returns:
         None: The function does not return a value. Instead, it prints the formatted table.
@@ -113,7 +144,9 @@ def create_queryset_table(queryset, title, label=None, headers=None):
         for item in queryset.values():
             item_table = [label + ": ", item]
             all_items_list.append(item_table)
-        create_pretty_table(all_items_list, f"All {title}: ")
+        create_pretty_table(
+            all_items_list, f"All {title}: ", order_by_fields=order_by_fields
+        )
 
     if headers is not None:
         for key, values in queryset.items():
@@ -121,4 +154,9 @@ def create_queryset_table(queryset, title, label=None, headers=None):
             for value in values.values():
                 item_table.append(value)
             all_items_list.append(item_table)
-        create_pretty_table(all_items_list, headers=headers, title=f"All {title}: ")
+        create_pretty_table(
+            all_items_list,
+            headers=headers,
+            title=f"All {title}: ",
+            order_by_fields=order_by_fields,
+        )
