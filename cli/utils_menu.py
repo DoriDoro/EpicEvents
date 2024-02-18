@@ -162,7 +162,7 @@ def get_app_menu(app):
         ValueError: If the user enters a choice that is not an integer or not in the available choices.
     """
     possible_choices = {
-        1: "List",
+        1: "List and filter",
         2: "Create",
         3: "Update",
         4: "Delete",
