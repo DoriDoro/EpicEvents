@@ -11,7 +11,7 @@ class Command(EpicEventsCommand):
     def handle(self, *args, **options):
         super().handle(*args, **options)
 
-        choice = get_app_menu("contract")
+        choice = get_app_menu("contract", self.user)
 
         if choice == 1:
             call_command("contract_list_filter")

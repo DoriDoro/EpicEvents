@@ -11,7 +11,7 @@ class Command(EpicEventsCommand):
     def handle(self, *args, **options):
         super().handle(*args, **options)
 
-        choice = get_app_menu("event")
+        choice = get_app_menu("event", self.user)
 
         if choice == 1:
             call_command("event_list_filter")
