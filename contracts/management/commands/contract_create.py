@@ -38,6 +38,7 @@ class Command(EpicEventsCommand):
             "amount_paid": self.decimal_input("Paid amount"),
             "state": self.choice_str_input(("S", "D"), "State [S]igned or [D]raft"),
         }
+        # TODO: remove employee out of return
 
     def make_changes(self, data):
         validated_data = dict()
@@ -70,6 +71,7 @@ class Command(EpicEventsCommand):
             create_error_message("Contract")
             call_command("contract_create")
 
+        # TODO: use self.user as employee
         # create the contract:
         self.object = Contract.objects.create(
             client=validated_data["client"],

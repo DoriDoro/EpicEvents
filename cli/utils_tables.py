@@ -144,6 +144,7 @@ def create_queryset_table(
         for item in queryset.values():
             item_table = [label + ": ", item]
             all_items_list.append(item_table)
+
         create_pretty_table(
             all_items_list, f"All {title}: ", order_by_fields=order_by_fields
         )
@@ -154,6 +155,7 @@ def create_queryset_table(
             for value in values.values():
                 item_table.append(value)
             all_items_list.append(item_table)
+
         create_pretty_table(
             all_items_list,
             headers=headers,
