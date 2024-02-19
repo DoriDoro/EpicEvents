@@ -11,6 +11,7 @@ from cli.utils_menu import BOLD, ENDC, style_text_display, BLUE
 from cli.utils_messages import (
     create_invalid_error_message,
     create_permission_denied_message,
+    create_info_message,
 )
 from cli.utils_tables import create_pretty_table
 from cli.utils_token_mixin import JWTTokenMixin
@@ -328,6 +329,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             If the user enters '' or ' ' the program calls the 'start'-command to exit.
         """
         value = cls.text_input(label, required)
+        # value = maskpass.askpass(prompt=label, mask="*") if required else input(label)
 
         if value in ["", " "]:
             print()
@@ -464,7 +466,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Returns:
             queryset: Returns the requested queryset.
         """
-        return None
+        pass
 
     def get_user_queryset(self):
         """
@@ -482,7 +484,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Args:
              choice (dict): Contains the user's input from 'get_data' function.
         """
-        return None
+        pass
 
     def request_field_selection(self):
         """
@@ -491,16 +493,65 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Returns:
             list: The list contains the choices of the user.
         """
-        return None
+        return None, None
 
     def choose_attributes(self):
-        return None  # TODO: change the return type and add dogstring
+        """
+        Generates a table with a list of model attributes/fields that can be used for filtering.
+
+        This method prepares a list of fields that the user can choose from when filtering data.
+        It formats each field by replacing underscores with spaces and capitalizing the first
+        letter. The formatted fields are then added to a table using the `create_pretty_table`
+        function.
+
+        The table is displayed to the user with the prompt "Which fields you want to filter?".
+
+        The `fields` attribute of the instance is set to the list of fields that are to be
+        displayed in the table.
+        """
+        pass
 
     def filter_selected_fields(self, selected_fields, order, user_queryset):
-        return None, list()  # TODO: change the pass if necessary and add dogstring
+        """
+        Filters and orders a queryset based on user-selected fields and order preference.
+
+        This method takes a list of selected fields, an order preference, and a queryset of users.
+        It maps the selected fields to their corresponding database fields using a predefined
+        mapping. The queryset is then ordered by the selected fields in the specified order
+        (ascending or descending).
+
+        Args:
+            selected_fields (list): A list of selected fields represented by single-letter codes.
+            order (str): The order in which to sort the queryset, either 'A' for ascending or 'D'
+                for descending.
+            user_queryset (QuerySet): The queryset of users to be filtered and ordered.
+
+        Returns:
+            tuple: A tuple containing the filtered and ordered queryset ('filtered_queryset')and
+                the list of fields used for ordering ('order').
+
+        Raises:
+            KeyError: If any of the selected fields are not found in the field mapping.
+        """
+        return None, None
 
     def display_result(self, filter_queryset, order_by_fields):
-        pass  # TODO: change the pass if necessary and add dogstring
+        """
+        Displays a formatted table of client data based on the filtered queryset.
+
+        This method constructs a dictionary of client data with each client's
+        details keyed by their ID. It then uses the `create_queryset_table` function
+        to display the data in a table format, with the option to order the data
+        based on the fields specified in `order_by_fields`.
+
+        Args:
+            filter_queryset (QuerySet): A queryset of filtered client data.
+            order_by_fields (list): A list of fields by which the data should be ordered.
+
+        Returns:
+            None: The function does not return a value; it displays the table directly.
+        """
+        pass
 
     # METHODS FOR HANDLE:
 
@@ -513,6 +564,9 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     def list_filter(self):
         """Methods when action='LIST_FILTER' in the child Command."""
         self.get_queryset()
+        if not self.queryset:
+            create_info_message("No data available!")
+            self.go_back()
         self.get_create_model_table()
         choice = self.get_data()
         self.user_choice(choice)
@@ -524,8 +578,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
                 selected_fields, order, user_queryset
             )
             self.display_result(filter_queryset, order_by_fields)
-
-        self.go_back()
+            self.go_back()
 
     def create(self):
         """Methods when action='CREATE' in the child Command."""
