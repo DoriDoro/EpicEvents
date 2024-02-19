@@ -13,15 +13,26 @@ class Command(EpicEventsCommand):
 
         choice = get_app_menu("employee", self.user)
 
-        if choice == 1:
-            call_command("employee_list_filter")
-        if choice == 2:
-            call_command("employee_create")
-        if choice == 3:
-            call_command("employee_update")
-        if choice == 4:
-            call_command("employee_delete")
-        if choice == 5:
-            call_command("employee_filter")
-        if choice == 6:
-            call_command("start")
+        if self.user.employee_users.role == "SA":
+            if choice == 1:
+                call_command("employee_list")
+            if choice == 2:
+                call_command("start")
+
+        if self.user.employee_users.role == "SU":
+            if choice == 1:
+                call_command("employee_list")
+            if choice == 2:
+                call_command("start")
+
+        if self.user.employee_users.role == "MA":
+            if choice == 1:
+                call_command("employee_list")
+            if choice == 2:
+                call_command("employee_create")
+            if choice == 3:
+                call_command("employee_update")
+            if choice == 4:
+                call_command("employee_delete")
+            if choice == 5:
+                call_command("start")

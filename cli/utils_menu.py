@@ -114,6 +114,7 @@ def get_start_menu(title):
 
     Args:
         title (str): The title of the menu.
+        user (user instance): To determine what menu to display.
 
     Returns:
         int: The user's choice.
@@ -121,6 +122,7 @@ def get_start_menu(title):
     Raises:
         ValueError: If the user enters a choice that is not an integer or not in the available choices.
     """
+
     possible_choices = {
         1: "employees",
         2: "clients",
@@ -146,14 +148,13 @@ def get_start_menu(title):
     return choice
 
 
-def get_app_menu(app):
-    # TODO: menu for SA, SU and MA in addition for the permissions
-
+def get_app_menu(app, user):
     """
     Displays the menu and prompts the user for input.
 
     Args:
         app (str): The title of the menu.
+        user (user instance): To determine what menu to display.
 
     Returns:
         int: The user's choice.
@@ -161,14 +162,86 @@ def get_app_menu(app):
     Raises:
         ValueError: If the user enters a choice that is not an integer or not in the available choices.
     """
-    possible_choices = {
-        1: "List and filter",
-        2: "Create",
-        3: "Update",
-        4: "Delete",
-        5: "Filter",
-        6: ["quit", "Go back to Main Menu"],
-    }
+
+    possible_choices = {}
+
+    if user.employee_users.role == "SA":
+        if app == "employee":
+            possible_choices = {
+                1: "List",
+                2: ["quit", "Go back to Main Menu"],
+            }
+        if app == "client":
+            possible_choices = {
+                1: "List and filter",
+                2: "Create",
+                3: "Update",
+                4: ["quit", "Go back to Main Menu"],
+            }
+        if app == "contract":
+            possible_choices = {
+                1: "List and filter",
+                2: "Update",
+                3: ["quit", "Go back to Main Menu"],
+            }
+        if app == "event":
+            possible_choices = {
+                1: "List and filter",
+                2: "Create",
+                3: ["quit", "Go back to Main Menu"],
+            }
+
+    if user.employee_users.role == "SU":
+        if app == "employee":
+            possible_choices = {
+                1: "List",
+                2: ["quit", "Go back to Main Menu"],
+            }
+        if app == "client":
+            possible_choices = {
+                1: "List and filter",
+                2: ["quit", "Go back to Main Menu"],
+            }
+        if app == "contract":
+            possible_choices = {
+                1: "List and filter",
+                2: ["quit", "Go back to Main Menu"],
+            }
+        if app == "event":
+            possible_choices = {
+                1: "List and filter",
+                2: "Update",
+                3: ["quit", "Go back to Main Menu"],
+            }
+
+    if user.employee_users.role == "MA":
+        if app == "employee":
+            possible_choices = {
+                1: "List",
+                2: "Create",
+                3: "Update",
+                4: "Delete",
+                5: ["quit", "Go back to Main Menu"],
+            }
+        if app == "client":
+            possible_choices = {
+                1: "List and filter",
+                2: ["quit", "Go back to Main Menu"],
+            }
+        if app == "contract":
+            possible_choices = {
+                1: "List and filter",
+                2: "Create",
+                3: "Update",
+                4: ["quit", "Go back to Main Menu"],
+            }
+        if app == "event":
+            possible_choices = {
+                1: "List and filter",
+                2: "Update",
+                3: ["quit", "Go back to Main Menu"],
+            }
+
     app_capitalized = app.title()
 
     _display_menu_headline(f"Menu of the {app_capitalized}s")
