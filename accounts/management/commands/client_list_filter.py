@@ -80,6 +80,7 @@ class Command(EpicEventsCommand):
             ("A", "D"), "Your choice? [A]scending or [D]ecending"
         )
         self.stdout.write()
+
         return selected_fields, order
 
     def get_user_queryset(self):

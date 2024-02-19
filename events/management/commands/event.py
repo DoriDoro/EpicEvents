@@ -11,7 +11,7 @@ class Command(EpicEventsCommand):
     def handle(self, *args, **options):
         super().handle(*args, **options)
 
-        choice = get_app_menu("event")
+        choice = get_app_menu("event", self.user)
 
         if self.user.employee_users.role == "SA":
             if choice == 1:
