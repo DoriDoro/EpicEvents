@@ -114,7 +114,6 @@ def get_start_menu(title):
 
     Args:
         title (str): The title of the menu.
-        user (user instance): To determine what menu to display.
 
     Returns:
         int: The user's choice.
@@ -162,85 +161,63 @@ def get_app_menu(app, user):
     Raises:
         ValueError: If the user enters a choice that is not an integer or not in the available choices.
     """
-
-    possible_choices = {}
-
-    if user.employee_users.role == "SA":
-        if app == "employee":
-            possible_choices = {
-                1: "List",
-                2: ["quit", "Go back to Main Menu"],
-            }
-        if app == "client":
-            possible_choices = {
+    choices_by_role_and_app = {
+        "SA": {
+            "employee": {1: "List", 2: ["quit", "Go back to Main Menu"]},
+            "client": {
                 1: "List and filter",
                 2: "Create",
                 3: "Update",
                 4: ["quit", "Go back to Main Menu"],
-            }
-        if app == "contract":
-            possible_choices = {
+            },
+            "contract": {
                 1: "List and filter",
                 2: "Update",
                 3: ["quit", "Go back to Main Menu"],
-            }
-        if app == "event":
-            possible_choices = {
+            },
+            "event": {
                 1: "List and filter",
                 2: "Create",
                 3: ["quit", "Go back to Main Menu"],
-            }
-
-    if user.employee_users.role == "SU":
-        if app == "employee":
-            possible_choices = {
-                1: "List",
-                2: ["quit", "Go back to Main Menu"],
-            }
-        if app == "client":
-            possible_choices = {
-                1: "List and filter",
-                2: ["quit", "Go back to Main Menu"],
-            }
-        if app == "contract":
-            possible_choices = {
-                1: "List and filter",
-                2: ["quit", "Go back to Main Menu"],
-            }
-        if app == "event":
-            possible_choices = {
+            },
+        },
+        "SU": {
+            "employee": {1: "List", 2: ["quit", "Go back to Main Menu"]},
+            "client": {1: "List and filter", 2: ["quit", "Go back to Main Menu"]},
+            "contract": {1: "List and filter", 2: ["quit", "Go back to Main Menu"]},
+            "event": {
                 1: "List and filter",
                 2: "Update",
                 3: ["quit", "Go back to Main Menu"],
-            }
-
-    if user.employee_users.role == "MA":
-        if app == "employee":
-            possible_choices = {
+            },
+        },
+        "MA": {
+            "employee": {
                 1: "List",
                 2: "Create",
                 3: "Update",
                 4: "Delete",
                 5: ["quit", "Go back to Main Menu"],
-            }
-        if app == "client":
-            possible_choices = {
-                1: "List and filter",
-                2: ["quit", "Go back to Main Menu"],
-            }
-        if app == "contract":
-            possible_choices = {
+            },
+            "client": {1: "List and filter", 2: ["quit", "Go back to Main Menu"]},
+            "contract": {
                 1: "List and filter",
                 2: "Create",
                 3: "Update",
                 4: ["quit", "Go back to Main Menu"],
-            }
-        if app == "event":
-            possible_choices = {
+            },
+            "event": {
                 1: "List and filter",
                 2: "Update",
                 3: ["quit", "Go back to Main Menu"],
-            }
+            },
+        },
+    }
+
+    # Retrieve the possible choices for the given role and app
+    possible_choices = choices_by_role_and_app.get(user.employee_users.role, {}).get(
+        app, {}
+    )
 
     app_capitalized = app.title()
 
