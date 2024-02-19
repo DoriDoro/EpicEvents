@@ -356,11 +356,12 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         print()
 
     # METHODS FOR ALL ACTIONS:
-    # METHODS FOR ALL ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
+    # METHODS FOR ALL ACTIONS: (LIST, LIST_FILTER, CREATE, UPDATE AND DELETE):
     def get_create_model_table(self):
         """Within this method, create a table of the existing model instances."""
         pass
 
+    # METHODS FOR ALL ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
     def get_data(self):
         """
         Prompts the user for data/information.
@@ -503,6 +504,12 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     # METHODS FOR HANDLE:
 
+    def list(self):
+        """Methods when action='LIST' in the child Command."""
+        self.get_queryset()
+        self.get_create_model_table()
+        self.go_back()
+
     def list_filter(self):
         """Methods when action='LIST_FILTER' in the child Command."""
         self.get_queryset()
@@ -569,7 +576,9 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             call_command("start")
             return
 
-        if self.action == "LIST_FILTER":
+        if self.action == "LIST":
+            self.list()
+        elif self.action == "LIST_FILTER":
             self.list_filter()
         elif self.action == "CREATE":
             self.create()

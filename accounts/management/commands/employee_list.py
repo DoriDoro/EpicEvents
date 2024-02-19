@@ -19,7 +19,7 @@ class Command(EpicEventsCommand):
     """
 
     help = "Lists all employees."
-    action = "LIST_FILTER"
+    action = "LIST"
     permissions = ["SA", "SU", "MA"]
 
     def get_queryset(self):
