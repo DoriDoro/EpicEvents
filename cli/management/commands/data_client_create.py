@@ -13,7 +13,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         data_client = {}
 
-        # create 20 client data:
         for i in range(1, 21):
             client = {
                 "email": fake.email(),
@@ -29,14 +28,7 @@ class Command(BaseCommand):
         try:
             for employee in employees:
                 for data in data_client.values():
-                    Client.objects.create(
-                        employee=employee,
-                        email=data["email"],
-                        first_name=data["first_name"],
-                        last_name=data["last_name"],
-                        phone=data["phone"],
-                        company_name=data["company_name"],
-                    )
+                    Client.objects.create(employee=employee, **data)
 
         except IntegrityError:
             self.stdout.write(self.style.WARNING("Exists already!"))

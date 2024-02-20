@@ -13,36 +13,36 @@ class Command(BaseCommand):
     help = "This command creates 12 employees as basic data."
 
     def handle(self, *args, **options):
+        roles = ["SA", "SU", "MA"]
         data_employee = {}
 
-        # create 12 employee data:
         for i in range(1, 13):
+            # Use modulo operation to cycle through the roles
+            role = roles[(i - 1) % len(roles)]
             employee = {
                 "email": fake.email(),
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name().upper(),
+                "role": role,
             }
             data_employee[i] = employee
 
         try:
-            roles = ["SA", "SU", "MA"]
-
-            for role in roles:
-                for _ in range(4):
-                    for key, data in list(
-                        data_employee.items()
-                    ):  # Use list() to avoid mutation during iteration
-                        user = UserModel.objects.create_user(data["email"], "Test")
-                        Employee.objects.create(
-                            user=user,
-                            first_name=data["first_name"],
-                            last_name=data["last_name"],
-                            role=role,
-                        )
-
+            for key, data in list(data_employee.items()):
+                user, created = UserModel.objects.get_or_create(
+                    email=data["email"],
+                    defaults={"email": data["email"], "password": "Test"},
+                )
+                if created:
+                    Employee.objects.create(
+                        user=user,
+                        first_name=data["first_name"],
+                        last_name=data["last_name"],
+                        role=data["role"],
+                    )
         except IntegrityError:
-            self.stdout.write(self.style.WARNING("Exists already!"))
+            self.stdout.write(self.style.WARNING("   Exists already!"))
         else:
             self.stdout.write(
-                self.style.SUCCESS("Users and Employees successfully created!")
+                self.style.SUCCESS("   Users and Employees successfully created!")
             )
