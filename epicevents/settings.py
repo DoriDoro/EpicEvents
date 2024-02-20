@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "contracts",
     "events",
     "cli",
+    "data",
 ]
 
 MIDDLEWARE = [

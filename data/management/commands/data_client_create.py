@@ -1,16 +1,19 @@
 from faker import Faker
-from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 
 from accounts.models import Client, Employee
+from data.utils_data_custom_command import DataCreateCommand
 
 fake = Faker()
 
 
-class Command(BaseCommand):
+class Command(DataCreateCommand):
     help = "This command creates 20 clients as basic data."
 
-    def handle(self, *args, **options):
+    def get_queryset(self):
+        self.employee = Employee.objects.filter(role="SA")
+
+    def create_fake_data(self):
         data_client = {}
 
         for i in range(1, 21):
@@ -23,12 +26,13 @@ class Command(BaseCommand):
             }
             data_client[i] = client
 
-        employees = Employee.objects.filter(role="SA")
+        return data_client
 
+    def create_instances(self, data):
         try:
-            for employee in employees:
-                for data in data_client.values():
-                    Client.objects.create(employee=employee, **data)
+            for employee in self.employee:
+                for d in data.values():
+                    Client.objects.create(employee=employee, **d)
 
         except IntegrityError:
             self.stdout.write(self.style.WARNING("Exists already!"))
