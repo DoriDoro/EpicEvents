@@ -52,3 +52,6 @@ class Contract(models.Model):
         rest_amount = total_costs_decimal - amount_paid_decimal
 
         return f"{rest_amount} €"
+
+    def __str__(self):
+        return f"{self.client.email} ({self.employee.user.email})"

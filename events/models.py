@@ -33,3 +33,6 @@ class Event(models.Model):
         verbose_name=_("number of guests"),
     )
     notes = models.TextField(verbose_name=_("notes for the event"))
+
+    def __str__(self):
+        return self.name
