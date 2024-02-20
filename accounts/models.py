@@ -80,7 +80,7 @@ class Employee(models.Model):
         return self.user.email
 
     def __str__(self):
-        return self.get_full_name
+        return f"{self.get_full_name} ({self.role})"
 
 
 class Client(models.Model):

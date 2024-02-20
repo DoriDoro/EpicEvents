@@ -104,7 +104,7 @@ def create_model_table(model, column_label, title):
 
         create_pretty_table(all_items_list, f"All {title}: ")
     else:
-        create_info_message(f"No {model}-table available, until now!")
+        create_info_message(f"No table available, until now!")
 
 
 def create_queryset_table(
