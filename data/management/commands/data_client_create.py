@@ -17,7 +17,10 @@ class Command(DataCreateCommand):
         data_client = {}
 
         for i in range(1, 21):
+            employee = self.employee[(i - 1) % len(self.employee)]
+
             client = {
+                "employee": employee,
                 "email": fake.email(),
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
@@ -30,9 +33,8 @@ class Command(DataCreateCommand):
 
     def create_instances(self, data):
         try:
-            for employee in self.employee:
-                for d in data.values():
-                    Client.objects.create(employee=employee, **d)
+            for d in data.values():
+                Client.objects.create(**d)
 
         except IntegrityError:
             self.stdout.write(self.style.WARNING("Exists already!"))

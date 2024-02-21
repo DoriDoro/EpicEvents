@@ -20,12 +20,16 @@ class Command(DataCreateCommand):
         data_employee = {}
 
         for i in range(1, 13):
+            first_name = fake.first_name()
+            last_name = fake.last_name()
+            email = f"{first_name.lower()}.{last_name.lower()}@mail.com"
+
             # Use modulo operation to cycle through the roles
             role = roles_choices[(i - 1) % len(roles_choices)]
             employee = {
-                "email": fake.email(),
-                "first_name": fake.first_name(),
-                "last_name": fake.last_name().upper(),
+                "email": email,
+                "first_name": first_name,
+                "last_name": last_name.upper(),
                 "role": role,
             }
             data_employee[i] = employee
@@ -35,11 +39,11 @@ class Command(DataCreateCommand):
     def create_instances(self, data):
         try:
             for key, value in data.items():
-                user, created = UserModel.objects.get_or_create(
+                user = UserModel.objects.create_user(
                     email=value["email"],
-                    defaults={"email": value["email"], "password": "Test"},
+                    password="Test",
                 )
-                if created:
+                if user:
                     Employee.objects.create(
                         user=user,
                         first_name=value["first_name"],
@@ -49,6 +53,7 @@ class Command(DataCreateCommand):
         except IntegrityError:
             self.stdout.write(self.style.WARNING("   Exists already!"))
         else:
+            self.stdout.write(data[1]["email"])
             self.stdout.write(
                 self.style.SUCCESS("   Users and Employees successfully created!")
             )
