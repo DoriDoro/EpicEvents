@@ -21,11 +21,14 @@ class Command(DataCreateCommand):
         data_event = {}
 
         for i in range(1, 51):
-            date_object = fake.date()
-            date_object = datetime.strptime(date_object, "%Y-%m-%d")
+            date_object = fake.date_time()
             date_object = make_aware(date_object)
 
+            contract = self.contract[(i - 1) % len(self.contract)]
+
             event = {
+                "contract": contract,
+                "employee": contract.employee,
                 "date": date_object,
                 "name": fake.name(),
                 "location": fake.address(),
@@ -38,11 +41,8 @@ class Command(DataCreateCommand):
 
     def create_instances(self, data):
         try:
-            for contract in self.contract:
-                for d in data.values():
-                    Event.objects.create(
-                        contract=contract, employee=contract.employee, **d
-                    )
+            for d in data.values():
+                Event.objects.create(**d)
 
         except IntegrityError:
             self.stdout.write(self.style.WARNING("Exists already!"))
