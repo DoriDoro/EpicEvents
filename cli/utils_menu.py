@@ -199,17 +199,23 @@ def get_app_menu(app, user):
                 4: "Delete",
                 5: ["quit", "Go back to Main Menu"],
             },
-            "client": {1: "List and filter", 2: ["quit", "Go back to Main Menu"]},
+            "client": {
+                1: "List and filter",
+                2: "Delete",
+                3: ["quit", "Go back to Main Menu"],
+            },
             "contract": {
                 1: "List and filter",
                 2: "Create",
                 3: "Update",
-                4: ["quit", "Go back to Main Menu"],
+                4: "Delete",
+                5: ["quit", "Go back to Main Menu"],
             },
             "event": {
                 1: "List and filter",
                 2: "Update",
-                3: ["quit", "Go back to Main Menu"],
+                3: "Delete",
+                4: ["quit", "Go back to Main Menu"],
             },
         },
     }

@@ -12,6 +12,7 @@ from events.models import Event
 class Command(EpicEventsCommand):
     help = "Prompts for details to delete an event."
     action = "DELETE"
+    permissions = ["MA"]
 
     def get_create_model_table(self):
         table_data = dict()

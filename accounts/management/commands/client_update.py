@@ -12,6 +12,7 @@ from cli.utils_tables import (
 class Command(EpicEventsCommand):
     help = "Prompts for details to to update a client."
     action = "UPDATE"
+    permissions = ["SA"]
 
     def get_create_model_table(self):
         create_model_table(Client, "email", "Client Emails")

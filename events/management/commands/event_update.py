@@ -17,6 +17,7 @@ from events.models import Event
 class Command(EpicEventsCommand):
     help = "Prompts for details to update an event"
     action = "UPDATE"
+    permissions = ["SA", "MA"]
 
     def get_create_model_table(self):
         table_data = dict()
