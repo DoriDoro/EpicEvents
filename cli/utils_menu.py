@@ -169,17 +169,17 @@ def get_app_menu(app, user):
                 2: "Create",
                 3: "Update",
                 4: ["quit", "Go back to Main Menu"],
-            },
+            },  # filter possible
             "contract": {
                 1: "List and filter",
                 2: "Update",
                 3: ["quit", "Go back to Main Menu"],
-            },
+            },  # filter possible because MA creates the contract with employee of client
             "event": {
                 1: "List and filter",
                 2: "Create",
                 3: ["quit", "Go back to Main Menu"],
-            },
+            },  # filter possible because employee created the client, is associated with contract
         },
         "SU": {
             "employee": {1: "List", 2: ["quit", "Go back to Main Menu"]},
@@ -198,7 +198,7 @@ def get_app_menu(app, user):
                 3: "Update",
                 4: "Delete",
                 5: ["quit", "Go back to Main Menu"],
-            },
+            },  # can filter employees, create filter logic inside List
             "client": {
                 1: "List and filter",
                 2: "Delete",
@@ -210,7 +210,7 @@ def get_app_menu(app, user):
                 3: "Update",
                 4: "Delete",
                 5: ["quit", "Go back to Main Menu"],
-            },
+            },  # can filter contracts, but user_queryset not useful because SA employee
             "event": {
                 1: "List and filter",
                 2: "Update",
