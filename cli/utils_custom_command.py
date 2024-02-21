@@ -186,9 +186,6 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
         if value not in options:
             value = cls.choice_str_input(options, label, required)
-        if value in ["", " "]:
-            print()
-            call_command("start")
 
         return value
 
@@ -236,10 +233,6 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         values = cls.text_input(label, required)
 
-        if values in ["", " "]:
-            print()
-            call_command("start")
-
         return [w for w in values if w in options]
 
     @classmethod
@@ -258,10 +251,6 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             If the user enters '' or ' ' the program calls the 'start'-command to exit.
         """
         value = cls.text_input(label, required)  # DD/MM/YYYY
-
-        if value in ["", " "]:
-            print()
-            call_command("start")
 
         try:
             # save the given date in format: 2025-12-15 00:00:00
@@ -295,10 +284,6 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         value = cls.text_input(label, required)
 
-        if value in ["", " "]:
-            print()
-            call_command("start")
-
         try:
             validate_email(value)
         except ValidationError:
@@ -330,10 +315,6 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         value = cls.text_input(label, required)
         # value = maskpass.askpass(prompt=label, mask="*") if required else input(label)
-
-        if value in ["", " "]:
-            print()
-            call_command("start")
 
         try:
             validate_password(value)
