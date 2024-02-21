@@ -28,7 +28,14 @@ class Command(EpicEventsCommand):
     def get_create_model_table(self):
         table_data = dict()
 
-        headers = ["", "Employee", "Email", "First name", "Last name", "Company_name"]
+        headers = [
+            "",
+            "Employee email",
+            "Client email",
+            "First name",
+            "Last name",
+            "Company_name",
+        ]
 
         for client in self.queryset:
             client_data = {

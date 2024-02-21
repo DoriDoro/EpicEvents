@@ -30,12 +30,12 @@ class Command(EpicEventsCommand):
 
         headers = [
             "",
-            "employee",
-            "client",
-            "total amount",
-            "amount paid",
-            "rest amount",
-            "state",
+            "Employee email",
+            "Client email",
+            "Total amount",
+            "Amount paid",
+            "Rest amount",
+            "State",
         ]
 
         for contract in self.queryset:

@@ -44,7 +44,7 @@ class Command(EpicEventsCommand):
             event_data = {
                 "employee": event.employee.user.email,
                 "client": event.contract.client.email,
-                "date": event.date,
+                "date": event.date.strftime("%d/%m/%Y"),
                 "name": event.name,
                 "location": event.location,
                 "max_guests": event.max_guests,
