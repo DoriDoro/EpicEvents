@@ -1,6 +1,7 @@
 from django.core.management import call_command
 
 from cli.utils_custom_command import EpicEventsCommand
+from cli.utils_messages import create_permission_denied_message
 from cli.utils_tables import create_queryset_table, create_pretty_table
 from contracts.models import Contract
 
@@ -61,12 +62,17 @@ class Command(EpicEventsCommand):
         }
 
     def user_choice(self, choice):
-        if choice["filter"] == "Y":
+        if choice["filter"] == "Y" and self.user.employee_users.role in ["SA", "MA"]:
             self.stdout.write()
             return
-        if choice["filter"] == "N":
+        elif choice["filter"] == "Y":
+            create_permission_denied_message()
+            call_command("client")
+            return
+        elif choice["filter"] == "N":
             self.stdout.write()
             call_command("client")
+            return
 
     def choose_attributes(self):
         self.fields = ["client", "total_amount", "amount_paid", "state"]
@@ -93,6 +99,7 @@ class Command(EpicEventsCommand):
 
     def get_user_queryset(self):
         return self.queryset.filter(employee__user=self.user)
+        # TODO: SA and MA can filter, user_queryset has to be SA, even MA is filtering
 
     def filter_selected_fields(self, selected_fields, order, user_queryset):
         field_mapping = {

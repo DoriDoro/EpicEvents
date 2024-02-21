@@ -8,7 +8,6 @@ from cli.utils_messages import (
     create_success_message,
 )
 from cli.utils_tables import create_queryset_table, create_model_table
-from contracts.models import Contract
 from events.models import Event
 
 
@@ -44,7 +43,7 @@ class Command(EpicEventsCommand):
         validated_data = dict()
 
         client = (
-            Contract.objects.filter(client__email=data["client"])
+            Client.objects.filter(email=data["client"])
             .select_related("employee")
             .first()
         )  # get info of client and employee
@@ -55,6 +54,7 @@ class Command(EpicEventsCommand):
 
         validated_data["client"] = client
         validated_data["employee"] = client.employee
+        # TODO: verify if client.employee = self.user
 
         # remove client from data:
         data.pop("client", None)

@@ -15,6 +15,7 @@ class Command(DataCreateCommand):
     def get_queryset(self):
         self.client = Client.objects.all().order_by("?")
         self.employee = Employee.objects.filter(role="MA").order_by("?")
+        # TODO: The MA creates the contract but used the SA employee associated with client
 
     def create_fake_data(self):
         state_choices = ["S", "S", "S", "D"]
