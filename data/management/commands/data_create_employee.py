@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from faker import Faker
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
@@ -38,18 +39,25 @@ class Command(DataCreateCommand):
 
     def create_instances(self, data):
         try:
-            for key, value in data.items():
-                user = UserModel.objects.create_user(
-                    email=value["email"],
-                    password="Test",
+            users_to_create = []
+            employees_to_create = []
+
+            for value in data.values():
+                user = UserModel(email=value["email"], password=make_password("Test"))
+                users_to_create.append(user)
+
+                employee = Employee(
+                    user=user,
+                    first_name=value["first_name"],
+                    last_name=value["last_name"],
+                    role=value["role"],
                 )
-                if user:
-                    Employee.objects.create(
-                        user=user,
-                        first_name=value["first_name"],
-                        last_name=value["last_name"],
-                        role=value["role"],
-                    )
+                employees_to_create.append(employee)
+
+            # Bulk create users and employees
+            UserModel.objects.bulk_create(users_to_create)
+            Employee.objects.bulk_create(employees_to_create)
+
         except IntegrityError:
             self.stdout.write(self.style.WARNING("   Exists already!"))
         else:
