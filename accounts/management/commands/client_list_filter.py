@@ -31,20 +31,20 @@ class Command(EpicEventsCommand):
 
         headers = [
             "",
-            "Employee email",
-            "Client email",
+            "** Client email **",
             "First name",
             "Last name",
-            "Company_name",
+            "Company name",
+            "Employee",
         ]
 
         for client in self.queryset:
             client_data = {
-                "employee": client.employee.user.email,
                 "email": client.email,
                 "first_name": client.first_name,
                 "last_name": client.last_name,
                 "company_name": client.company_name,
+                "employee": client.employee,
             }
             table_data[f"Client {client.id}"] = client_data
 
@@ -119,7 +119,7 @@ class Command(EpicEventsCommand):
     def display_result(self, filter_queryset, order_by_fields):
         table_data = dict()
 
-        headers = ["", "Email", "First name", "Last name", "Company name"]
+        headers = ["", "** Client email **", "First name", "Last name", "Company name"]
 
         for client in filter_queryset:
             client_data = {

@@ -31,22 +31,22 @@ class Command(EpicEventsCommand):
 
         headers = [
             "",
-            "Employee email",
-            "Client email",
+            "** Client email **",
             "Total amount",
             "Amount paid",
             "Rest amount",
             "State",
+            "Employee",
         ]
 
         for contract in self.queryset:
             contract_data = {
-                "employee": contract.employee.user.email,
                 "client": contract.client.email,
                 "total": contract.total,
                 "paid": contract.paid_amount,
                 "rest": contract.rest_amount,
                 "state": contract.get_state_display(),
+                "employee": contract.employee,
             }
             table_data[f"Contract {contract.id}"] = contract_data
 
@@ -125,7 +125,7 @@ class Command(EpicEventsCommand):
     def display_result(self, filter_queryset, order_by_fields):
         table_data = dict()
 
-        headers = ["", "client", "total amount", "amount paid", "state"]
+        headers = ["", "** Client email **", "Total amount", "Amount paid", "State"]
 
         for contract in filter_queryset:
             client_data = {
