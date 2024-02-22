@@ -2,6 +2,7 @@ from faker import Faker
 from django.db import IntegrityError
 
 from accounts.models import Client, Employee
+from cli.utils_messages import create_success_message, create_error_message
 from data.utils_data_custom_command import DataCreateCommand
 
 fake = Faker()
@@ -41,8 +42,6 @@ class Command(DataCreateCommand):
                 Client.objects.create(**d)
 
         except IntegrityError:
-            self.stdout.write(self.style.WARNING("Exists already!"))
+            create_error_message("There are clients which")
         else:
-            self.stdout.write(
-                self.style.SUCCESS("Users and Employees successfully created!")
-            )
+            create_success_message("Clients", "created")

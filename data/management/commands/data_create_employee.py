@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 
 from accounts.models import Employee
+from cli.utils_messages import create_error_message, create_success_message
 from data.utils_data_custom_command import DataCreateCommand
 
 UserModel = get_user_model()
@@ -59,9 +60,7 @@ class Command(DataCreateCommand):
             Employee.objects.bulk_create(employees_to_create)
 
         except IntegrityError:
-            self.stdout.write(self.style.WARNING("   Exists already!"))
+            create_error_message("There are employees which")
         else:
             self.stdout.write(data[1]["email"])
-            self.stdout.write(
-                self.style.SUCCESS("   Users and Employees successfully created!")
-            )
+            create_success_message("Users and Employees", "created")

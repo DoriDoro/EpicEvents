@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.utils.timezone import make_aware
 from faker import Faker
 
+from cli.utils_messages import create_success_message, create_error_message
 from contracts.models import Contract
 from data.utils_data_custom_command import DataCreateCommand
 from events.models import Event
@@ -45,6 +46,6 @@ class Command(DataCreateCommand):
                 Event.objects.create(**d)
 
         except IntegrityError:
-            self.stdout.write(self.style.WARNING("Exists already!"))
+            create_error_message("There are events which")
         else:
-            self.stdout.write(self.style.SUCCESS("Events successfully created!"))
+            create_success_message("Events", "created")
