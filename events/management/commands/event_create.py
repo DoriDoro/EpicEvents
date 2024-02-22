@@ -7,7 +7,7 @@ from cli.utils_messages import (
     create_error_message,
     create_success_message,
 )
-from cli.utils_tables import create_queryset_table, create_model_table
+from cli.utils_tables import create_queryset_table
 from events.models import Event
 
 
@@ -16,13 +16,13 @@ class Command(EpicEventsCommand):
     action = "CREATE"
     permissions = ["SA"]
 
+    def get_queryset(self):
+        self.queryset = Event.objects.select_related("contract__client").all()
+
     def get_create_model_table(self):
         table_data = dict()
 
-        create_model_table(Client, "email", "Client Emails")
-
-        queryset = Event.objects.select_related("contract__client").all()
-        for event in queryset:
+        for event in self.queryset:
             table_data[event.contract.client.id] = event.contract.client.email
 
         create_queryset_table(table_data, "Events", "Email")

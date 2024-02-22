@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from accounts.models import Client
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_error_message, create_success_message
-from cli.utils_tables import create_model_table
+from cli.utils_tables import create_queryset_table
 
 
 class Command(EpicEventsCommand):
@@ -12,8 +12,30 @@ class Command(EpicEventsCommand):
     action = "CREATE"
     permissions = ["SA"]
 
+    def get_queryset(self):
+        self.queryset = Client.objects.all()
+
     def get_create_model_table(self):
-        create_model_table(Client, "email", "Client Emails")
+        table_data = dict()
+
+        headers = [
+            "",
+            "** Client email **",
+            "First name",
+            "Last name",
+            "Company_name",
+        ]
+
+        for client in self.queryset:
+            client_data = {
+                "email": client.email,
+                "first_name": client.first_name,
+                "last_name": client.last_name,
+                "company_name": client.company_name,
+            }
+            table_data[f"Client {client.id}"] = client_data
+
+        create_queryset_table(table_data, "Clients", headers=headers)
 
     def get_data(self):
         self.display_input_title("Enter details to create a client:")

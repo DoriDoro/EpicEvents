@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_error_message, create_success_message
-from cli.utils_tables import create_model_table
+from cli.utils_tables import create_queryset_table
 
 UserModel = get_user_model()
 
@@ -15,8 +15,30 @@ class Command(EpicEventsCommand):
     action = "CREATE"
     permissions = ["MA"]
 
+    def get_queryset(self):
+        self.queryset = Employee.objects.select_related("user").all()
+
     def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employee Emails")
+        table_data = dict()
+
+        headers = [
+            "",
+            "** Employee email **",
+            "First name",
+            "Last name",
+            "Role",
+        ]
+
+        for employee in self.queryset:
+            employee_data = {
+                "email": employee.user.email,
+                "first_name": employee.first_name,
+                "last_name": employee.last_name,
+                "role": employee.role,
+            }
+            table_data[f"Employee {employee.id}"] = employee_data
+
+        create_queryset_table(table_data, "Employee", headers=headers)
 
     def get_data(self):
         self.display_input_title("Enter details to create an employee:")
