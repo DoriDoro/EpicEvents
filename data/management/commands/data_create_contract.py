@@ -20,22 +20,22 @@ class Command(DataCreateCommand):
         state_choices = ["S", "S", "S", "D"]
         data_contract = {}
 
-        for i in range(1, 21):
-            for client in self.client:
-                state = state_choices[(i - 1) % len(state_choices)]
+        for i in range(1, 11):
+            client = self.client[(i - 1) % len(self.client)]
+            state = state_choices[(i - 1) % len(state_choices)]
 
-                contract = {
-                    "client": client,
-                    "employee": client.employee,
-                    "total_costs": fake.pydecimal(
-                        left_digits=5, right_digits=2, positive=True
-                    ),
-                    "amount_paid": fake.pydecimal(
-                        left_digits=3, right_digits=2, positive=True
-                    ),
-                    "state": state,
-                }
-                data_contract[i] = contract
+            contract = {
+                "client": client,
+                "employee": client.employee,
+                "total_costs": fake.pydecimal(
+                    left_digits=5, right_digits=2, positive=True
+                ),
+                "amount_paid": fake.pydecimal(
+                    left_digits=3, right_digits=2, positive=True
+                ),
+                "state": state,
+            }
+            data_contract[i] = contract
 
         return data_contract
 
