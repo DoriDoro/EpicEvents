@@ -338,13 +338,12 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """Prints a new line"""
         print()
 
-    # METHODS FOR ALL ACTIONS:
     # METHODS FOR ALL ACTIONS: (LIST, LIST_FILTER, CREATE, UPDATE AND DELETE):
     def get_create_model_table(self):
         """Within this method, create a table of the existing model instances."""
         pass
 
-    # METHODS FOR ALL ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
+    # METHODS FOR ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
     def get_data(self):
         """
         Prompts the user for data/information.
@@ -401,45 +400,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
                 field = field.replace("_", " ")
                 self.update_table.append([f"{field.capitalize()}: ", field_item])
 
-    # METHODS FOR ACTIONS: CREATE AND UPDATE:
-    def create_table(self):
-        """
-        Creates a table with help of library: 'tabulate'. It takes the instance attribute
-        'update_table' to create the table, 'cli/utils_tables.py'.
-        """
-        create_pretty_table(self.update_table)
-
-    # METHODS FOR ACTION: UPDATE AND DELETE:
-    def get_requested_model(self):
-        """
-        Prompt the user for the email or other required details to find the corresponding model.
-        Displays a or several table(s) with help of 'cli/utils_table.py'.
-        """
-        pass
-
-    # METHODS FOR ACTION: UPDATE:
-    def get_fields_to_update(self):
-        """
-        Uses the 'multiple_choice_str_input' to retrieve the user's input. These choices will be
-        transmitted to the 'get_data' method to call the necessary inputs. And sets the instance
-        attribute 'field_to_update'.
-
-        Returns:
-            list: Contains a list of the option(s) which the user entered.
-        """
-        return self.fields_to_update
-
-    def get_available_fields(self):
-        """
-        Sets the instance attribute 'available_fields'.
-
-        Returns:
-            dict: Contains the 'method', 'params' and 'label' to display in 'get_data' the
-            necessary input-types.
-        """
-        pass
-
-    # METHODS FOR ACTION: LIST_FILTER:
+    # METHODS FOR ACTION: LIST_FILTER and LIST:
     def get_queryset(self):
         """
         Requests the queryset of a model.
@@ -534,8 +495,45 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         """
         pass
 
-    # METHODS FOR HANDLE:
+    # METHODS FOR ACTIONS: CREATE AND UPDATE:
+    def create_table(self):
+        """
+        Creates a table with help of library: 'tabulate'. It takes the instance attribute
+        'update_table' to create the table, 'cli/utils_tables.py'.
+        """
+        create_pretty_table(self.update_table)
 
+    # METHODS FOR ACTION: UPDATE AND DELETE:
+    def get_requested_model(self):
+        """
+        Prompt the user for the email or other required details to find the corresponding model.
+        Displays a or several table(s) with help of 'cli/utils_table.py'.
+        """
+        pass
+
+    # METHODS FOR ACTION: UPDATE:
+    def get_fields_to_update(self):
+        """
+        Uses the 'multiple_choice_str_input' to retrieve the user's input. These choices will be
+        transmitted to the 'get_data' method to call the necessary inputs. And sets the instance
+        attribute 'field_to_update'.
+
+        Returns:
+            list: Contains a list of the option(s) which the user entered.
+        """
+        return self.fields_to_update
+
+    def get_available_fields(self):
+        """
+        Sets the instance attribute 'available_fields'.
+
+        Returns:
+            dict: Contains the 'method', 'params' and 'label' to display in 'get_data' the
+            necessary input-types.
+        """
+        pass
+
+    # METHODS FOR HANDLE:
     def list(self):
         """Methods when action='LIST' in the child Command."""
         self.get_queryset()
@@ -563,6 +561,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     def create(self):
         """Methods when action='CREATE' in the child Command."""
+        self.get_queryset()
         self.get_create_model_table()
         validated_data = self.get_data()
         self.make_changes(validated_data)
