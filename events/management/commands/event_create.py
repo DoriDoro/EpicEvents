@@ -54,7 +54,6 @@ class Command(EpicEventsCommand):
 
         validated_data["client"] = client
         validated_data["employee"] = client.employee
-        # TODO: verify if client.employee = self.user
 
         # remove client from data:
         data.pop("client", None)
