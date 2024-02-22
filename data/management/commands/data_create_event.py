@@ -21,9 +21,13 @@ class Command(DataCreateCommand):
     def create_fake_data(self):
         data_event = {}
 
-        for i in range(1, 51):
+        for i in range(1, 11):
             date_object = fake.date_time()
             date_object = make_aware(date_object)
+
+            event_term = fake.word(
+                ext_word_list=["conference", "workshop", "meetup", "gathering"]
+            )
 
             contract = self.contract[(i - 1) % len(self.contract)]
 
@@ -31,7 +35,7 @@ class Command(DataCreateCommand):
                 "contract": contract,
                 "employee": contract.employee,
                 "date": date_object,
-                "name": fake.name(),
+                "name": f"{fake.name()} {event_term}",
                 "location": fake.address(),
                 "max_guests": fake.random_int(min=50, max=1000),
                 "notes": fake.text(),
