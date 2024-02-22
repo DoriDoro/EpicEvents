@@ -24,19 +24,49 @@ class Command(EpicEventsCommand):
         Returns:
             A queryset of the Contract model, with all ForeignKey relations.
         """
-        return Contract.objects.select_related("client").all()
+        self.queryset = Contract.objects.select_related("client").all()
 
     def get_create_model_table(self):
-        table_data = dict()
-        create_model_table(Client, "email", "Client Emails")
-        create_model_table(Employee, "user.email", "Employee Emails")
+        all_clients_data = dict()
+        all_contracts_data = dict()
+        headers_clients = [
+            "",
+            "** Client email **",
+            "First name",
+            "Last name",
+            "Company name",
+            "Employee",
+        ]
+        headers_contracts = [
+            "",
+            "** Client email **",
+            "Total costs",
+            "Amount paid",
+            "State",
+            "Employee",
+        ]
 
-        queryset = self.get_queryset()  # call the internal get_queryset method
+        for contract in self.queryset:
+            contract_data = {
+                "email": contract.client.email,
+                "total_costs": contract.total_costs,
+                "amount_paid": contract.paid_amount,
+                "state": contract.state,
+                "employee": contract.client.employee.user.email,
+            }
+            client_data = {
+                "email": contract.client.email,
+                "first_name": contract.client.first_name,
+                "last_name": contract.client.last_name,
+                "company_name": contract.client.company_name,
+                "employee": contract.client.employee.user.email,
+            }
 
-        for contract in queryset:
-            table_data[contract.client.id] = contract.client.email
+            all_clients_data[f"Client {contract.client.id}"] = client_data
+            all_contracts_data[f"Contract {contract.id}"] = contract_data
 
-        create_queryset_table(table_data, "Client Emails from contracts", "Email")
+        create_queryset_table(all_clients_data, "Clients", headers=headers_clients)
+        create_queryset_table(all_contracts_data, "Clients", headers=headers_contracts)
 
     def get_data(self):
         self.display_input_title("Enter details to create a new contract:")

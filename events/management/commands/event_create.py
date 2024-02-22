@@ -20,12 +20,38 @@ class Command(EpicEventsCommand):
         self.queryset = Event.objects.select_related("contract__client").all()
 
     def get_create_model_table(self):
-        table_data = dict()
+        all_events_data = dict()
+        my_events_data = dict()
+        headers_all = [
+            "",
+            "** Client email **",
+            "Date",
+            "Name",
+            "Location",
+            "Max guests",
+            "Employee",
+        ]
+        headers_my = headers_all[0:6]
 
         for event in self.queryset:
-            table_data[event.contract.client.id] = event.contract.client.email
+            event_data = {
+                "email": event.contract.client.email,
+                "date": event.date.strftime("%d/%m/%Y"),
+                "name": event.name,
+                "location": event.location,
+                "max_guests": event.max_guests,
+                "employee": event.employee,
+            }
 
-        create_queryset_table(table_data, "Events", "Email")
+            all_events_data[f"Event {event.id}"] = event_data
+
+            if event.contract.client.employee.user == self.user:
+                event_data = event_data.copy()
+                event_data.pop("employee", None)
+                my_events_data[f"Events {event.id}"] = event_data
+
+        create_queryset_table(all_events_data, "Events", headers=headers_all)
+        create_queryset_table(my_events_data, "my Events", headers=headers_my)
 
     def get_data(self):
         self.display_input_title("Enter the details to create a new event:")
