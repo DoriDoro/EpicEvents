@@ -13,7 +13,7 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
-    help = "Creates 50 events."
+    help = "This command creates 50 events."
 
     def get_queryset(self):
         self.contract = Contract.objects.select_related("employee").all()
@@ -21,7 +21,7 @@ class Command(DataCreateCommand):
     def create_fake_data(self):
         data_event = {}
 
-        for i in range(1, 11):
+        for i in range(1, 51):
             date_object = fake.date_time()
             date_object = make_aware(date_object)
 

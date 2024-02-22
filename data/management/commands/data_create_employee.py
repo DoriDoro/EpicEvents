@@ -12,7 +12,7 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
-    help = "This command creates 12 employees as basic data."
+    help = "This command creates 24 employees as basic data."
 
     def get_queryset(self):
         pass
@@ -21,7 +21,7 @@ class Command(DataCreateCommand):
         roles_choices = ["SA", "SU", "MA"]
         data_employee = {}
 
-        for i in range(1, 13):
+        for i in range(1, 25):
             first_name = fake.first_name()
             last_name = fake.last_name()
             email = f"{first_name.lower()}.{last_name.lower()}@mail.com"
@@ -44,7 +44,9 @@ class Command(DataCreateCommand):
             employees_to_create = []
 
             for value in data.values():
-                user = UserModel(email=value["email"], password=make_password("Test"))
+                user = UserModel(
+                    email=value["email"], password=make_password("TestPassw0rd!")
+                )
                 users_to_create.append(user)
 
                 employee = Employee(

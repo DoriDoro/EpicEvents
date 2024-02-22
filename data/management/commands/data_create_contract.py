@@ -11,7 +11,7 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
-    help = "Creates 20 contracts."
+    help = "This command creates 30 contracts."
 
     def get_queryset(self):
         self.client = Client.objects.select_related("employee").all().order_by("?")
@@ -20,7 +20,7 @@ class Command(DataCreateCommand):
         state_choices = ["S", "S", "S", "D"]
         data_contract = {}
 
-        for i in range(1, 11):
+        for i in range(1, 31):
             client = self.client[(i - 1) % len(self.client)]
             state = state_choices[(i - 1) % len(state_choices)]
 

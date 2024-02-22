@@ -9,7 +9,7 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
-    help = "This command creates 20 clients as basic data."
+    help = "This command creates 40 clients as basic data."
 
     def get_queryset(self):
         self.employee = Employee.objects.filter(role="SA")
@@ -17,7 +17,7 @@ class Command(DataCreateCommand):
     def create_fake_data(self):
         data_client = {}
 
-        for i in range(1, 21):
+        for i in range(1, 41):
             first_name = fake.first_name()
             last_name = fake.last_name()
             email = f"{first_name.lower()}.{last_name.lower()}@mail.com"
