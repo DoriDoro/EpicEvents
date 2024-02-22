@@ -98,13 +98,17 @@ class Command(EpicEventsCommand):
         return selected_fields, order
 
     def get_user_queryset(self):
+        # if an MA employee is authenticated, create a queryset with all SA employees
+        if self.user.employee_users.role == "MA":
+            return self.queryset.filter(employee__role="SA")
+
+        # if an SA employee is authenticated, create queryset of this SA employee
         return self.queryset.filter(employee__user=self.user)
-        # TODO: SA and MA can filter, user_queryset has to be SA, even MA is filtering
 
     def filter_selected_fields(self, selected_fields, order, user_queryset):
         field_mapping = {
             "C": "client",
-            "T": "total_amount",
+            "T": "total_costs",
             "A": "amount_paid",
             "S": "state",
         }
