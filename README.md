@@ -17,8 +17,8 @@ open terminal
 4. `. venv/bin/activate` on MacOS and Linux `venv\Scripts\activate` on Windows
 5. `pip install -r requirements.txt`
 
-Option 1: 
-  `python manage.py start` and login with one of these employees:
+Option 1: <br>
+start the program with command: `python manage.py start` and login with one of these emails:
 
   |    **Employee email**     |    Password     |  Role  |
   |:-------------------------:|:---------------:|:------:|
@@ -27,7 +27,7 @@ Option 1:
   |  joseph.osborne@mail.com  |  TestPassw0rd!  |   MA   |
 
 
-Option 2:
+Option 2: <br>
 create additional fake data by yourself, by running these commands:
 1. `python manage.py data_create_employee` (prints one employee/user email on console to login)
 2. `python manage.py data_create_client`
