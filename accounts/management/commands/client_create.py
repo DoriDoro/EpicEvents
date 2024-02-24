@@ -33,7 +33,7 @@ class Command(EpicEventsCommand):
         displaying an error message and re-prompting the user to create a client.
     - `collect_changes`: Confirms the creation of a new client and displays a success message.
     - `go_back`: Provides an option to go back to the previous command, presumably to the main
-    client management interface.
+        client management interface.
 
     This class encapsulates the functionality for creating new clients, ensuring that only users
     with the appropriate permissions can perform this action. It leverages the `EpicEventsCommand`

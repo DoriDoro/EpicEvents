@@ -10,6 +10,36 @@ from contracts.models import Contract
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed for managing contract
+    deletions within a system. It is specifically tailored for users with "MA" permissions,
+    indicating that it is intended for managers.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to delete a contract.
+    - `action`: A string indicating the action associated with this command, set to "DELETE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, only
+        "MA" (Management) has the permission.
+
+    Key methods within this class include:
+
+    - `get_create_model_table`: Generates a table of all contracts to help the user select a
+        contract to delete.
+    - `get_requested_model`: Prompts the user to input the email address of the client from
+        the contract they wish to delete and displays the contract's details for confirmation.
+    - `get_data`: Prompts the user to confirm the deletion of the selected contract.
+    - `make_changes`: If the user confirms the deletion, it proceeds to delete the contract;
+        otherwise, it cancels the operation and returns to the contract management interface.
+    - `collect_changes`: Confirms the deletion of the contract and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        contract management interface.
+
+    This class encapsulates the functionality for deleting contracts, ensuring that only users with
+    the appropriate permissions can perform this action. It leverages
+    the `EpicEventsCommand` class for common command functionalities, such as displaying input
+    prompts and handling user input.
+    """
+
     help = "Prompts for details to delete a contract."
     action = "DELETE"
     permissions = ["MA"]

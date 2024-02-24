@@ -12,18 +12,45 @@ from contracts.models import Contract
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed to facilitate the creation
+    of new contract within a system. It is specifically tailored for users with "MA" permissions,
+    indicating that it is intended for management.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to create a new contract.
+    - `action`: A string indicating the action associated with this command, set to "CREATE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, only
+        "MA" (Management) has the permission.
+
+    Key methods within this class include:
+
+    - `get_queryset`: Initializes the queryset for `Contract` objects, selecting related `Client`
+        objects for each client.
+    - `get_create_model_table`: Generates tables of all contracts and a subset of clients related
+        to the employee with role ('SA') which is responsible for the client, displaying relevant
+        information such as email of the client, total costs, amount already paid, state of the
+        contract and the employee.
+    - `get_data`: Prompts the user to input details for creating a new contract, capturing client
+        email, the total costs, the paid amount and the state of the contract.
+    - `make_changes`: Validates if the client exists otherwise it prints an error message.
+        Attempts to create a new `Contract` object with the provided data, associating it with the
+        responsible client `Employee` object. And verifies if the contract already exists.
+    - `collect_changes`: Confirms the creation of a new contract and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        contract management interface.
+
+    This class encapsulates the functionality for creating new contracts, ensuring that only users
+    with the appropriate permissions can perform this action. It leverages the `EpicEventsCommand`
+    class for common command functionalities, such as displaying input prompts
+    and handling user input.
+    """
+
     help = "Prompts for details to create a new contract."
     action = "CREATE"
     permissions = ["MA"]
 
     def get_queryset(self):
-        """
-        Not using the EpicEventsCommand get_queryset method because only used for the creation
-        of a contract.
-
-        Returns:
-            A queryset of the Contract model, with all ForeignKey relations.
-        """
         self.queryset = Contract.objects.select_related("client").all()
 
     def get_create_model_table(self):
