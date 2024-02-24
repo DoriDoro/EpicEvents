@@ -7,19 +7,23 @@ from cli.utils_messages import create_info_message
 
 class Command(EpicEventsCommand):
     """
-    Command to start the Epic Events program.
+    This script defines a class `Command` that inherits from `EpicEventsCommand`. It provides the
+    start menu for choosing which model to go to next.
 
-    This command displays the start menu of the Epic Events program and allows users
-    with appropriate permissions to navigate to different sections of the program.
+    - The `help` attribute provides a brief description of the command's purpose.
+    - The `permissions` attribute lists the roles that have permission to execute this command.
+    - The `handle` method is overridden to customize the command's behavior based on the user's
+        role and their choice from the application menu.
 
-    Permissions for Employees with role:
-        - SA: Sales
-        - SU: Support
-        - MA: Management
+    The `handle` method performs the following operations:
+    - Calls the superclass's `handle` method to ensure proper initialization.
+    - Retrieves the user's choice from the application start menu for the next step.
+
+    This class demonstrates the use of inheritance and role-based access control in a command-line
+    interface, allowing for a flexible and secure management.
     """
 
     help = "Start the Epic Events program."
-
     permissions = ["SA", "SU", "MA"]
 
     def handle(self, *args, **options):

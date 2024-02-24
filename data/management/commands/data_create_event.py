@@ -13,6 +13,29 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
+    """
+    Command to create 50 events. This command generates and creates 50 events with fake data. It
+    selects contracts and their associated employees randomly from the database and assigns them
+    to events. The command also generates fake dates, event names, locations, and notes for
+    each event. If there are any integrity errors during the creation process,
+    it handles them appropriately.
+
+    Attributes:
+        help (str): Description of the command.
+
+    Methods:
+        get_queryset(self): Initializes the queryset for contracts, selecting them with their
+            associated employees.
+        create_fake_data(self): Generates fake data for   50 events and returns a dictionary
+            with the data.
+        create_instances(self, data): Creates instances of Event model in the database using the
+            provided data.
+
+    Raises:
+        IntegrityError: If there is an attempt to create an event that violates database
+            integrity constraints.
+    """
+
     help = "This command creates 50 events."
 
     def get_queryset(self):

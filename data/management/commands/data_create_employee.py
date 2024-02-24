@@ -12,6 +12,28 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
+    """
+    Command to create 24 employees with basic data. This command generates and creates 24 employees
+    with fake data. It assigns roles cyclically from a predefined list of roles ("SA", "SU", "MA").
+    The command also generates random first names, last names, and emails for each employee.
+    The password for each user is set to a default value. If there are any integrity errors
+    during the creation process, it handles them appropriately.
+
+    Attributes:
+        help (str): Description of the command.
+
+    Methods:
+        get_queryset(self): Placeholder method for future use.
+        create_fake_data(self): Generates fake data for 24 employees and returns a dictionary
+            with the data.
+        create_instances(self, data): Creates instances of User and Employee models in the
+            database using the provided data.
+
+    Raises:
+        IntegrityError: If there is an attempt to create an employee that violates database
+            integrity constraints.
+    """
+
     help = "This command creates 24 employees as basic data."
 
     def get_queryset(self):

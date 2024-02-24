@@ -51,6 +51,9 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     permissions = None
 
     def __init__(self, *args, **options):
+        """
+        Initialize the subclass attributes.
+        """
         super().__init__(*args, **options)
         self.object = None
         self.queryset = None

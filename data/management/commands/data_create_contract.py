@@ -11,6 +11,28 @@ fake = Faker()
 
 
 class Command(DataCreateCommand):
+    """
+    Command to create 30 contracts. This command is designed to generate and create 30 contracts
+    with fake data. It selects clients and employees randomly from the database and assigns them
+    to contracts with varying states. The command also generates fake total costs and amount paid
+    for each contract. If there are any integrity errors during the creation process,
+    it handles them appropriately.
+
+    Attributes:
+        help (str): Description of the command.
+
+    Methods:
+        get_queryset(self): Initializes the queryset for clients, selecting them in a random order.
+        create_fake_data(self): Generates fake data for 30 contracts and returns a dictionary
+            with the data.
+        create_instances(self, data): Creates instances of Contract model in the database using
+            the provided data.
+
+    Raises:
+        IntegrityError: If there is an attempt to create a contract that violates database
+            integrity constraints.
+    """
+
     help = "This command creates 30 contracts."
 
     def get_queryset(self):
