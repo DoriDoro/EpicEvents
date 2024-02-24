@@ -38,7 +38,7 @@ create fake data by yourself, by running these commands:
 1. `python manage.py data_create_employee` (prints one employee/user email, with Role: SA, on console to log in)
 2. `python manage.py data_create_client`
 3. `python manage.py data_create_contract`
-4. `python manage.py data_create_event`
+4. `python manage.py data_create_event` <br>
 the commands to create all these data is located in `data/management/commands/`.
 5. start the program with command: `python manage.py start` and login with e.g. the email which is printed on the console after you enter `python manage.py data_create_employee` command with password: `TestPassw0rd!`.
 
