@@ -46,6 +46,8 @@ class Command(EpicEventsCommand):
             all_clients_data[f"Client {client.id}"] = client_data
 
             if client.employee.user == self.user:
+                # create a copy of 'client_date' otherwise the column 'Employee' is empty
+                client_data = client_data.copy()
                 client_data.pop("employee", None)
                 my_clients_data[f"Client {client.id}"] = client_data
 
