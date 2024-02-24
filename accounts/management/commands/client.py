@@ -5,6 +5,33 @@ from cli.utils_menu import get_app_menu
 
 
 class Command(EpicEventsCommand):
+    """
+    This script defines a class `Command` that inherits from `EpicEventsCommand`. It provides a
+    menu for operations around clients based on the user's role.
+
+    - The `help` attribute provides a brief description of the command's purpose.
+    - The `permissions` attribute lists the roles that have permission to execute this command.
+    - The `handle` method is overridden to customize the command's behavior based on the user's
+        role and their choice from the application menu.
+
+    The `handle` method performs the following operations:
+    - Calls the superclass's `handle` method to ensure proper initialization.
+    - Retrieves the user's choice from the application menu for the "client" section.
+    - Depending on the user's role (`SA`, `SU`, or `MA`), it executes different commands based
+        on the user's choice:
+        - For `SA` role:
+            - Choice  1: Calls `client_list_filter` command.
+            - Choice  2: Calls `client_create` command.
+            - Choice  3: Calls `client_update` command.
+            - Choice  4: Calls `start` command.
+        - For `SU` and `MA` roles:
+            - Choice  1: Calls `client_list_filter` command.
+            - Choice  2: Calls `start` command.
+
+    This class demonstrates the use of inheritance and role-based access control in a command-line
+    interface, allowing for a flexible and secure management of client operations.
+    """
+
     help = "Menu for all operations around the clients."
     permissions = ["SA", "SU", "MA"]
 

@@ -11,6 +11,39 @@ UserModel = get_user_model()
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed to facilitate the creation
+    of new employees within a system. It is specifically tailored for users with "MA" permissions,
+    indicating that it is intended for management.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to create a new employee.
+    - `action`: A string indicating the action associated with this command, set to "CREATE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, only
+        "MA" (Management) has the permission.
+
+    Key methods within this class include:
+
+    - `get_queryset`: Initializes the queryset for `Employee` objects, selecting related `User`
+        objects for each employee.
+    - `get_create_model_table`: Generates tables of all employees and a subset of employees
+        related to the current user, displaying relevant information such as email, first name,
+        last name and role.
+    - `get_data`: Prompts the user to input details for creating a new employee, capturing email,
+        password, first name, last name and role.
+    - `make_changes`: Attempts to create a new `User` and a new `Employee` object with the
+        provided data. Handles potential `IntegrityError` by displaying an error message and
+        re-prompting the user to create an employee.
+    - `collect_changes`: Confirms the creation of a new employee and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        employee management interface.
+
+    This class encapsulates the functionality for creating new employees, ensuring that only users
+    with the appropriate permissions can perform this action. It leverages the `EpicEventsCommand`
+    class for common command functionalities, such as displaying input prompts
+    and handling user input.
+    """
+
     help = "Prompts to create a new employee."
     action = "CREATE"
     permissions = ["MA"]

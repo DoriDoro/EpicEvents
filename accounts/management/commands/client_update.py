@@ -10,6 +10,38 @@ from cli.utils_tables import (
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed for updating client details
+    within a system. It is specifically tailored for users with "SA" permissions, indicating that
+    it is intended for sales.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to update a client.
+    - `action`: A string indicating the action associated with this command, set to "UPDATE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, only
+        "SA" (Sales) has the permission.
+
+    Key methods within this class include:
+
+    - `get_create_model_table`: Generates a table of all client emails to help the user select a
+        client to update.
+    - `get_requested_model`: Prompts the user to input the email address of the client they wish
+        to update and displays the client's details for confirmation.
+    - `get_fields_to_update`: Prompts the user to select which fields they want to update.
+    - `get_available_fields`: Maps the selected fields to their corresponding input methods
+        for data collection.
+    - `get_data`: Collects the new data for the selected fields from the user.
+    - `make_changes`: Updates the client with the new data.
+    - `collect_changes`: Confirms the update of the client and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        client management interface.
+
+    This class encapsulates the functionality for updating client details, ensuring that only
+    users with the appropriate permissions can perform this action. It leverages
+    the `EpicEventsCommand` class for common command functionalities, such as displaying input
+    prompts and handling user input.
+    """
+
     help = "Prompts for details to to update a client."
     action = "UPDATE"
     permissions = ["SA"]

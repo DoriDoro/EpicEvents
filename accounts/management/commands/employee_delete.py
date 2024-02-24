@@ -7,6 +7,36 @@ from cli.utils_tables import create_model_table, create_pretty_table
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed for managing employee
+    deletions within a system. It is specifically tailored for users with "MA" permissions,
+    indicating that it is intended for managers.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to delete an employee.
+    - `action`: A string indicating the action associated with this command, set to "DELETE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, only
+        "MA" (Management) has the permission.
+
+    Key methods within this class include:
+
+    - `get_create_model_table`: Generates a table of all employees emails to help the user select
+        an employee to delete.
+    - `get_requested_model`: Prompts the user to input the email address of the employee they wish
+        to delete and displays the employee's details for confirmation.
+    - `get_data`: Prompts the user to confirm the deletion of the selected employee.
+    - `make_changes`: If the user confirms the deletion, it proceeds to delete the employee;
+        otherwise, it cancels the operation and returns to the employee management interface.
+    - `collect_changes`: Confirms the deletion of the employee and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        employee management interface.
+
+    This class encapsulates the functionality for deleting employees, ensuring that only users with
+    the appropriate permissions can perform this action. It leverages
+    the `EpicEventsCommand` class for common command functionalities, such as displaying input
+    prompts and handling user input.
+    """
+
     help = "Delete an employee."
     action = "DELETE"
     permissions = ["MA"]
