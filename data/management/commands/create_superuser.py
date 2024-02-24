@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            UserModel.objects.create_superuser("admin", "admin@mail.com", "admin")
+            UserModel.objects.create_superuser("admin@mail.com", "admin")
         except IntegrityError:
             self.stdout.write(self.style.WARNING("Exists already!"))
         else:
