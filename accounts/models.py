@@ -6,8 +6,21 @@ from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     """
-    Custom user model manager where email is the unique identifiers
-    for authentication instead of usernames.
+    The `UserManager` class is a custom manager for the `User` model, extending Django's
+    `BaseUserManager`. It provides methods for creating users and superusers, ensuring that email
+    addresses are normalized and that superusers have the appropriate permissions set.
+
+    - `create_user`: Creates a new user with the given email and password. It normalizes the email
+        address and sets the password. This method is designed to handle the creation
+        of regular users.
+    - `create_superuser`: Creates a new superuser with the given email and password. It ensures
+        that superusers have `is_staff`, `is_superuser`, and `is_active` set to `True`.
+        This method is specifically for creating superusers with full permissions.
+
+    These methods are essential for managing user accounts within a Django application, providing
+    a secure and flexible way to handle user authentication and authorization. By using custom
+    methods for creating users and superusers, the `UserManager` allows for the implementation of
+    custom logic and validation that aligns with the specific requirements of the application.
     """
 
     def create_user(self, email, password, **extra_fields):
@@ -38,6 +51,39 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    """
+    This class `User` is a custom user model for Django applications, designed to use email
+    addresses as the primary identifier for user authentication instead of traditional usernames.
+    It extends `AbstractUser` to inherit all the fields and methods necessary for user management,
+    including authentication and authorization.
+
+    - `username`: This field is set to `None` to indicate that email addresses will be used for
+        authentication instead of usernames.
+    - `email` (EmailField): An `EmailField` that is marked as unique, ensuring that each email address can only
+        be associated with one user account.
+
+    - `USERNAME_FIELD`: Specifies the field to be used as the unique identifier for authentication,
+        which is set to `'email'`.
+    - `REQUIRED_FIELDS`: Specifies additional fields that must be filled out when creating a user.
+        Since the email field is required and unique, this list is empty.
+
+    - `objects`: Assigns the custom `UserManager` to handle the creation of user and superuser
+        instances.
+
+    The `UserManager` class, `UserManager`, is a custom manager for the `User` model. It provides
+    methods for creating users and superusers, ensuring that email addresses are normalized and
+    that superusers have the appropriate permissions set.
+
+    - `create_user`: Creates a new user with the given email and password. It normalizes the email
+        address and sets the password.
+    - `create_superuser`: Creates a new superuser with the given email and password. It ensures
+        that superusers have `is_staff`, `is_superuser`, and `is_active` set to `True`.
+
+    This custom user model allows for a more straightforward authentication flow, where users log
+    in using their email addresses, and it provides a flexible foundation for customizing user
+    management features in Django applications.
+    """
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
 
@@ -51,6 +97,30 @@ class User(AbstractUser):
 
 
 class Employee(models.Model):
+    """
+    The `Employee` model represents employees within the system, with different roles such as
+    Sales, Support, and Management. Each employee is associated with a user account, allowing for
+    authentication and authorization based on their role.
+
+    - `ROLE_CHOICES`: A dictionary defining the possible roles an employee can have, including
+        Sales, Support, and Management.
+
+    - `user` (ForeignKey): A one-to-one relationship with the `User` model, establishing a link between an
+        employee and their user account. This field is crucial for authentication
+        and authorization purposes.
+    - `first_name` and `last_name` (CharField): Char fields for storing the employee's first and last names.
+    - `role` (CharField): A char field with choices defined by `ROLE_CHOICES`, specifying the employee's role
+        within the organization.
+
+    Property methods include:
+    - `get_full_name`: A property method that returns the employee's full name, combining
+        the first and last names.
+    - `get_email_address`: A property method that retrieves the associated user's email address.
+
+    The `__str__` method returns a string representation of the employee, displaying
+        their full name and role.
+    """
+
     SALES = "SA"
     SUPPORT = "SU"
     MANAGEMENT = "MA"
@@ -84,6 +154,33 @@ class Employee(models.Model):
 
 
 class Client(models.Model):
+    """
+    The `Client` model represents clients associated with employees within the system.
+    Each client is linked to an employee, indicating who is responsible for their account.
+
+    - `employee` (ForeignKey): A foreign key relationship to the `Employee` model, linking each
+        client to their assigned employee.
+    - `email` (ForeignKey): An email field that stores the client's email address, ensuring
+        uniqueness to prevent duplicate client entries.
+    - `first_name`, `last_name`, `phone`, and `company_name` (CharField): Char fields for storing
+        the client's personal information and company name.
+    - `created_on` and `last_update`: DateTime fields that automatically record the creation
+        and last update times of a client record.
+
+    Property methods include:
+    - `get_full_name`: A property method that returns the client's full name, combining
+        the first and last names.
+    - `get_email_address`: A property method that retrieves the associated employee's
+        user's email address.
+
+    The `__str__` method returns a string representation of the client, displaying their full name.
+
+    These models are essential for managing employees and clients within a Django application,
+    providing a structured way to store and access user and client information. The relationships
+    between the models ensure that each client is associated with an employee,
+    facilitating role-based access control and data management.
+    """
+
     employee = models.ForeignKey(
         "accounts.Employee",
         on_delete=models.CASCADE,

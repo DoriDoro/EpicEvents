@@ -5,6 +5,44 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Contract(models.Model):
+    """
+    The `Contract` model represents a contract between a client and an employee within a system.
+    It is designed to track the financial details of a contract, including the total costs,
+    the amount paid, and the state of the contract (either signed or draft).
+
+    - `SIGNED` and `DRAFT`: Constants representing the possible states a contract can be in.
+    - `STATE_CHOICES`: A dictionary mapping the state constants to human-readable labels.
+
+    - `client` (ForeignKey): A foreign key to the `Client` model, indicating the client associated
+        with the contract.
+    - `employee` (ForeignKey): A foreign key to the `Employee` model, indicating the employee
+        associated with the contract.
+    - `total_costs` (DecimalField): A decimal field representing the total cost of the contract.
+    - `amount_paid` (DecimalField): A decimal field representing the amount paid towards the
+        contract.
+    - `create_date` (DateTimeField): A datetime field automatically set to the current date and
+        time when the contract is created.
+    - `state` (CharField): A char field with choices defined by `STATE_CHOICES`, indicating the
+        current state of the contract.
+
+    Property methods include:
+    - `total`: Returns the total costs of the contract formatted as a string
+        with a currency symbol.
+    - `paid_amount`: Returns the amount paid towards the contract formatted as a string
+        with a currency symbol.
+    - `rest_amount`: Calculates the remaining amount to be paid on the contract by subtracting
+        the amount paid from the total costs, and returns it formatted as a string
+        with a currency symbol.
+
+    The `__str__` method returns a string representation of the contract, displaying the full name
+    of the client and the email of the associated employee.
+
+    This model is essential for managing contracts within a Django application, providing a
+    structured way to store and access contract information. The use of `on_delete=models.CASCADE`
+    for both `client` and `employee` foreign keys ensures that when a client or employee
+    is deleted, all associated contracts are also deleted to maintain data integrity.
+    """
+
     SIGNED = "S"
     DRAFT = "D"
 

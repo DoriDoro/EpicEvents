@@ -5,6 +5,24 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Event(models.Model):
+    """
+    This model represents an event with various attributes such as contract, employee, date, name,
+    location, max_guests, and notes.
+
+    - `contract` (ForeignKey): A foreign key to the Contract model, representing the contract
+        associated with the event.
+    - `employee` (ForeignKey): A foreign key to the Employee model, representing the employee
+        assigned to the event.
+    - `date` (DateTimeField): The date and time when the event is scheduled to take place.
+    - `name` (CharField): The name of the event.
+    - `location` (CharField): The address where the event will take place.
+    - `max_guests` (PositiveIntegerField): The maximum number of guests allowed for the event.
+    - `notes` (TextField): Additional notes or details about the event.
+
+    The `__str__` method returns a string representation of the event, including its name and
+    the email of the associated employee.
+    """
+
     contract = models.ForeignKey(
         "contracts.Contract",
         on_delete=models.CASCADE,
