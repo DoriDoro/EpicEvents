@@ -54,4 +54,4 @@ class Contract(models.Model):
         return f"{rest_amount} €"
 
     def __str__(self):
-        return f"{self.client.email} ({self.employee.user.email})"
+        return f"{self.client.get_full_name} ({self.employee.user.email})"

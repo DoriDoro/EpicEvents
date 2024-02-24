@@ -35,4 +35,4 @@ class Event(models.Model):
     notes = models.TextField(verbose_name=_("notes for the event"))
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.employee.user.email})"
