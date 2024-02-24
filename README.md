@@ -3,10 +3,16 @@
 ## Description:
 Project 12 OpenClassrooms Path - Epic Events -- develop a secure back-end architecture with Python and SQL
 
-Work in progress ...
+Epic Events is an Event Manager CLI program to create, update and delete employees, clients, contracts and events. 
 
-using SQLite for the evaluation and
-one other branch project with PostgreSQL
+I have chosen to use the Django ORM to create my models, use BaseCommand to create, update, delete and also to display a manu. As admin tool I have used the Django admin interphase. The database is a SQLite database.
+My permission system is integrated in the EpicEventCommand, where I use a class attribute 'permission' to verify if the user has the permission to access the command. 
+
+The authentication is Django based but to create a token I am using the JWT. To integrate the token into the commands, there is a JWTTokenMixin. This mixin generates a token, 
+verifies the token and handles the login and logout of the user. 
+
+Every employee has a specific role. The roles are SAles, SUpport and MAnagement. Every employee can make different operation within that program. This operation are permission-based
+and even the menu is based on the specific role of the employee. To visualize which employee has access to which operation you can check the file: `cli/utils_menu.py.get_app_menu`.
 
 
 ## Installation:
@@ -36,6 +42,10 @@ create fake data by yourself, by running these commands:
 
 the commands to create all these data is located in `data/management/commands/`.
 
+
+## Entity-Relationship Diagram (ERD):
+realized with https://dbdiagram.io
+![diagram](/README_images/EpicEvents_modelDiagramm.png)
 
 ## Skill:
 - Implementing a secure database with Python and SQL
