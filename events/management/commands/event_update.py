@@ -15,6 +15,38 @@ from events.models import Event
 
 
 class Command(EpicEventsCommand):
+    """
+    This class `Command` is a subclass of `EpicEventsCommand` designed for updating event details
+    within a system. It is specifically tailored for users with "SA" and "MA" permissions,
+    indicating that it is intended for sales and management.
+
+    - `help`: A string describing the command's purpose, which is to prompt for details necessary
+        to update an event.
+    - `action`: A string indicating the action associated with this command, set to "UPDATE".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case,
+        "SA" (Sales) and "MA" (Management) has the permission.
+
+    Key methods within this class include:
+
+    - `get_create_model_table`: Generates a table of all events to help the user select an event
+        to update.
+    - `get_requested_model`: Prompts the user to input the email address of the client from
+        the event they wish to update and displays the event's details for confirmation.
+    - `get_fields_to_update`: Prompts the user to select which fields they want to update.
+    - `get_available_fields`: Maps the selected fields to their corresponding input methods
+        for data collection.
+    - `get_data`: Collects the new data for the selected fields from the user.
+    - `make_changes`: Updates the event with the new data.
+    - `collect_changes`: Confirms the update of the event and displays a success message.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        event management interface.
+
+    This class encapsulates the functionality for updating event details, ensuring that only
+    users with the appropriate permissions can perform this action. It leverages
+    the `EpicEventsCommand` class for common command functionalities, such as displaying input
+    prompts and handling user input.
+    """
+
     help = "Prompts for details to update an event"
     action = "UPDATE"
     permissions = ["SA", "MA"]

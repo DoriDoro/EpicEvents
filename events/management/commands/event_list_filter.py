@@ -8,17 +8,41 @@ from events.models import Event
 
 class Command(EpicEventsCommand):
     """
-    Command to list and filter all Events.
+    This class `Command` is a subclass of `EpicEventsCommand` designed to list all events with an
+    option to filter the list based on user input. It is accessible to users with "SA", "SU", or
+    "MA" permissions.
 
-    This command requests a queryset of all Events and displays them with get_create_model_table,
-    finish the command and goes back to the event menu.
+    - `help`: A string describing the command's purpose, which is to list all events
+        and optionally filter them.
+    - `action`: A string indicating the action associated with this command, set to "LIST_FILTER".
+    - `permissions`: A list of roles that are allowed to execute this command, in this case, "SA"
+        (Sales), "SU" (Support), and "MA" (Management) have the permission.
 
-    After the listing of all events, the user has the possibility to ask to filter all
+    Key methods within this class include:
 
-    Permissions for Employees with role:
-        - SA: Sales
-        - SU: Support
-        - MA: Management
+    - `get_queryset`: Initializes the queryset for `Event` objects, selecting related `Contract`
+        and `Employee` objects for each event.
+    - `get_create_model_table`: Generates a table of all events, displaying relevant information
+        such as client email, date, name, location, maximum guest number, and employee.
+    - `get_data`: Prompts the user to decide whether they want to filter events,
+        capturing their choice.
+    - `user_choice`: Handles the user's choice to filter events, with special handling for "SA"
+        and "SU" role to allow filtering without permission denied messages.
+    - `choose_attributes`: Displays fields available for filtering and allows the user to select
+        which fields they want to filter by.
+    - `request_field_selection`: Prompts the user to select specific fields for filtering and to
+        choose the order (ascending or descending).
+    - `get_user_queryset`: Filters the queryset based on the user's selection and order preference.
+    - `filter_selected_fields`: Applies the selected filters and order to the queryset, preparing
+        it for display.
+    - `display_result`: Displays the filtered and ordered list of events to the user.
+    - `go_back`: Provides an option to go back to the previous command, presumably to the main
+        event management interface.
+
+    This class encapsulates the functionality for listing and optionally filtering events,
+    ensuring that only users with the appropriate permissions can perform these actions.
+    It leverages the `EpicEventsCommand` class for common command functionalities, such as
+    displaying input prompts and handling user input.
     """
 
     help = "Lists all events."
