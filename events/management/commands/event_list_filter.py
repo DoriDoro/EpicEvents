@@ -110,7 +110,7 @@ class Command(EpicEventsCommand):
 
     def filter_selected_fields(self, selected_fields, order, user_queryset):
         field_mapping = {
-            "C": "client",
+            "C": "contract__client",
             "D": "date",
             "N": "name",
             "L": "location",
@@ -133,8 +133,8 @@ class Command(EpicEventsCommand):
 
         for event in filter_queryset:
             event_data = {
-                "client": event.client.email,
-                "date": event.total_costs,
+                "client": event.contract.client.email,
+                "date": event.date.strftime("%d/%m/%Y"),
                 "name": event.name,
                 "location": event.location,
                 "max_guests": event.max_guests,
