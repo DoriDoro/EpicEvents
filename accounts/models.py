@@ -201,9 +201,5 @@ class Client(models.Model):
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-    @property
-    def get_email_address(self):
-        return self.employee.user.email
-
     def __str__(self):
-        return self.get_full_name
+        return f"{self.get_full_name} ({self.employee.get_full_name})"
