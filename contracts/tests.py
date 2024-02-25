@@ -12,11 +12,14 @@ class ContractTestCase(TestCase):
     COSTS = 51236.20
     AMOUNT = 520.60
     SIGNED = "S"
-    DRAFT = "D"
+
+    USER_EMAIL = "testemployee@mail.com"
+    CLIENT_FIRST_NAME = "John"
+    CLIENT_LAST_NAME = "Client"
 
     def setUp(self):
         self.user = UserModel.objects.create_user(
-            email="testemployee@mail.com", password="TestPassw0rd!"
+            email=self.USER_EMAIL, password="TestPassw0rd!"
         )
         self.employee = Employee.objects.create(
             user=self.user,
@@ -27,8 +30,8 @@ class ContractTestCase(TestCase):
         self.client = Client.objects.create(
             employee=self.employee,
             email="testclient@mail.com",
-            first_name="John",
-            last_name="Client",
+            first_name=self.CLIENT_FIRST_NAME,
+            last_name=self.CLIENT_LAST_NAME,
             phone="1234567890",
             company_name="Test Company",
         )
@@ -37,7 +40,7 @@ class ContractTestCase(TestCase):
             employee=self.employee,
             total_costs=self.COSTS,
             amount_paid=self.AMOUNT,
-            state=self.DRAFT,
+            state=self.SIGNED,
         )
 
     def tearDown(self):
@@ -67,5 +70,5 @@ class ContractTestCase(TestCase):
     def test_contract_str(self):
         self.assertEquals(
             f"{self.client.get_full_name} ({self.employee.user.email})",
-            "John Client (testemployee@mail.com)",
+            f"{self.CLIENT_FIRST_NAME} {self.CLIENT_LAST_NAME} ({self.USER_EMAIL})",
         )

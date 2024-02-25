@@ -10,13 +10,13 @@ UserModel = get_user_model()
 
 
 class EventTestCase(TestCase):
-    COSTS = 51236.20
-    AMOUNT = 520.60
-    SIGNED = "S"
+    LOCATION = "Test Address"
+    NAME = "Test Event"
+    USER_EMAIL = "testemployee@mail.com"
 
     def setUp(self):
         self.user = UserModel.objects.create_user(
-            email="testemployee@mail.com", password="TestPassw0rd!"
+            email=self.USER_EMAIL, password="TestPassw0rd!"
         )
         self.employee = Employee.objects.create(
             user=self.user,
@@ -35,15 +35,15 @@ class EventTestCase(TestCase):
         self.contract = Contract.objects.create(
             client=self.client,
             employee=self.employee,
-            total_costs=self.COSTS,
-            amount_paid=self.AMOUNT,
-            state=self.SIGNED,
+            total_costs=51236.20,
+            amount_paid=520.60,
+            state="S",
         )
         self.event = Event.objects.create(
             contract=self.contract,
             employee=self.employee,
-            name="Test Event",
-            location="Test Address",
+            name=self.NAME,
+            location=self.LOCATION,
             max_guests=652,
             notes="Test Text",
         )
@@ -58,7 +58,7 @@ class EventTestCase(TestCase):
     def test_event_creation_successful(self):
         self.assertEqual(self.event.contract.client, self.client)
         self.assertEqual(self.event.employee, self.employee)
-        self.assertEqual(self.event.location, "Test Address")
+        self.assertEqual(self.event.location, self.LOCATION)
 
     def test_event_creation_failed(self):
         pass
@@ -66,5 +66,5 @@ class EventTestCase(TestCase):
     def test_event_str(self):
         self.assertEquals(
             f"{self.event.name} ({self.employee.user.email})",
-            "Test Event (testemployee@mail.com)",
+            f"{self.NAME} ({self.USER_EMAIL})",
         )
