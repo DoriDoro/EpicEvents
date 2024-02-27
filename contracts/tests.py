@@ -7,9 +7,6 @@ class ContractTestCase(ModelTestCase):
         self.assertEqual(self.contract.employee, self.employee)
         self.assertEqual(self.contract.total_costs, self.COSTS)
 
-    def test_contract_creation_failed(self):
-        pass
-
     def test_contract_total(self):
         self.assertEquals(self.contract.total, f"{self.COSTS} €")
 

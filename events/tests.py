@@ -7,9 +7,6 @@ class EventTestCase(ModelTestCase):
         self.assertEqual(self.event.employee, self.employee)
         self.assertEqual(self.event.location, self.LOCATION)
 
-    def test_event_creation_failed(self):
-        pass
-
     def test_event_str(self):
         self.assertEquals(
             f"{self.event.name} ({self.employee.user.email})",

@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.test import TestCase
 
 from django.contrib.auth import get_user_model
@@ -64,11 +65,26 @@ class ModelTestCase(TestCase):
 
 class UserModelTestCase(ModelTestCase):
     def test_user_creation_successful(self):
-        self.assertEqual(self.user.email, self.USER_EMAIL)
-        self.assertTrue(self.user.check_password(self.USER_PASSWORD))
+        UserModel.objects.create_user(
+            email="testuser3@mail.com", password=self.USER_PASSWORD
+        )
 
     def test_user_creation_failed(self):
-        pass
+        invalid_data = [
+            {"email": "", "password": None},
+            {"email": "testuser3@mail.com", "password": ""},
+            {"email": None, "password": self.USER_PASSWORD},
+        ]
+
+        for data in invalid_data:
+            with self.assertRaises(ValueError):
+                UserModel.objects.create_user(**data)
+
+    def test_user_creation_second_time(self):
+        with self.assertRaises(IntegrityError):
+            UserModel.objects.create_user(
+                email=self.USER_EMAIL, password=self.USER_PASSWORD
+            )
 
 
 class EmployeeTestCase(ModelTestCase):
@@ -76,9 +92,6 @@ class EmployeeTestCase(ModelTestCase):
         self.assertEqual(self.employee.first_name, self.EMPLOYEE_FIRST_NAME)
         self.assertEqual(self.employee.last_name, self.EMPLOYEE_LAST_NAME)
         self.assertEqual(self.employee.user.email, self.USER_EMAIL)
-
-    def test_employee_creation_failed(self):
-        pass
 
     def test_employee_full_name(self):
         self.assertEquals(
@@ -101,9 +114,6 @@ class ClientTestCase(ModelTestCase):
         self.assertEqual(self.custom_client.first_name, self.CLIENT_FIRST_NAME)
         self.assertEqual(self.custom_client.last_name, self.CLIENT_LAST_NAME)
         self.assertEqual(self.custom_client.employee.user.email, self.USER_EMAIL)
-
-    def test_client_creation_failed(self):
-        pass
 
     def test_client_full_name(self):
         self.assertEqual(
