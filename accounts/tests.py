@@ -3,6 +3,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from accounts.models import Employee, Client
+from contracts.models import Contract
+from events.models import Event
 
 UserModel = get_user_model()
 
@@ -16,6 +18,13 @@ class ModelTestCase(TestCase):
 
     CLIENT_FIRST_NAME = "John"
     CLIENT_LAST_NAME = "Client"
+
+    COSTS = 51236.20
+    AMOUNT = 520.60
+    SIGNED = "S"
+
+    LOCATION = "Test Address"
+    NAME = "Test Event"
 
     @classmethod
     def setUpTestData(cls):
@@ -35,6 +44,21 @@ class ModelTestCase(TestCase):
             last_name=cls.CLIENT_LAST_NAME,
             phone=1234567,
             company_name="Test Company",
+        )
+        cls.contract = Contract.objects.create(
+            client=cls.custom_client,
+            employee=cls.employee,
+            total_costs=cls.COSTS,
+            amount_paid=cls.AMOUNT,
+            state=cls.SIGNED,
+        )
+        cls.event = Event.objects.create(
+            contract=cls.contract,
+            employee=cls.employee,
+            name=cls.NAME,
+            location=cls.LOCATION,
+            max_guests=652,
+            notes="Test Text",
         )
 
 
