@@ -90,7 +90,6 @@ class DataCreateCommand(BaseCommand):
         necessary setup. A `queryset` is created for further operations. It creates the fake data
         and creates the model instances with the fake data.
         """
-        super().handle(*args, **options)
 
         self.get_queryset()
         fake_data = self.create_fake_data()
