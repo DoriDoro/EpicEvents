@@ -95,11 +95,11 @@ class Command(EpicEventsCommand):
             return
         elif choice["filter"] == "Y":
             create_permission_denied_message()
-            call_command("client")
+            call_command("contract")
             sys.exit()
         elif choice["filter"] == "N":
             self.stdout.write()
-            call_command("client")
+            call_command("contract")
             sys.exit()
 
     def choose_attributes(self):
