@@ -1,13 +1,13 @@
 from django.core.management import call_command
 
-from accounts.models import Client, Employee
+from accounts.models import Client
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import (
     create_error_message,
     create_does_not_exists_message,
     create_success_message,
 )
-from cli.utils_tables import create_model_table, create_queryset_table
+from cli.utils_tables import create_queryset_table
 from contracts.models import Contract
 
 
@@ -51,11 +51,14 @@ class Command(EpicEventsCommand):
     permissions = ["MA"]
 
     def get_queryset(self):
-        self.queryset = Contract.objects.select_related("client").all()
+        self.queryset = (
+            Client.objects.select_related("employee")
+            .filter(contract_clients__isnull=True)
+            .all()
+        )
 
     def get_create_model_table(self):
         all_clients_data = dict()
-        all_contracts_data = dict()
         headers_clients = [
             "",
             "** Client email **",
@@ -64,36 +67,21 @@ class Command(EpicEventsCommand):
             "Company name",
             "Employee",
         ]
-        headers_contracts = [
-            "",
-            "** Client email **",
-            "Total costs",
-            "Amount paid",
-            "State",
-            "Employee",
-        ]
 
-        for contract in self.queryset:
-            contract_data = {
-                "email": contract.client.email,
-                "total_costs": contract.total_costs,
-                "amount_paid": contract.paid_amount,
-                "state": contract.state,
-                "employee": contract.client.employee.user.email,
-            }
+        for client in self.queryset:
             client_data = {
-                "email": contract.client.email,
-                "first_name": contract.client.first_name,
-                "last_name": contract.client.last_name,
-                "company_name": contract.client.company_name,
-                "employee": contract.client.employee.user.email,
+                "email": client.email,
+                "first_name": client.first_name,
+                "last_name": client.last_name,
+                "company_name": client.company_name,
+                "employee": client.employee.user.email,
             }
 
-            all_clients_data[f"Client {contract.client.id}"] = client_data
-            all_contracts_data[f"Contract {contract.id}"] = contract_data
+            all_clients_data[f"Client {client.id}"] = client_data
 
-        create_queryset_table(all_clients_data, "Clients", headers=headers_clients)
-        create_queryset_table(all_contracts_data, "Clients", headers=headers_contracts)
+        create_queryset_table(
+            all_clients_data, "Clients without a contract", headers=headers_clients
+        )
 
     def get_data(self):
         self.display_input_title("Enter details to create a new contract:")
