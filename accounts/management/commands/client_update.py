@@ -4,8 +4,8 @@ from accounts.models import Client
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_success_message, create_invalid_error_message
 from cli.utils_tables import (
-    create_model_table,
     create_pretty_table,
+    create_queryset_table,
 )
 
 
@@ -23,6 +23,8 @@ class Command(EpicEventsCommand):
 
     Key methods within this class include:
 
+    - `get_queryset`: Initializes the queryset for `Client` objects, selecting related `Employee`
+        objects for each event.
     - `get_create_model_table`: Generates a table of all client emails to help the user select a
         client to update.
     - `get_requested_model`: Prompts the user to input the email address of the client they wish
@@ -46,8 +48,32 @@ class Command(EpicEventsCommand):
     action = "UPDATE"
     permissions = ["SA"]
 
+    def get_queryset(self):
+        self.queryset = Client.objects.filter(employee__user=self.user).all()
+
     def get_create_model_table(self):
-        create_model_table(Client, "email", "Client Emails")
+        table_data = dict()
+
+        headers = [
+            "",
+            "** Client email **",
+            "First name",
+            "Last name",
+            "Phone",
+            "Company name",
+        ]
+
+        for client in self.queryset:
+            client_data = {
+                "email": client.email,
+                "first_name": client.first_name,
+                "last_name": client.last_name,
+                "phone": client.phone,
+                "company_name": client.company_name,
+            }
+            table_data[f"Client {client.id}"] = client_data
+
+        create_queryset_table(table_data, "my Clients", headers=headers)
 
     def get_requested_model(self):
         while True:

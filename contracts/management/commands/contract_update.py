@@ -28,6 +28,8 @@ class Command(EpicEventsCommand):
 
     Key methods within this class include:
 
+    - `get_queryset`: Initializes the queryset for `Contract` objects, selecting related `Client`
+        objects for each event.
     - `get_create_model_table`: Generates a table of all contract to help the user select a
         contract to update.
     - `get_requested_model`: Prompts the user to input the email address of the client they wish
@@ -49,17 +51,34 @@ class Command(EpicEventsCommand):
 
     help = "Prompts for details to update a contract."
     action = "UPDATE"
-    permissions = ["SA", "MA"]
+    permissions = ["MA"]
+
+    def get_queryset(self):
+        self.queryset = Contract.objects.select_related("client").all()
 
     def get_create_model_table(self):
         table_data = dict()
 
-        queryset = Contract.objects.select_related("client").all()
+        headers = [
+            "",
+            "** Client email **",
+            "Total costs",
+            "Amount paid",
+            "Rest amount",
+            "State",
+        ]
 
-        for contract in queryset:
-            table_data[contract.client.id] = contract.client.email
+        for contract in self.queryset:
+            contract_data = {
+                "client": contract.client.email,
+                "total": contract.total,
+                "paid": contract.paid_amount,
+                "rest": contract.rest_amount,
+                "state": contract.get_state_display(),
+            }
+            table_data[f"Contract {contract.id}"] = contract_data
 
-        create_queryset_table(table_data, "Client Emails from contracts", "Email")
+        create_queryset_table(table_data, "Contracts", headers=headers)
 
     def get_requested_model(self):
         while True:

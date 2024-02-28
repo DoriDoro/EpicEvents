@@ -1,3 +1,5 @@
+import sys
+
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import transaction
@@ -10,8 +12,8 @@ from cli.utils_messages import (
     create_error_message,
 )
 from cli.utils_tables import (
-    create_model_table,
     create_pretty_table,
+    create_queryset_table,
 )
 
 UserModel = get_user_model()
@@ -31,6 +33,8 @@ class Command(EpicEventsCommand):
 
     Key methods within this class include:
 
+    - `get_queryset`: Initializes the queryset for `Employee` objects, selecting related `User`
+        objects for each event.
     - `get_create_model_table`: Generates a table of all employee emails to help the user select an
         employee to update.
     - `get_requested_model`: Prompts the user to input the email address of the employee they wish
@@ -54,8 +58,30 @@ class Command(EpicEventsCommand):
     action = "UPDATE"
     permissions = ["MA"]
 
+    def get_queryset(self):
+        self.queryset = Employee.objects.select_related("user").all()
+
     def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employee Emails")
+        table_data = dict()
+
+        headers = [
+            "",
+            "** Employee email **",
+            "First name",
+            "Last name",
+            "Role",
+        ]
+
+        for employee in self.queryset:
+            employee_data = {
+                "email": employee.user.email,
+                "first_name": employee.first_name,
+                "last_name": employee.last_name,
+                "role": employee.role,
+            }
+            table_data[f"Employee {employee.id}"] = employee_data
+
+        create_queryset_table(table_data, "Employees", headers=headers)
 
     def get_requested_model(self):
         while True:

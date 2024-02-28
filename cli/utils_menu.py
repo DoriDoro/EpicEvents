@@ -172,8 +172,7 @@ def get_app_menu(app, user):
             },  # filter possible
             "contract": {
                 1: "List and filter",
-                2: "Update",
-                3: ["quit", "Go back to Main Menu"],
+                2: ["quit", "Go back to Main Menu"],
             },  # filter possible because MA creates the contract with employee of client
             "event": {
                 1: "List and filter",
