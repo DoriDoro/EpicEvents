@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 
 from accounts.models import Employee
@@ -80,6 +82,7 @@ class Command(EpicEventsCommand):
         if data["delete"] == "N":
             self.stdout.write()
             call_command("employee")
+            sys.exit()
 
     def collect_changes(self):
         create_success_message("Employee", "deleted")

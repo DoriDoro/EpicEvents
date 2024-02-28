@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 
 from cli.utils_custom_command import EpicEventsCommand
@@ -93,6 +95,7 @@ class Command(EpicEventsCommand):
         if data["delete"] == "N":
             self.stdout.write()
             call_command("event")
+            sys.exit()
 
     def collect_changes(self):
         create_success_message("Event", "deleted")

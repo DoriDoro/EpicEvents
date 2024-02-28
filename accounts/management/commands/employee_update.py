@@ -164,6 +164,7 @@ class Command(EpicEventsCommand):
             if UserModel.objects.filter(email=email).exists():
                 create_error_message("This email")
                 call_command("employee_update")
+                sys.exit()
             else:
                 user = self.object.user
                 user.email = email

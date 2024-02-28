@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 from django.db import IntegrityError
 
@@ -106,6 +108,7 @@ class Command(EpicEventsCommand):
         except IntegrityError:
             create_error_message("Email")
             call_command("client_create")
+            sys.exit()
 
     def collect_changes(self):
         self.fields = [

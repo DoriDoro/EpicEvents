@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 
 from accounts.models import Client
@@ -102,6 +104,7 @@ class Command(EpicEventsCommand):
         if not client:
             create_does_not_exists_message("Client")
             call_command("contract_create")
+            sys.exit()
 
         validated_data["client"] = client
         validated_data["employee"] = client.employee
@@ -116,6 +119,7 @@ class Command(EpicEventsCommand):
         if contract_exists:
             create_error_message("Contract")
             call_command("contract_create")
+            sys.exit()
 
         # create the contract:
         self.object = Contract.objects.create(

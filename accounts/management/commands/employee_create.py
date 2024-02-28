@@ -1,3 +1,5 @@
+import sys
+
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import IntegrityError
@@ -97,6 +99,7 @@ class Command(EpicEventsCommand):
         except IntegrityError:
             create_error_message("Email")
             call_command("employee_create")
+            sys.exit()
 
     def collect_changes(self):
         self.fields = ["email", "first_name", "last_name", "role"]

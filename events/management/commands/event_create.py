@@ -149,6 +149,7 @@ class Command(EpicEventsCommand):
         if event_exists:
             create_error_message("Event")
             call_command("event_create")
+            sys.exit()
 
         # create new event:
         self.object = Event.objects.create(
