@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
@@ -61,6 +62,19 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         self.fields_to_update = list()
         self.available_fields = dict()
         self.update_table = list()
+        self.employee = None
+        self.client = None
+
+    @classmethod
+    def custom_input(cls, label):
+        value = input(label)
+
+        if value in ["", " "]:
+            print()
+            call_command("start")
+            sys.exit()
+
+        return value
 
     @classmethod
     def text_input(cls, label, required=True):
@@ -85,19 +99,16 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Raises:
             ValueError: If the input is required but not provided.
         """
+        original_label = label
+
         if required:
             label = f"{label}*"
         label = f"{'':^5}{BOLD}{label}{ENDC}: "
 
-        value = input(label)
-        if required:
-            if value in ["", " "]:
-                print()
-                call_command("start")
-
-            while not value:
-                create_invalid_error_message("input")
-                value = input(label)
+        value = cls.custom_input(label)
+        if not value and required:
+            create_invalid_error_message("input")
+            value = cls.text_input(original_label, required=required)
 
         return value
 
@@ -118,20 +129,17 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             uses a ValueError if the input of user is '', the 'start'-command will be called to
             exit the function.
         """
+        original_label = label
+
         if required:
             label = f"{label}*"
         label = f"{'':^5}{BOLD}{label}{ENDC}: "
 
         try:
-            value = int(input(label))
+            value = int(cls.custom_input(label))
         except ValueError:
-            print()
-            call_command("start")
-
-        if required:
-            while not value:
-                print("Invalid input! Number input.")
-                value = int(input(label))
+            print("Invalid input! Number input.")
+            value = cls.int_input(original_label, required=required)
 
         return value
 
@@ -150,22 +158,19 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Raises:
             InvalidOperation: If the input is other than decimal.
         """
+        original_label = label
+
         if required:
             label = f"{label}*"
         label = f"{'':^5}{BOLD}{label}{ENDC}: "
 
-        value = input(label)
+        value = cls.custom_input(label)
 
-        if required:
-            if value in ["", " "]:
-                print()
-                call_command("start")
-
-            try:
-                value = Decimal(value)
-            except InvalidOperation:
-                print("Invalid input! Decimal input.")
-                value = input(label)
+        try:
+            value = Decimal(value)
+        except InvalidOperation:
+            print("Invalid input! Decimal input.")
+            value = cls.decimal_input(original_label, required=required)
 
         return value
 
@@ -215,6 +220,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         if value in ["", " "]:
             print()
             call_command("start")
+            sys.exit()
 
         return value
 
@@ -542,6 +548,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         self.get_queryset()
         self.get_create_model_table()
         self.go_back()
+        sys.exit()
 
     def list_filter(self):
         """Methods when action='LIST_FILTER' in the child Command."""
@@ -549,6 +556,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         if not self.queryset:
             create_info_message("No data available!")
             self.go_back()
+            sys.exit()
         self.get_create_model_table()
         choice = self.get_data()
         self.user_choice(choice)
@@ -561,6 +569,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             )
             self.display_result(filter_queryset, order_by_fields)
             self.go_back()
+            sys.exit()
 
     def create(self):
         """Methods when action='CREATE' in the child Command."""
@@ -571,9 +580,15 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         self.collect_changes()
         self.create_table()
         self.go_back()
+        sys.exit()
 
     def update(self):
         """Methods when action='UPDATE' in the child Command."""
+        self.get_queryset()
+        if not self.queryset:
+            create_info_message("No data available!")
+            self.go_back()
+            sys.exit()
         self.get_create_model_table()
         self.get_requested_model()
         self.get_fields_to_update()
@@ -583,6 +598,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         self.collect_changes()
         self.create_table()
         self.go_back()
+        sys.exit()
 
     def delete(self):
         """Methods when action='DELETE' in the child Command."""
@@ -592,6 +608,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         self.make_changes(validated_data)
         self.collect_changes()
         self.go_back()
+        sys.exit()
 
     def handle(self, *args, **options):
         """
@@ -610,7 +627,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         if self.user.employee_users.role not in self.permissions:
             create_permission_denied_message()
             call_command("start")
-            return
+            sys.exit()
 
         if self.action == "LIST":
             self.list()
