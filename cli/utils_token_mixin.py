@@ -207,7 +207,9 @@ class JWTTokenMixin:
             if user is not None:
                 self.token = self.generate_token(user.pk, user.email)
 
-                create_success_message("Employee", "logged in")
+                create_success_message(
+                    f"Employee [Role: {user.employee_users.role}]", "logged in"
+                )
             else:
                 create_invalid_error_message("email or password")
                 self.login()
