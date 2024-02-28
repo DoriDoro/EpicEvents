@@ -26,19 +26,19 @@ open terminal
 **Option 1:** <br>
 start the program with command: `python manage.py start` and login with one of these emails:
 
-  |    **Employee email**     |    Password     |  Role  |
-  |:-------------------------:|:---------------:|:------:|
-  |   john.turner@mail.com    |  TestPassw0rd!  |   SA   |
-  |   john.jacobs@mail.com    |  TestPassw0rd!  |   SU   |
-  |  joseph.osborne@mail.com  |  TestPassw0rd!  |   MA   |
+  |   **Employee email**    |    Password     |  Role  |
+  |:-----------------------:|:---------------:|:------:|
+  |  kelly.miller@mail.com  |  TestPassw0rd!  |   SA   |
+  |  craig.chavez@mail.com  |  TestPassw0rd!  |   SU   |
+  | ernest.bishop@mail.com  |  TestPassw0rd!  |   MA   |
 
 
 **Option 2:** <br>
 create fake data by yourself, by running these commands:
-1. `python manage.py data_create_employee` (prints one employee/user email, with Role: SA, on console to log in)
-2. `python manage.py data_create_client`
-3. `python manage.py data_create_contract`
-4. `python manage.py data_create_event` <br>
+1. `python manage.py data_create_employees` (prints one employee/user email, with Role: SA, on console to log in, password: TestPassw0rd!)
+2. `python manage.py data_create_clients`
+3. `python manage.py data_create_contracts`
+4. `python manage.py data_create_events` <br>
 the commands to create all these data is located in `data/management/commands/`.
 5. start the program with command: `python manage.py start` and login with e.g. the email which is printed on the console after you enter `python manage.py data_create_employee` command with password: `TestPassw0rd!`.
 
