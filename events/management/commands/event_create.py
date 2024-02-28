@@ -28,8 +28,8 @@ class Command(EpicEventsCommand):
 
     Key methods within this class include:
 
-    - `get_queryset`: Initializes the queryset for `Event` objects, selecting related `Client`
-        objects for each event.
+    - `get_queryset`: Initializes the queryset for `Event` objects, selecting related `Contract`,
+        `Client` and `Employee` objects for each event.
     - `get_create_model_table`: Generates tables of all events and a subset of clients related to
         the current user, displaying relevant information such as email, date, name, location,
         max_guest and (employee).

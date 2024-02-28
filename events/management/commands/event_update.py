@@ -27,7 +27,8 @@ class Command(EpicEventsCommand):
         "SA" (Sales) and "MA" (Management) has the permission.
 
     Key methods within this class include:
-
+    - `get_queryset`: Initializes the queryset for `Event` objects, selecting related `Client`
+        objects for each event.
     - `get_create_model_table`: Generates a table of all events to help the user select an event
         to update.
     - `get_requested_model`: Prompts the user to input the email address of the client from
@@ -49,16 +50,49 @@ class Command(EpicEventsCommand):
 
     help = "Prompts for details to update an event"
     action = "UPDATE"
-    permissions = ["SA", "MA"]
+    permissions = ["SU", "MA"]
+
+    def get_queryset(self):
+        if self.user.employee_users.role == "SA":
+            self.queryset = (
+                Event.objects.select_related("contract__client")
+                .filter(employee__user=self.user)
+                .all()
+            )
+
+        self.queryset = Event.objects.select_related(
+            "contract__client", "employee"
+        ).all()
 
     def get_create_model_table(self):
         table_data = dict()
 
-        queryset = Event.objects.select_related("contract__client").all()
-        for event in queryset:
-            table_data[event.contract.client.id] = event.contract.client.email
+        headers = [
+            "",
+            "** Client email **",
+            "Date",
+            "Name",
+            "Location",
+            "Max guests",
+        ]
 
-        create_queryset_table(table_data, "Client Emails from Events", "Email")
+        for event in self.queryset:
+            event_data = {
+                "client": event.contract.client.email,
+                "date": event.date.strftime("%d/%m/%Y"),
+                "name": event.name,
+                "location": event.location,
+                "max_guests": event.max_guests,
+            }
+
+            if self.user.employee_users.role == "MA":
+                headers.append("Employee")
+
+                event_data["employee"] = event.employee
+
+            table_data[f"Event {event.id}"] = event_data
+
+        create_queryset_table(table_data, "my Events", headers=headers)
 
     def get_requested_model(self):
         while True:
