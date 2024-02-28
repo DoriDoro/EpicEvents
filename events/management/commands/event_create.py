@@ -1,6 +1,8 @@
+import sys
+
 from django.core.management import call_command
 
-from accounts.models import Client
+from accounts.models import Client, Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import (
     create_does_not_exists_message,
@@ -8,6 +10,7 @@ from cli.utils_messages import (
     create_success_message,
 )
 from cli.utils_tables import create_queryset_table
+from contracts.models import Contract
 from events.models import Event
 
 
@@ -50,11 +53,18 @@ class Command(EpicEventsCommand):
     permissions = ["SA"]
 
     def get_queryset(self):
-        self.queryset = Event.objects.select_related("contract__client").all()
+        self.queryset = (
+            Event.objects.select_related("contract", "contract__client", "employee")
+            .filter(contract__state="S")
+            .all()
+        )
+        self.employee = Employee.objects.filter(role="SU")
+        self.client = Client.objects.filter(contract_clients__state="S")
 
     def get_create_model_table(self):
         all_events_data = dict()
-        my_events_data = dict()
+        all_su_employee_data = dict()
+        all_clients_data = dict()
         headers_all = [
             "",
             "** Client email **",
@@ -64,7 +74,8 @@ class Command(EpicEventsCommand):
             "Max guests",
             "Employee",
         ]
-        headers_my = headers_all[0:6]
+        headers_su_employee = ["", "** Employee email **", "Role"]
+        headers_client = ["", "** Client email **"]
 
         for event in self.queryset:
             event_data = {
@@ -78,13 +89,21 @@ class Command(EpicEventsCommand):
 
             all_events_data[f"Event {event.id}"] = event_data
 
-            if event.contract.client.employee.user == self.user:
-                event_data = event_data.copy()
-                event_data.pop("employee", None)
-                my_events_data[f"Events {event.id}"] = event_data
+        for employee in self.employee:
+            su_employee_data = {"email": employee.user.email, "role": employee.role}
+            all_su_employee_data[f"Employee {employee.id}"] = su_employee_data
+
+        for client in self.client:
+            client_data = {"email": client.email}
+            all_clients_data[f"Client {client.id}"] = client_data
 
         create_queryset_table(all_events_data, "Events", headers=headers_all)
-        create_queryset_table(my_events_data, "my Events", headers=headers_my)
+        create_queryset_table(
+            all_su_employee_data, "SU Employees", headers=headers_su_employee
+        )
+        create_queryset_table(
+            all_clients_data, "Clients with signed contract", headers=headers_client
+        )
 
     def get_data(self):
         self.display_input_title("Enter the details to create a new event:")
@@ -96,30 +115,35 @@ class Command(EpicEventsCommand):
             "location": self.text_input("Location of the event"),
             "max_guests": self.int_input("Number of guests"),
             "notes": self.text_input("Any notes?"),
+            "employee": self.email_input("SU employee email"),
         }
 
     def make_changes(self, data):
         validated_data = dict()
 
-        client = (
-            Client.objects.filter(email=data["client"])
-            .select_related("employee")
-            .first()
-        )  # get info of client and employee
+        client = Client.objects.filter(email=data["client"]).first()
+        employee = Employee.objects.filter(user__email=data["employee"]).first()
+        contract = Contract.objects.filter(client__email=data["client"]).first()
 
         if not client:
             create_does_not_exists_message("Client")
             call_command("event_create")
+            sys.exit()
+        if not employee:
+            create_does_not_exists_message("Employee")
+            call_command("event_create")
+            sys.exit()
 
         validated_data["client"] = client
-        validated_data["employee"] = client.employee
-
-        # remove client from data:
+        validated_data["employee"] = employee
+        validated_data["contract"] = contract
+        # remove client/employee from data dict, use validated_data dict instead further:
         data.pop("client", None)
+        data.pop("employee", None)
 
         # verify if event already exists:
         event_exists = Event.objects.filter(
-            contract=validated_data["client"], name=data["name"]
+            contract__client=validated_data["client"], name=data["name"]
         ).exists()
 
         if event_exists:
@@ -128,7 +152,7 @@ class Command(EpicEventsCommand):
 
         # create new event:
         self.object = Event.objects.create(
-            contract=validated_data["client"],
+            contract=validated_data["contract"],
             employee=validated_data["employee"],
             **data,
         )
