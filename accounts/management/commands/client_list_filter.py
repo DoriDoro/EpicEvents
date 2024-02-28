@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 
 from accounts.models import Client
@@ -92,11 +94,11 @@ class Command(EpicEventsCommand):
         elif choice["filter"] == "Y":
             create_permission_denied_message()
             call_command("client")
-            return
+            sys.exit()
         elif choice["filter"] == "N":
             self.stdout.write()
             call_command("client")
-            return
+            sys.exit()
 
     def choose_attributes(self):
         self.fields = ["email", "first_name", "last_name", "company_name"]
