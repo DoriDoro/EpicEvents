@@ -23,10 +23,15 @@ class Command(EpicEventsCommand):
             - Choice  1: Calls `event_list_filter` command.
             - Choice  2: Calls `event_create` command.
             - Choice  3: Calls `start` command.
-        - For `SU` and `MA` role:
+        - For `SU` role:
             - Choice  1: Calls `event_list_filter` command.
             - Choice  2: Calls `event_update` command.
             - Choice  3: Calls `start` command.
+        - For `MA` role:
+            - Choice  1: Calls `event_list_filter` command.
+            - Choice  2: Calls `event_update` command.
+            - Choice  3: Calls `event_delete` command.
+            - Choice  4: Cals `start` command.
 
     This class demonstrates the use of inheritance and role-based access control in a command-line
     interface, allowing for a flexible and secure management of event operations.
@@ -43,23 +48,25 @@ class Command(EpicEventsCommand):
         if self.user.employee_users.role == "SA":
             if choice == 1:
                 call_command("event_list_filter")
-            if choice == 2:
+            elif choice == 2:
                 call_command("event_create")
-            if choice == 3:
+            elif choice == 3:
                 call_command("start")
 
         if self.user.employee_users.role == "SU":
             if choice == 1:
                 call_command("event_list_filter")
-            if choice == 2:
+            elif choice == 2:
                 call_command("event_update")
-            if choice == 3:
+            elif choice == 3:
                 call_command("start")
 
         if self.user.employee_users.role == "MA":
             if choice == 1:
                 call_command("event_list_filter")
-            if choice == 2:
+            elif choice == 2:
                 call_command("event_update")
-            if choice == 3:
+            elif choice == 3:
+                call_command("event_delete")
+            elif choice == 4:
                 call_command("start")

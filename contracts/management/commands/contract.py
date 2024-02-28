@@ -19,18 +19,15 @@ class Command(EpicEventsCommand):
     - Retrieves the user's choice from the application menu for the "contract" section.
     - Depending on the user's role (`SA`, `SU`, or `MA`), it executes different commands based
         on the user's choice:
-        - For `SA` role:
-            - Choice  1: Calls `contract_list_filter` command.
-            - Choice  2: Calls `contract_update` command.
-            - Choice  3: Calls `start` command.
-        - For `SU` role:
+        - For `SA` and `SU` role:
             - Choice  1: Calls `contract_list_filter` command.
             - Choice  2: Calls `start` command.
         - For `MA` roles:
             - Choice  1: Calls `contract_list_filter` command.
             - Choice  2: Calls `contract_create` command.
             - Choice  3: Calls `contract_update` command.
-            - Choice  4: Calls `start` command.
+            - Choice  4: Calls `contract_delete` command.
+            - Choice  5: Calls `start` command.
 
     This class demonstrates the use of inheritance and role-based access control in a command-line
     interface, allowing for a flexible and secure management of client operations.
@@ -47,23 +44,23 @@ class Command(EpicEventsCommand):
         if self.user.employee_users.role == "SA":
             if choice == 1:
                 call_command("contract_list_filter")
-            if choice == 2:
-                call_command("contract_update")
-            if choice == 3:
+            elif choice == 2:
                 call_command("start")
 
         if self.user.employee_users.role == "SU":
             if choice == 1:
                 call_command("contract_list_filter")
-            if choice == 2:
+            elif choice == 2:
                 call_command("start")
 
         if self.user.employee_users.role == "MA":
             if choice == 1:
                 call_command("contract_list_filter")
-            if choice == 2:
+            elif choice == 2:
                 call_command("contract_create")
-            if choice == 3:
+            elif choice == 3:
                 call_command("contract_update")
-            if choice == 4:
+            elif choice == 4:
+                call_command("contract_delete")
+            elif choice == 5:
                 call_command("start")
