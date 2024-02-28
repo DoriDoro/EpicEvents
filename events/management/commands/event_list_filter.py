@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import call_command
 
 from cli.utils_custom_command import EpicEventsCommand
@@ -88,17 +90,17 @@ class Command(EpicEventsCommand):
         }
 
     def user_choice(self, choice):
-        if choice["filter"] == "Y" and self.user.employee_users.role in ["SA", "SU"]:
+        if choice["filter"] == "Y" and self.user.employee_users.role == "SU":
             self.stdout.write()
             return
         elif choice["filter"] == "Y":
             create_permission_denied_message()
             call_command("client")
-            return
+            sys.exit()
         elif choice["filter"] == "N":
             self.stdout.write()
             call_command("client")
-            return
+            sys.exit()
 
     def choose_attributes(self):
         self.fields = [
