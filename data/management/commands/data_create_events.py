@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.utils.timezone import make_aware
 from faker import Faker
 
+from accounts.models import Employee
 from cli.utils_messages import create_success_message, create_error_message
 from contracts.models import Contract
 from data.utils_data_custom_command import DataCreateCommand
@@ -39,7 +40,8 @@ class Command(DataCreateCommand):
     help = "This command creates 50 events."
 
     def get_queryset(self):
-        self.contract = Contract.objects.select_related("employee").all()
+        self.contract = Contract.objects.filter(state="S")
+        self.employee = Employee.objects.filter(role="SU")
 
     def create_fake_data(self):
         data_event = {}
@@ -53,10 +55,11 @@ class Command(DataCreateCommand):
             )
 
             contract = self.contract[(i - 1) % len(self.contract)]
+            employee = self.employee[(i - 1) % len(self.employee)]
 
             event = {
                 "contract": contract,
-                "employee": contract.employee,
+                "employee": employee,
                 "date": date_object,
                 "name": f"{fake.name()} {event_term}",
                 "location": fake.address(),

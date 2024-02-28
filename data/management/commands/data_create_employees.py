@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from faker import Faker
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from accounts.models import Employee
 from cli.utils_messages import create_error_message, create_success_message
@@ -60,6 +60,7 @@ class Command(DataCreateCommand):
 
         return data_employee
 
+    @transaction.atomic
     def create_instances(self, data):
         try:
             users_to_create = []
