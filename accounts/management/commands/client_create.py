@@ -48,34 +48,25 @@ class Command(EpicEventsCommand):
     permissions = ["SA"]
 
     def get_queryset(self):
-        self.queryset = Client.objects.select_related("employee").all()
+        self.queryset = (
+            Client.objects.select_related("employee")
+            .only("employee__first_name", "employee__last_name", "employee__role")
+            .all()
+        )
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
+
         all_clients_data = dict()
         my_clients_data = dict()
-        headers_all = [
-            "",
-            "** Client email **",
-            "First name",
-            "Last name",
-            "Company name",
-            "Employee",
-        ]
-        headers_my = [
-            "",
-            "** Client email **",
-            "First name",
-            "Last name",
-            "Company name",
-        ]
 
         for client in self.queryset:
             client_data = {
                 "email": client.email,
-                "first_name": client.first_name,
-                "last_name": client.last_name,
+                "name": client.get_full_name,
+                "phone": client.phone,
                 "company_name": client.company_name,
-                "employee": client.employee,
+                "employee": f"{client.employee.get_full_name} ({client.employee.role})",
             }
 
             all_clients_data[f"Client {client.id}"] = client_data
@@ -86,8 +77,13 @@ class Command(EpicEventsCommand):
                 client_data.pop("employee", None)
                 my_clients_data[f"Client {client.id}"] = client_data
 
-        create_queryset_table(all_clients_data, "Clients", headers=headers_all)
-        create_queryset_table(my_clients_data, "my Clients", headers=headers_my)
+        create_queryset_table(
+            all_clients_data, "Clients", headers=self.headers["client"]
+        )
+        # remove 'employee' from headers
+        create_queryset_table(
+            my_clients_data, "my Clients", headers=self.headers["client"][0:5]
+        )
 
     def get_data(self):
         self.display_input_title("Enter details to create a client:")

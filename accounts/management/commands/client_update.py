@@ -51,29 +51,22 @@ class Command(EpicEventsCommand):
     def get_queryset(self):
         self.queryset = Client.objects.filter(employee__user=self.user).all()
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Client email **",
-            "First name",
-            "Last name",
-            "Phone",
-            "Company name",
-        ]
 
         for client in self.queryset:
             client_data = {
                 "email": client.email,
-                "first_name": client.first_name,
-                "last_name": client.last_name,
+                "name": client.get_full_name,
                 "phone": client.phone,
                 "company_name": client.company_name,
             }
             table_data[f"Client {client.id}"] = client_data
 
-        create_queryset_table(table_data, "my Clients", headers=headers)
+        create_queryset_table(
+            table_data, "my Clients", headers=self.headers["client"][0:5]
+        )
 
     def get_requested_model(self):
         while True:
