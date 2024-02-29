@@ -52,20 +52,20 @@ class Command(EpicEventsCommand):
     permissions = ["SA", "SU", "MA"]
 
     def get_queryset(self):
-        self.queryset = Event.objects.select_related("contract", "employee").all()
+        self.queryset = (
+            Event.objects.select_related("contract", "employee")
+            .only(
+                "contract__client__email",
+                "employee__first_name",
+                "employee__last_name",
+                "employee__role",
+            )
+            .all()
+        )
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Client email **",
-            "Date",
-            "Name",
-            "Location",
-            "Max guests",
-            "Employee",
-        ]
 
         for event in self.queryset:
             event_data = {
@@ -74,11 +74,11 @@ class Command(EpicEventsCommand):
                 "name": event.name,
                 "location": event.location,
                 "max_guests": event.max_guests,
-                "employee": event.employee,
+                "employee": f"{event.employee.get_full_name} ({event.employee.role})",
             }
             table_data[f"Event {event.id}"] = event_data
 
-        create_queryset_table(table_data, "Events", headers=headers)
+        create_queryset_table(table_data, "Events", headers=self.headers["event"])
 
     def get_data(self):
         self.display_input_title("Enter choice:")
