@@ -52,20 +52,20 @@ class Command(EpicEventsCommand):
     permissions = ["SA", "SU", "MA"]
 
     def get_queryset(self):
-        self.queryset = Contract.objects.select_related("client", "employee").all()
+        self.queryset = (
+            Contract.objects.select_related("client", "employee")
+            .only(
+                "client__email",
+                "employee__first_name",
+                "employee__last_name",
+                "employee__role",
+            )
+            .all()
+        )
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Client email **",
-            "Total amount",
-            "Amount paid",
-            "Rest amount",
-            "State",
-            "Employee",
-        ]
 
         for contract in self.queryset:
             contract_data = {
@@ -74,11 +74,11 @@ class Command(EpicEventsCommand):
                 "paid": contract.paid_amount,
                 "rest": contract.rest_amount,
                 "state": contract.get_state_display(),
-                "employee": contract.employee,
+                "employee": f"{contract.employee.get_full_name} ({contract.employee.role})",
             }
             table_data[f"Contract {contract.id}"] = contract_data
 
-        create_queryset_table(table_data, "Contracts", headers=headers)
+        create_queryset_table(table_data, "Contracts", headers=self.headers["contract"])
 
     def get_data(self):
         self.display_input_title("Enter choice:")

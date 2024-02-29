@@ -54,19 +54,13 @@ class Command(EpicEventsCommand):
     permissions = ["MA"]
 
     def get_queryset(self):
-        self.queryset = Contract.objects.select_related("client").all()
+        self.queryset = (
+            Contract.objects.select_related("client").only("client__email").all()
+        )
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Client email **",
-            "Total costs",
-            "Amount paid",
-            "Rest amount",
-            "State",
-        ]
 
         for contract in self.queryset:
             contract_data = {
@@ -78,7 +72,9 @@ class Command(EpicEventsCommand):
             }
             table_data[f"Contract {contract.id}"] = contract_data
 
-        create_queryset_table(table_data, "Contracts", headers=headers)
+        create_queryset_table(
+            table_data, "Contracts", headers=self.headers["contract"][0:6]
+        )
 
     def get_requested_model(self):
         while True:

@@ -46,15 +46,28 @@ class Command(EpicEventsCommand):
     action = "DELETE"
     permissions = ["MA"]
 
-    def get_create_model_table(self):
+    def get_queryset(self):
+        self.queryset = (
+            Contract.objects.select_related("client").only("client__email").all()
+        )
+
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
 
-        queryset = Contract.objects.select_related("client").all()
+        for contract in self.queryset:
+            contract_data = {
+                "client": contract.client.email,
+                "total": contract.total,
+                "paid": contract.paid_amount,
+                "rest": contract.rest_amount,
+                "state": contract.get_state_display(),
+            }
+            table_data[f"Contract {contract.id}"] = contract_data
 
-        for contract in queryset:
-            table_data[contract.client.id] = contract.client.email
-
-        create_queryset_table(table_data, "Client Emails from contracts", "Email")
+        create_queryset_table(
+            table_data, "Contracts", headers=self.headers["contract"][0:6]
+        )
 
     def get_requested_model(self):
         while True:
