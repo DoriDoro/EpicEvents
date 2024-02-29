@@ -2,7 +2,7 @@ import sys
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
@@ -88,6 +88,7 @@ class Command(EpicEventsCommand):
             ),
         }
 
+    @transaction.atomic
     def make_changes(self, data):
         try:
             user = UserModel.objects.create_user(
