@@ -59,29 +59,23 @@ class Command(EpicEventsCommand):
     permissions = ["MA"]
 
     def get_queryset(self):
-        self.queryset = Employee.objects.select_related("user").all()
+        self.queryset = (
+            Employee.objects.select_related("user").only("user__email").all()
+        )
 
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Employee email **",
-            "First name",
-            "Last name",
-            "Role",
-        ]
 
         for employee in self.queryset:
             employee_data = {
                 "email": employee.user.email,
-                "first_name": employee.first_name,
-                "last_name": employee.last_name,
+                "first_name": employee.get_full_name,
                 "role": employee.role,
             }
             table_data[f"Employee {employee.id}"] = employee_data
 
-        create_queryset_table(table_data, "Employees", headers=headers)
+        create_queryset_table(table_data, "Employees", headers=self.headers["employee"])
 
     def get_requested_model(self):
         while True:

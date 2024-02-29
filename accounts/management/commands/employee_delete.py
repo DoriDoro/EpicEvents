@@ -5,7 +5,7 @@ from django.core.management import call_command
 from accounts.models import Employee
 from cli.utils_custom_command import EpicEventsCommand
 from cli.utils_messages import create_success_message, create_invalid_error_message
-from cli.utils_tables import create_model_table, create_pretty_table
+from cli.utils_tables import create_pretty_table, create_queryset_table
 
 
 class Command(EpicEventsCommand):
@@ -39,12 +39,28 @@ class Command(EpicEventsCommand):
     prompts and handling user input.
     """
 
-    help = "Delete an employee."
+    help = "Prompts to delete an employee."
     action = "DELETE"
     permissions = ["MA"]
 
-    def get_create_model_table(self):
-        create_model_table(Employee, "user.email", "Employee Emails")
+    def get_queryset(self):
+        self.queryset = (
+            Employee.objects.select_related("user").only("user__email").all()
+        )
+
+    def get_instance_data(self):
+        super().get_instance_data()
+        table_data = dict()
+
+        for employee in self.queryset:
+            employee_data = {
+                "email": employee.user.email,
+                "name": employee.get_full_name,
+                "role": employee.role,
+            }
+            table_data[f"Employee {employee.id}"] = employee_data
+
+        create_queryset_table(table_data, "Employee", headers=self.headers["employee"])
 
     def get_requested_model(self):
         while True:
