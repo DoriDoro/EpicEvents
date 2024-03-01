@@ -19,34 +19,6 @@ from cli.utils_token_mixin import JWTTokenMixin
 
 
 class EpicEventsCommand(JWTTokenMixin, BaseCommand):
-    """
-    Custom management command for handling epic events.
-
-    Class attributes:
-        action (str): The action to perform (LIST, CREATE, UPDATE, DELETE).
-        permissions (str): The role required to access the command.
-
-    Instance attributes:
-        object (Any): The object to be manipulated by the command.
-        queryset (Any): The queryset is used only in "action = 'LIST'" and requests the queryset of
-            a model.
-        fields (list): A list of fields to update.
-        fields_to_update (list): A list of fields that need to be updated.
-        available_fields (dict): A dictionary of available fields.
-        update_table (list): A list representing the update table.
-
-    Methods:
-        __init__(self, *args, **options): Initializes the command with options.
-        handle(self): The main method to execute the command's action.
-
-    Example usage:
-        python manage.py epic_events --action=LIST --permissions=employee
-
-    Note:
-        - Ensure the `action` attribute is set to one of 'LIST', 'CREATE', 'UPDATE', 'DELETE'.
-        - The `permissions` attribute should be set to the role required to execute the command.
-    """
-
     help = "Custom BaseCommand for handling epic events"
     action = None
     permissions = None
@@ -56,14 +28,15 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         Initialize the subclass attributes.
         """
         super().__init__(*args, **options)
-        self.object = None
-        self.queryset = None
+        self.available_fields = dict()
+        self.client = None
+        self.employee = None
         self.fields = list()
         self.fields_to_update = list()
-        self.available_fields = dict()
+        self.headers = list()
+        self.object = None
+        self.queryset = None
         self.update_table = list()
-        self.employee = None
-        self.client = None
 
     @classmethod
     def custom_input(cls, label):
@@ -348,8 +321,37 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         print()
 
     # METHODS FOR ALL ACTIONS: (LIST, LIST_FILTER, CREATE, UPDATE AND DELETE):
-    def get_create_model_table(self):
+    def get_instance_data(self):
         """Within this method, create a table of the existing model instances."""
+        self.headers = {
+            "employee": ["", "** Employee email **" "", "Name", "Role"],
+            "client": [
+                "",
+                "** Client email **",
+                "Name",
+                "Phone",
+                "Company name",
+                "Employee",
+            ],
+            "contract": [
+                "",
+                "** Client email **",
+                "Total amount",
+                "Amount paid",
+                "Rest amount",
+                "State",
+                "Employee",
+            ],
+            "event": [
+                "",
+                "** Client email **",
+                "Date",
+                "Name",
+                "Location",
+                "Max guests",
+                "Employee",
+            ],
+        }
         pass
 
     # METHODS FOR ACTIONS: (LIST_FILTER, CREATE, UPDATE AND DELETE):
@@ -546,7 +548,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     def list(self):
         """Methods when action='LIST' in the child Command."""
         self.get_queryset()
-        self.get_create_model_table()
+        self.get_instance_data()
         self.go_back()
         sys.exit()
 
@@ -557,7 +559,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             create_info_message("No data available!")
             self.go_back()
             sys.exit()
-        self.get_create_model_table()
+        self.get_instance_data()
         choice = self.get_data()
         self.user_choice(choice)
         if choice["filter"] == "Y":
@@ -574,7 +576,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
     def create(self):
         """Methods when action='CREATE' in the child Command."""
         self.get_queryset()
-        self.get_create_model_table()
+        self.get_instance_data()
         validated_data = self.get_data()
         self.make_changes(validated_data)
         self.collect_changes()
@@ -589,7 +591,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
             create_info_message("No data available!")
             self.go_back()
             sys.exit()
-        self.get_create_model_table()
+        self.get_instance_data()
         self.get_requested_model()
         self.get_fields_to_update()
         self.get_available_fields()
@@ -602,7 +604,8 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
 
     def delete(self):
         """Methods when action='DELETE' in the child Command."""
-        self.get_create_model_table()
+        self.get_queryset()
+        self.get_instance_data()
         self.get_requested_model()
         validated_data = self.get_data()
         self.make_changes(validated_data)
