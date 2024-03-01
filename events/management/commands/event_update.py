@@ -53,28 +53,29 @@ class Command(EpicEventsCommand):
     permissions = ["SU", "MA"]
 
     def get_queryset(self):
-        if self.user.employee_users.role == "SA":
-            self.queryset = (
-                Event.objects.select_related("contract__client")
+        if self.user.employee_users.role == "SU":
+            queryset = (
+                Event.objects.select_related("contract")
+                .only("contract__client__email")
                 .filter(employee__user=self.user)
                 .all()
             )
+        else:
+            queryset = (
+                Event.objects.select_related("contract", "employee")
+                .only(
+                    "contract__client__email",
+                    "employee__first_name",
+                    "employee__last_name",
+                    "employee__role",
+                )
+                .all()
+            )
+        self.queryset = queryset
 
-        self.queryset = Event.objects.select_related(
-            "contract__client", "employee"
-        ).all()
-
-    def get_create_model_table(self):
+    def get_instance_data(self):
+        super().get_instance_data()
         table_data = dict()
-
-        headers = [
-            "",
-            "** Client email **",
-            "Date",
-            "Name",
-            "Location",
-            "Max guests",
-        ]
 
         for event in self.queryset:
             event_data = {
@@ -83,16 +84,18 @@ class Command(EpicEventsCommand):
                 "name": event.name,
                 "location": event.location,
                 "max_guests": event.max_guests,
+                "employee": f"{event.employee.get_full_name} ({event.employee.role})",
             }
-
-            if self.user.employee_users.role == "MA":
-                headers.append("Employee")
-
-                event_data["employee"] = event.employee
-
             table_data[f"Event {event.id}"] = event_data
 
-        create_queryset_table(table_data, "my Events", headers=headers)
+        if self.user.employee_users.role == "MA":
+            create_queryset_table(
+                table_data, "my Events", headers=self.headers["event"]
+            )
+        else:
+            create_queryset_table(
+                table_data, "my Events", headers=self.headers["event"][0:6]
+            )
 
     def get_requested_model(self):
         while True:

@@ -53,41 +53,20 @@ class Command(EpicEventsCommand):
     permissions = ["SA"]
 
     def get_queryset(self):
-        self.queryset = (
-            Event.objects.select_related("contract", "contract__client", "employee")
-            .filter(contract__state="S")
-            .all()
+        self.employee = (
+            Employee.objects.select_related("user")
+            .only("user__email")
+            .filter(role="SU")
         )
-        self.employee = Employee.objects.filter(role="SU")
-        self.client = Client.objects.filter(contract_clients__state="S")
+        self.client = Client.objects.filter(contract_clients__state="S").only("email")
 
-    def get_create_model_table(self):
-        all_events_data = dict()
+    def get_instance_data(self):
+        super().get_instance_data()
+
         all_su_employee_data = dict()
         all_clients_data = dict()
-        headers_all = [
-            "",
-            "** Client email **",
-            "Date",
-            "Name",
-            "Location",
-            "Max guests",
-            "Employee",
-        ]
+
         headers_su_employee = ["", "** Employee email **", "Role"]
-        headers_client = ["", "** Client email **"]
-
-        for event in self.queryset:
-            event_data = {
-                "email": event.contract.client.email,
-                "date": event.date.strftime("%d/%m/%Y"),
-                "name": event.name,
-                "location": event.location,
-                "max_guests": event.max_guests,
-                "employee": event.employee,
-            }
-
-            all_events_data[f"Event {event.id}"] = event_data
 
         for employee in self.employee:
             su_employee_data = {"email": employee.user.email, "role": employee.role}
@@ -97,12 +76,13 @@ class Command(EpicEventsCommand):
             client_data = {"email": client.email}
             all_clients_data[f"Client {client.id}"] = client_data
 
-        create_queryset_table(all_events_data, "Events", headers=headers_all)
         create_queryset_table(
             all_su_employee_data, "SU Employees", headers=headers_su_employee
         )
         create_queryset_table(
-            all_clients_data, "Clients with signed contract", headers=headers_client
+            all_clients_data,
+            "Clients with signed contract",
+            headers=self.headers["client"][0:2],
         )
 
     def get_data(self):
