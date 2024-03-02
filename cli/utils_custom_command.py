@@ -19,6 +19,31 @@ from cli.utils_token_mixin import JWTTokenMixin
 
 
 class EpicEventsCommand(JWTTokenMixin, BaseCommand):
+    """
+    Custom management command for handling epic events.
+
+    Class attributes:
+        action (str): The action to perform (LIST, CREATE, UPDATE, DELETE).
+        permissions (str): The role required to access the command.
+
+    Instance attributes:
+        object (Any): The object to be manipulated by the command.
+        queryset (Any): The queryset is used only in "action = 'LIST'" and requests the queryset of
+            a model.
+        fields (list): A list of fields to update.
+        fields_to_update (list): A list of fields that need to be updated.
+        available_fields (dict): A dictionary of available fields.
+        update_table (list): A list representing the update table.
+
+    Methods:
+        __init__(self, *args, **options): Initializes the command with options.
+        handle(self): The main method to execute the command's action.
+
+    Note:
+        - Ensure the `action` attribute is set to one of 'LIST', 'CREATE', 'UPDATE', 'DELETE'.
+        - The `permissions` attribute should be set to the role required to execute the command.
+
+    """
     help = "Custom BaseCommand for handling epic events"
     action = None
     permissions = None
