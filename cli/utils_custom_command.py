@@ -44,6 +44,7 @@ class EpicEventsCommand(JWTTokenMixin, BaseCommand):
         - The `permissions` attribute should be set to the role required to execute the command.
 
     """
+
     help = "Custom BaseCommand for handling epic events"
     action = None
     permissions = None
